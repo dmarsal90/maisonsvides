@@ -243,12 +243,13 @@
 							}
 						});
 						// Change color to confirmed events
-						console.log(aEventConfirmed);
 						aEventConfirmed.forEach(function(event){
 							var eventc = calendar.getEventById(event.event_id); // an event object!
-							console.log(eventc);
-							eventc.setProp('backgroundColor', "#3cd47c");
-							eventc.setProp('borderColor', "#3cd47c");
+							if (eventc !== null) {
+								eventc.setProp('backgroundColor', "#3cd47c");
+								eventc.setProp('borderColor', "#3cd47c");
+							}
+							
 						});
 						$('[data-hide-calendar]').on('click', function(){ // To hide ow show events of each calendar
 							console.log('click');
