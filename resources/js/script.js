@@ -1871,6 +1871,35 @@
 			var link = $(this).attr("data-send-form"); // Get link of attribute data
 			$("#templates_create").attr("action", link); // Put the link in the form
 		});
+		// Edit 
+		if ($("[data-edit-process]").length) {
+			var val = $("[data-edit-process]").val();
+			console.log(val);
+		}
+		$("[data-edit-process").on('change', function(){
+			var id = $(this).attr('id');
+			console.log(id);
+			var l = document.getElementById(id).value; // Get value of select
+			console.log();
+			if (l == 'sms') {
+				$("#rappel_sms").show();
+				$("#rappel_email").hide();
+				$("#rappel_task").hide();
+				document.getElementById("add_rappel").disabled = false;
+			}
+			if (l == 'email') {
+				$("#rappel_sms").hide();
+				$("#rappel_email").show();
+				$("#rappel_task").hide();
+				document.getElementById("add_rappel").disabled = false;
+			}
+			if (l == 'task') {
+				$("#rappel_sms").hide();
+				$("#rappel_email").hide();
+				$("#rappel_task").show();
+				document.getElementById("add_rappel").disabled = true;
+			}
+		});
 		$("#type_rappel").on('change', function(){
 			var l = document.getElementById("type_rappel").value; // Get value of select
 			if (l == 'sms') {

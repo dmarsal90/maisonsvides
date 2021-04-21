@@ -81,7 +81,7 @@
 														<a href="{!! route('deletetemplate', [ $template['type'], $template['file'] ]) !!}" data-delete>
 															<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 														</a>
-														<a href="#" data-toggle="modal" data-target="#editTemplateEmail{!! $template['id'] !!}" data-user-id="">
+														<a href="#" data-toggle="modal" data-target="#editTemplateEmail{!! $template['id'] !!}">
 															<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 														</a>
 													</td>
@@ -112,7 +112,7 @@
 														<a href="" data-delete>
 															<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 														</a>
-														<a href="#" data-toggle="modal" data-target="#editTemplateSMS{!! $template['id'] !!}" data-user-id="">
+														<a href="#" data-toggle="modal" data-target="#editTemplateSMS{!! $template['id'] !!}">
 															<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 														</a>
 													</td>
@@ -143,7 +143,7 @@
 														<a href="" data-delete="{!! route('deletetemplate', [ $template['id'], $template['file'] ]) !!}">
 															<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 														</a>
-														<a href="#" data-toggle="modal" data-target="#editTemplateTask{!! $template['id'] !!}" data-user-id="">
+														<a href="#" data-toggle="modal" data-target="#editTemplateTask{!! $template['id'] !!}">
 															<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 														</a>
 													</td>
@@ -173,7 +173,7 @@
 													<a href="{!! route('deletereminders', $reminder['id']) !!}" data-delete>
 														<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 													</a>
-													<a href="#" data-toggle="modal" data-target="#editUser" data-user-id="">
+													<a href="#" data-toggle="modal" data-target="#edit-reminder-{!! $reminder['id'] !!}">
 														<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 													</a>
 												</td>
@@ -203,7 +203,7 @@
 														<a href="" data-delete>
 															<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 														</a>
-														<a href="#" data-toggle="modal" data-target="#editUser" data-user-id="">
+														<a href="#" data-toggle="modal" data-target="#edit-condition-{!! $template['id'] !!}">
 															<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 														</a>
 													</td>
@@ -236,7 +236,7 @@
 														<a href="" data-delete>
 															<img src="{!! asset('img/icons/delete.svg') !!}" width="16">
 														</a>
-														<a href="#" data-toggle="modal" data-target="#editUser" data-user-id="">
+														<a href="#" data-toggle="modal" data-target="#edit-texte-offer-{!! $template['id'] !!}">
 															<img src="{!! asset('img/icons/search.svg') !!}" width="16">
 														</a>
 													</td>
@@ -674,9 +674,7 @@
 									</div>
 								</div><br>
 								<input type="hidden" name="days[]">
-								<div id="new_rappels" class="mb-4">
-									
-								</div>
+								<div id="new_rappels" class="mb-4"></div>
 								<div class="text-left">
 									<button type="button" id="add_rappel" class="btn btn-success">Ajouter une nouvelle étape</button>
 								</div>
@@ -687,7 +685,6 @@
 										<textarea name="form_condition" class="form-control" rows="3"> Acquisition non conditionnée à l’obtention d’un crédit bancaire.</textarea>
 									</div>
 								</div>
-								
 							</div>
 							<div id="temtext">
 								<div class="row">
@@ -828,8 +825,144 @@
 			</div>
 		</div>
 	@endif
+	@if($template['type'] == 'condition')
+		<div class="modal fade" id="edit-condition-{!! $template['id'] !!}" tabindex="-1" aria-labelledby="edit-condition-{!! $template['id'] !!}-Label" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<form action="{!! route('edittemplates', $template['id']) !!}" method="POST" data-form="form-edit-condition-{!! $template['id'] !!}">
+							@csrf()
+							<input type="hidden" name="type" value="task">
+							<input type="hidden" name="old_name_file" value="{!! $template['file'] !!}">
+							<input type="hidden" name="templateSubject" value="">
+							<div class="card">
+								<div class="card-header">Edit : {!! $template['name'] !!}</div>
+								<div class="card-body">
+									<div class="row mb-3">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"><br>
+											<textarea name="templateBody" class="form-control" rows="3"> {!! file_get_contents(asset('templates/'.$template['file'])) !!}</textarea>
+										</div>
+									</div>
+									<div class="text-right">
+										<button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
+										<button type="submit" class="btn btn-lg btn-success" data-submit-form="form-edit-condition-{!! $template['id'] !!}" >Sauvegarder</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
+	@if($template['type'] == 'text-offer')
+		<div class="modal fade" id="edit-texte-offer-{!! $template['id'] !!}" tabindex="-1" aria-labelledby="edit-texte-offer-{!! $template['id'] !!}-Label" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+				<div class="modal-content">
+					<div class="modal-body">
+						<form action="{!! route('edittemplates', $template['id']) !!}" method="POST" data-form="form-edit-texte-offer-{!! $template['id'] !!}">
+							@csrf()
+							<input type="hidden" name="type" value="task">
+							<input type="hidden" name="old_name_file" value="{!! $template['file'] !!}">
+							<input type="hidden" name="templateSubject" value="">
+							<div class="card">
+								<div class="card-header">Edit : {!! $template['name'] !!}</div>
+								<div class="card-body">
+									<div class="row mb-3">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12"><br>
+											<textarea name="templateBody" id="tinyEditTemplateTextOffer{!! $template['id'] !!}" data-height="400" data-tiny="tinyEditTemplateTextOffer{!! $template['id'] !!}" rows="40">{!! file_get_contents(asset('templates/'.$template['file'])) !!}</textarea>
+										</div>
+									</div>
+									<div class="text-right">
+										<button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
+										<button type="submit" class="btn btn-lg btn-success" data-submit-form="form-edit-texte-offer-{!! $template['id'] !!}" >Sauvegarder</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	@endif
 @endforeach
-
+@foreach($reminders as $reminder)
+	@php $infos = unserialize($reminder['reminder']) @endphp
+	<div class="modal fade" id="edit-reminder-{!! $reminder['id'] !!}" tabindex="-1" aria-labelledby="editTemplateTaskLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+			<div class="modal-content">
+				<div class="modal-body">
+					<form action="{!! route('edittemplates', $reminder['id']) !!}" method="POST" data-form="form-edit-reminder-{!! $reminder['id'] !!}">
+						@csrf()
+						<input type="hidden" name="type" value="task">
+						<input type="hidden" name="templateSubject" value="">
+						<div class="card">
+							<div class="card-header">Edit : {!! $reminder['name'] !!}</div>
+							<div class="card-body">
+								@foreach($infos as $info)
+									<div class="row">
+										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+											<strong>Rappel {!! $info['position'] + 1 !!}</strong>
+										</div>
+									</div><hr>
+									<div class="row">
+										<div class="col-xs-12 col-sm-12 col-md-2 col-lg-12 col-xl-2">
+											Type
+										</div>
+										<div class="col-xs-12 col-sm-12 col-md-10 col-lg-12 col-xl-10">
+											<select name="type_rappel[]" data-edit-process id="type_rappel{!! $reminder['id'] !!}{!! $info['position'] !!}" class="form-control">
+												<option {!! ($info['type_template'] == 'email') ? 'selected' : ''!!} value="email">Mail</option>
+												<option {!! ($info['type_template'] == 'sms') ? 'selected' : ''!!} value="sms">SMS</option>
+												<option {!! ($info['type_template'] == 'task') ? 'selected' : ''!!} value="task">Tâches</option>
+											</select>
+										</div>
+									</div><br>
+									<div class="row">
+										<div class="col-xs-12 col-sm-12 col-md-2 col-lg-12 col-xl-2">
+											Template
+										</div>
+										<div class="col-xs-12 col-sm-12 col-md-10 col-lg-12 col-xl-10">
+											<select name="type_rappel_choised[]" class="form-control" id="rappel_email{!! $reminder['id'] !!}{!! $info['position'] !!}">
+												@foreach($templates as $template)
+													@if($template['type'] == 'email')
+														<option value="{!! $template['file'] !!}">{!! $template['name'] !!}</option>
+													@endif
+												@endforeach
+											</select>
+											<select name="type_rappel_choised[]" class="form-control" id="rappel_sms{!! $reminder['id'] !!}{!! $info['position'] !!}">
+												@foreach($templates as $template)
+													@if($template['type'] == 'sms')
+														<option value="{!! $template['file'] !!}">{!! $template['name'] !!}</option>
+													@endif
+												@endforeach
+											</select>
+											<select name="type_rappel_choised[]" class="form-control" id="rappel_task{!! $reminder['id'] !!}{!! $info['position'] !!}">
+												@foreach($templates as $template)
+													@if($template['type'] == 'task')
+														<option value="{!! $template['file'] !!}">{!! $template['name'] !!}</option>
+													@endif
+												@endforeach
+											</select>
+										</div>
+									</div><br>
+									<input type="hidden" name="days[]">
+									<div id="new_rappels{!! $reminder['id'] !!}{!! $info['position'] !!}" class="mb-4"></div>
+								@endforeach
+								<div class="text-left">
+									<button type="button" id="add_rappel{!! $reminder['id'] !!}" class="btn btn-success">Ajouter une nouvelle étape</button>
+								</div>
+								<div class="text-right">
+									<button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
+									<button type="submit" class="btn btn-lg btn-success" data-submit-form="form-edit-reminder-{!! $reminder['id'] !!}" >Sauvegarder</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+@endforeach
 <!-- <div class="modal fade" id="editTemplateEmailEmail" tabindex="-1" aria-labelledby="createTemplateEmailLabel" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
 		<div class="modal-content">
