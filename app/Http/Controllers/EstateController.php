@@ -430,47 +430,53 @@ class EstateController extends Controller {
 		$events = EstateEvent::where('estate_id', '=', $id)->get();
 		$eventsArray = array();
 		$all = array();
-		foreach ($events as $_event) {
-			$event = $service->events->get($this->calendarId, $_event->event_id);
-			$eventsArray['id'] = $_event->id;
-			$eventsArray['id_google'] = $event->id;
-			$eventsArray['start'] = $event->start->dateTime;
-			$eventsArray['end'] = $event->end->dateTime;
-			$all[] = $eventsArray;
+		// dd($client->isAccessTokenExpired());
+		if (!$client->isAccessTokenExpired()) {
+			foreach ($events as $_event) {
+				$event = $service->events->get($this->calendarId, $_event->event_id);
+				$eventsArray['id'] = $_event->id;
+				$eventsArray['id_google'] = $event->id;
+				$eventsArray['start'] = $event->start->dateTime;
+				$eventsArray['end'] = $event->end->dateTime;
+				$all[] = $eventsArray;
+			}
 		}
 		// Get the list of tickets of a estate
 		$auxTickets = array();//$this->listAllTicketsEstate($id);
 
 		$this->countEstatesCategory(); // Save the total estates that they have a category
 		$this->countCategories(); // Save if a category is parent
-		// Save the client
-		$client = $this->getClient(Auth::user()->google_token);
-		// Create the service instance of Google Calendar
-		$service = new Google_Service_Calendar($client);
-		// Return view with the data of calendar
-		$calendarList = $service->calendarList->listCalendarList();
-
-
-		while(true) {
-			// foreach ($calendarList->getItems() as $calendarListEntry) {
-			// 	echo $calendarListEntry->getSummary();
-			// }
-			$pageToken = $calendarList->getNextPageToken();
-			if ($pageToken) {
-				$optParams = array('pageToken' => $pageToken);
-				$calendarList = $service->calendarList->listCalendarList($optParams);
-			} else {
-				break;
-			}
-		}
 		$emails = '';
-		foreach ($calendarList as $value) {
-			$account = explode("@", $value->id);
-			if ($account[1] == 'gmail.com') {
-				$id_ = 'src='.$value->id.'&amp;';
-				$emails = $emails . $id_;
+		// Save the client
+		if (!$client->isAccessTokenExpired()) {
+			$client = $this->getClient(Auth::user()->google_token);
+			// Create the service instance of Google Calendar
+			$service = new Google_Service_Calendar($client);
+			// Return view with the data of calendar
+			$calendarList = $service->calendarList->listCalendarList();
+
+
+			while(true) {
+				// foreach ($calendarList->getItems() as $calendarListEntry) {
+				// 	echo $calendarListEntry->getSummary();
+				// }
+				$pageToken = $calendarList->getNextPageToken();
+				if ($pageToken) {
+					$optParams = array('pageToken' => $pageToken);
+					$calendarList = $service->calendarList->listCalendarList($optParams);
+				} else {
+					break;
+				}
+			}
+			foreach ($calendarList as $value) {
+				$account = explode("@", $value->id);
+				if ($account[1] == 'gmail.com') {
+					$id_ = 'src='.$value->id.'&amp;';
+					$emails = $emails . $id_;
+				}
 			}
 		}
+
 		// Get to show events
 		$eve_ = $this->showEvents($id);
 		// Get events confirmed
@@ -536,22 +542,28 @@ class EstateController extends Controller {
 	 * Get events to show
 	 */
 	public function showEvents($estate_id) {
+		$allEvents = array();
+		$allEvents['total'] = 0;
 		// Save the client
 		$client = $this->getClient(Auth::user()->google_token);
-		// Init response
-		$response = array(
-			'status' => false,
-			'message' => 'Une erreur s\'est produite lors de la synchronisation du calendrier. Veuillez réessayer plus tard.',
-		);
-		// Create the service instance of Google Calendar
-		$service = new Google_Service_Calendar($client);
-		// Get data of events of the DB
-		$events = EstateEvent::where('estate_id', '=', $estate_id)->get();
-		$allEvents = array();
-		foreach ($events as $event) {
-			$allEvents['events'][] = $service->events->get('primary', $event->event_id);
+		if (!$client->isAccessTokenExpired()) {
+			// Init response
+			$response = array(
+				'status' => false,
+				'message' => 'Une erreur s\'est produite lors de la synchronisation du calendrier. Veuillez réessayer plus tard.',
+			);
+			// Create the service instance of Google Calendar
+			$service = new Google_Service_Calendar($client);
+			// Get data of events of the DB
+			$events = EstateEvent::where('estate_id', '=', $estate_id)->get();
+			foreach ($events as $event) {
+				$allEvents['events'][] = $service->events->get('primary', $event->event_id);
+			}
+			$allEvents['total'] = count($events);
 		}
-		$allEvents['total'] = count($events);
+		if ($client->isAccessTokenExpired()) {
+			User::where('id', '=', Auth::user()->id)->update(['google_token' => NULL]);
+		}
 		return $allEvents;
 
 	}

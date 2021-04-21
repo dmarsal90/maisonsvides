@@ -1,5 +1,5 @@
 jQuery(function($){
-
+if ($("#settings-templates").length) {
 	var geocoder = new google.maps.Geocoder();
 	var address = document.getElementById('estate__street').value;
 	geocoder.geocode( { 'address': address}, function(results, status) {
@@ -69,4 +69,5 @@ jQuery(function($){
 		$("#save__coordinate_x").val(coor[0]);
 		$("#save__coordinate_y").val(coor[1]);
 	})
+}
 });

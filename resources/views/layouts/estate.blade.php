@@ -61,7 +61,7 @@
 					<li class="menu__item">
 						<a class="{{ Request::is('estates*') ? 'active' : '' }} {{ Request::is('estate*') ? 'active' : '' }}" href="{!! route('estates', ['general', 'all']) !!}">@include('svg.iconfiles')<span>Dossiers</span></a>
 					</li>
-					@if(!session()->get('requireGoogleToken'))
+					@if(!session()->get('requireGoogleToken') && Auth::user()->google_token != NULL)
 						<li class="menu__item">
 							<a class="{{ Request::is('calendar*') ? 'active' : '' }}" href="{!! route('calendar') !!}">@include('svg.iconcalendar')<span>Calendrier</span></a>
 						</li>

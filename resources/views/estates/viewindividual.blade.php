@@ -66,7 +66,7 @@
 								<div class="wrapper__content">
 									<div class="block-16-9">
 										<div>
-											<img src="{!! asset('mainImages/'.$estate['main_photo']) !!}" data-img-view="main">
+											<img src="{!! ($estate['main_photo'] != '' ) ? asset('mainImages/'.$estate['main_photo']) : '' !!}" data-img-view="main">
 										</div>
 									</div>
 									<div class="row mb-2">
@@ -326,7 +326,7 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Un commentaire ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="number" name="details_commentaire" class="form-control" value="{!! $details['commentaire'] !!}" data-save>
+											<textarea  data-change-input name="details_commentaire" class="form-control" data-save rows="4">{!! $details['commentaire'] !!}</textarea>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -556,8 +556,8 @@
 									<button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#calendargoogle">Ajouter un rendez-vous</button>
 								</div>
 								@else
-								<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5 col-xl-5 mt-3">
-									<span class="alert alert-danger">Connectez-vous pour voir vos rendez-vous. <a href="{!! route('connect') !!}">Cliquez ici</a></span>
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mt-3">
+									<span class="alert alert-danger"><a href="{!! route('connect') !!}">Connectez-vous pour voir vos rendez-vous.</a></span>
 								</div>
 								@endif
 							</div>
@@ -1282,7 +1282,7 @@
 								<div class="row">
 									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-xl-6 mb-2">
 										<select class="form-control" name="condition" id="condition">
-											<option value=""></option>
+											<option value="">Choisissez un modèle</option>
 											@foreach($templates as $template)
 												@if($template['type'] == 'condition')
 													<option @isset($offer['condition_offer']) {!! ($offer['condition_offer'] == file_get_contents(asset('templates/'.$template['file']))) ? 'selected' : '' !!} @endisset value="{!! file_get_contents(asset('templates/'.$template['file'])) !!}">{!! file_get_contents(asset('templates/'.$template['file'])) !!}</option>
@@ -1293,7 +1293,7 @@
 								</div>
 								<div class="row mb-3">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-2">
-										<textarea id="tinyconditionOffer" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">{!! $offer['condition_offer'] !!}</textarea>
+										<textarea id="tinyconditionOffer" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">@isset($offer['condition_offer']){!! $offer['condition_offer'] !!}@endisset</textarea>
 									</div>
 								</div>
 								<div class="row ">
@@ -1302,7 +1302,7 @@
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-2"><strong>Texte à ajouter à l’offre :</strong></div>
 											<div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
 												<select class="form-control" name="text_add_offer" id="text_add_offer">
-													<option></option>
+													<option>Choisissez un modèle</option>
 													@foreach($templates as $template)
 														@if($template['type'] == 'text-offer')
 															<option value="{!! $template['id'] !!}" > {!! $template['name'] !!} </option>

@@ -243,8 +243,10 @@
 							}
 						});
 						// Change color to confirmed events
+						console.log(aEventConfirmed);
 						aEventConfirmed.forEach(function(event){
 							var eventc = calendar.getEventById(event.event_id); // an event object!
+							console.log(eventc);
 							eventc.setProp('backgroundColor', "#3cd47c");
 							eventc.setProp('borderColor', "#3cd47c");
 						});
@@ -1033,7 +1035,7 @@
 				if ($("#2").length) {
 					dateThree = $("#2").text();
 				}
-				var content = '<span>Suivez le lien ci-dessous pour vérifier les heures disponibles : </span>'+ $("#route_confirm").val();
+				var content = '<a style="display: inline-block; font-weight: 400; color: #fff; text-align: center; vertical-align: middle; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; background-color: #28a745; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 0.9rem; line-height: 1.6; border-radius: 0.25rem; transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; border-color: #38c172; margin-top:30px; text-decoration: none; cursor: pointer;" href="'+ $("#route_confirm").val() +'">Vérifier les heures disponibles</a>';
 				// Put data of the template choised to RDV
 				var id = $("#nom_template_rdv").val();
 				$("#subject_rdv").val($("#subject_rdv_"+id).val());
@@ -1055,7 +1057,7 @@
 				if ($("#2").length) {
 					dateThree = $("#2").text();
 				}
-				var content = '<span>Suivez le lien ci-dessous pour vérifier les heures disponibles : </span>'+ $("#route_confirm").val();
+				var content = '<a style="display: inline-block; font-weight: 400; color: #fff; text-align: center; vertical-align: middle; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; background-color: #28a745; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 0.9rem; line-height: 1.6; border-radius: 0.25rem; transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; border-color: #38c172; margin-top:30px; text-decoration: none; cursor: pointer;" href="'+ $("#route_confirm").val() +'">Vérifier les heures disponibles</a>';
 				// Put data of the template choised to RDV
 				var id = $("#nom_template_rdv").val();
 				$("#subject_rdv").val($("#subject_rdv_"+id).val());
@@ -3060,7 +3062,8 @@
 		$("[data-send-offer]").on('click', function(){
 			var content = tinymce.get("tinyCorps").getContent();
 			var url = $("[data-pdf-offer]").attr("href");
-			content = content.replace('[link-pdf]', url);
+			var btnurl = '<a style="display: inline-block; font-weight: 400; color: #fff; text-align: center; vertical-align: middle; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; background-color: #34b7eb; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 0.9rem; line-height: 1.6; border-radius: 0.25rem; transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; border-color: #38c172; margin-top:30px; text-decoration: none; cursor: pointer;" href="'+ url +'">Voir l\'offre</a>';
+			content = content.replace('[link-pdf]', btnurl);
 			$("#tinyCorps").val(content);
 			tinymce.get("tinyCorps").setContent(content);
 		});

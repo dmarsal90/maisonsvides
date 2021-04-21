@@ -34,6 +34,8 @@ class EstateDetail extends Model
 		'adapte',
 		'year_construction',
 		'year_renovation',
+		'coordinate_x',
+		'coordinate_y',
 		'peb',
 		'price_evaluated',
 		'price_market',
