@@ -1,5 +1,5 @@
 jQuery(function($){
-if ($("#settings-templates").length) {
+if ($("#visits-google-map").length) {
 	var geocoder = new google.maps.Geocoder();
 	var address = document.getElementById('estate__street').value;
 	geocoder.geocode( { 'address': address}, function(results, status) {
@@ -29,7 +29,6 @@ if ($("#settings-templates").length) {
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		});
 		google.maps.event.addListener(map, 'click', function(event) {
-			console.log(event);
 			placeMarker(event.latLng);
 		});
 

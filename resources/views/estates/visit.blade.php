@@ -2,7 +2,7 @@
 
 @section('content')
 	<div class="card font-body-content" id="visitStep1">
-		<div class="card-header">
+		<div class="card-header" id="visits-google-map">
 			Dossier: <?php echo date('ymdh.i', strtotime($estate['reference'])) ?>
 			<div class="wrapper__icons">
 				<!-- <span data-action="open-camera">
@@ -263,7 +263,7 @@
 										<div class="row mb-2 ml-2">
 											<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Un commentaire ? :</div>
 											<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-												<input data-change-input  type="number" name="details_commentaire" class="form-control" value="{!! $details['commentaire'] !!}" data-save>
+												<input data-change-input  type="text" name="details_commentaire" class="form-control" value="{!! $details['commentaire'] !!}" data-save>
 											</div>
 										</div>
 									</div>
