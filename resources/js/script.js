@@ -2015,6 +2015,7 @@
 			}
 		});
 		$(document).on('click', "[data-id-delete]", function(){ // If click in delete...
+			console.log()
 			$("#"+$(this).attr("data-id-delete")).remove(); // Remove the reminder
 		});
 		if ($("#manager_id").length) { // If exist the id manager_id

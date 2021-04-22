@@ -975,7 +975,7 @@ class EstateController extends Controller {
 		//Get estate details
 		$estateDetails = $this->getEstateDetails($id);
 		// Get details of the json
-		$details = json_decode($estateDetails['encode'], true);
+		$details = json_decode($estateDetails['adapte'], true);
 		// dd($details);
 		// Get remarks of current estate
 		$remarks = $this->getEstateRemark($id);
@@ -1534,6 +1534,7 @@ class EstateController extends Controller {
 	public function editInformations(Request $request) {
 		// Get all data of request
 		$data = $request->all();
+		$details = array();
 		// dd($data);
 		$idEstate = $data['estate_id'];
 		$idSeller = $data['seller_id'];
@@ -1621,6 +1622,26 @@ class EstateController extends Controller {
 				}
 				$updated = $this->updateData(app($model), $key, $dat, $id, $idEstate, $key_log); // Update data
 			}
+			// TO SAVE DETAILS IN JSON
+			if (str_starts_with($key, 'details__')) {
+				$key = str_replace('details__', '', $key);
+				$details[$key] = $dat;
+				$nameSeller = '';
+				if ($key == 'lastName') {
+					Seller::where('id', '=', $idSeller)->update(['name' => $dat]);
+				}
+				if ($key == 'firstName') {
+					$seller = Seller::where('id', '=', $idSeller)->get();
+					$nameSeller = $seller[0]->name .' '. $dat;
+					Seller::where('id', '=', $idSeller)->update(['name' => $nameSeller]);
+				}
+				if ($key == 'email') {
+					Seller::where('id', '=', $idSeller)->update(['email' => $dat]);
+				}
+				if ($key == 'phone') {
+					Seller::where('id', '=', $idSeller)->update(['phone' => $dat]);
+				}
+			}
 		}
 		if($updated) { // If updated is true
 			$response = array(
@@ -1650,180 +1671,11 @@ class EstateController extends Controller {
 		$this->countEstatesCategory(); // Save the total estates that they have a category
 		$this->countCategories(); // Save if a category is parent
 
-		// TO SAVE DETAILS IN JSON
-		$isOtherType = false;
-		$specific_data = array();
-		$basic_data = array();
-		$interior_layout = array();
-		$exterior_layout = array();
-		$technical_layout = array();
-		$seller_data = array();
-		$estate_type = $data['type_estate'];
-		// Init updated
-		$updated = false;
-		// Init the reponse
-		$response = array(
-			'status' => false, // Reponse status
-			'message' => 'Les informations n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
-		);
-		// Get keys of data
-		foreach($data as $key => $dat) { // Foreach key of data
-			if (str_starts_with($key, 'specific__')) {
-				$key = str_replace('specific__', '', $key);
-				$specific_data[$key] = $dat;
-			}
-			if (str_starts_with($key, 'basic_data__')) {
-				$key = str_replace('basic_data__', '', $key);
-				$basic_data[$key] = $dat;
-			}
-			if (str_starts_with($key, 'interior_layout__')) {
-				$key = str_replace('interior_layout__', '', $key);
-				$interior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'exterior_layout__')) {
-				$key = str_replace('exterior_layout__', '', $key);
-				$exterior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'technical_layout__')) {
-				$key = str_replace('technical_layout__', '', $key);
-				$technical_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'seller_data__')) {
-				$key = str_replace('seller_data__', '', $key);
-				$seller_data[$key] = $dat;
-			}
-		}
-		$details['estateDetails'] = array(
-			"specific_data" => $specific_data,
-			"basic_data" => $basic_data,
-			"technical_layout" => $technical_layout,
-			"interior_layout" => $interior_layout,
-			"exterior_layout" => $exterior_layout,
-			"seller_data" => $seller_data
-		);
-		//Get estate details
-		$estateDetails = EstateDetail::where('estate_id', '=', $data['estate_id'])->get();
-		$estateDetails = json_decode($estateDetails[0]->encode, true);
-		foreach ($estateDetails['estateDetails']['specific_data'] as $key => $oldValue) {
-			if (isset($details['estateDetails']['specific_data'][$key]) && $oldValue != $details['estateDetails']['specific_data'][$key]) {
-				$estateDetails['estateDetails']['specific_data'][$key] = $details['estateDetails']['specific_data'][$key];
-				//Create new log about update
-				EstateLog::create([
-					'estate_id' => $data['estate_id'],
-					'user_id' => Auth::user()->id,
-					'old_value' => $oldValue,
-					'new_value' => $details['estateDetails']['specific_data'][$key],
-					'field' => $key,
-				]);
-				if ($details['estateDetails']['specific_data'][$key] != $estate_type && $key == 'estate_type') {
-					$isOtherType = true;
-					break;
-				}
-			}
-		}
-		foreach ($estateDetails['estateDetails']['basic_data'] as $key => $oldValue) {
-			if (isset($details['estateDetails']['basic_data'][$key]) && $oldValue != $details['estateDetails']['basic_data'][$key]) {
-				$estateDetails['estateDetails']['basic_data'][$key] = $details['estateDetails']['basic_data'][$key];
-				//Create new log about update
-				EstateLog::create([
-					'estate_id' => $data['estate_id'],
-					'user_id' => Auth::user()->id,
-					'old_value' => $oldValue,
-					'new_value' => $details['estateDetails']['basic_data'][$key],
-					'field' => $key,
-				]);
-			}
-		}
-		foreach ($estateDetails['estateDetails']['technical_layout'] as $key => $oldValue) {
-			if (isset($details['estateDetails']['technical_layout'][$key]) && $oldValue != $details['estateDetails']['technical_layout'][$key]) {
-				$estateDetails['estateDetails']['technical_layout'][$key] = $details['estateDetails']['technical_layout'][$key];
-				//Create new log about update
-				EstateLog::create([
-					'estate_id' => $data['estate_id'],
-					'user_id' => Auth::user()->id,
-					'old_value' => $oldValue,
-					'new_value' => $details['estateDetails']['technical_layout'][$key],
-					'field' => $key,
-				]);
-			}
-		}
-		foreach ($estateDetails['estateDetails']['interior_layout'] as $key => $oldValue) {
-			if(is_array($oldValue)) {
-				if (isset($details['estateDetails']['interior_layout'][$key]) && is_array($details['estateDetails']['interior_layout'][$key])) {
-					$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => json_encode($oldValue),
-						'new_value' => json_encode($details['estateDetails']['interior_layout'][$key]),
-						'field' => $key,
-					]);
-				}
-			}
-			else {
-				if (isset($details['estateDetails']['interior_layout'][$key]) && $oldValue != $details['estateDetails']['interior_layout'][$key]) {
-					$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['interior_layout'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-		}
-		foreach ($estateDetails['estateDetails']['exterior_layout'] as $key => $oldValue) {
-			if(is_array($oldValue)) {
-				if (isset($details['estateDetails']['exterior_layout'][$key])) {
-					$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => json_encode($oldValue),
-						'new_value' => json_encode($details['estateDetails']['exterior_layout'][$key]),
-						'field' => $key,
-					]);
-				}
-			}
-			else {
-				if (isset($details['estateDetails']['exterior_layout'][$key]) && $oldValue != $details['estateDetails']['exterior_layout'][$key]) {
-					$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['exterior_layout'][$key],
-						'field' =>( $key == NULL) ? '': $key,
-					]);
-				}
-			}
-		}
-		foreach ($estateDetails['estateDetails']['seller_data'] as $key => $oldValue) {
-			if (isset($details['estateDetails']['seller_data'][$key]) && ($oldValue != $details['estateDetails']['seller_data'][$key])) {
-				$estateDetails['estateDetails']['seller_data'][$key] = $details['estateDetails']['seller_data'][$key];
-				//Create new log about update
-				EstateLog::create([
-					'estate_id' => $data['estate_id'],
-					'user_id' => Auth::user()->id,
-					'old_value' => $oldValue,
-					'new_value' => $details['estateDetails']['seller_data'][$key],
-					'field' => $key,
-				]);
-			}
-		}
-		if ($isOtherType) {
-			$estateDetails['estateDetails']['specific_data'] = $details['estateDetails']['specific_data'];
-		}
 		//Save json of the details in the DB
 		try {
 			// Update value where
 			EstateDetail::where('estate_id', '=', $data['estate_id'])
-				->update(['encode' => json_encode($estateDetails)]);
+				->update(['encode' => json_encode($details)]);
 			$response = array(
 				'status' => true,
 				'message' => 'Les informations a été mise à jour'
@@ -1924,14 +1776,6 @@ class EstateController extends Controller {
 	public function editDetails(Request $request) {
 		// Get all data of request
 		$data = $request->all();
-		$isOtherType = false;
-		$specific_data = array();
-		$basic_data = array();
-		$interior_layout = array();
-		$exterior_layout = array();
-		$technical_layout = array();
-		$seller_data = array();
-		$estate_type = (isset($data['type_estate'])) ? $data['type_estate'] : '';
 		// Init updated
 		$updated = false;
 		// Init the reponse
@@ -1939,33 +1783,26 @@ class EstateController extends Controller {
 			'status' => false, // Reponse status
 			'message' => 'Les informations n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
 		);
+		// Get details of the DB
+		$estatedetailsadapte = EstateDetail::where('estate_id', '=', $data['estate_id'])->get();
+		$estatedetailsadapte = json_decode($estatedetailsadapte[0]->encode);
 		// Get keys of data
 		foreach($data as $key => $dat) { // Foreach key of data
-			if (str_starts_with($key, 'specific__')) {
-				$key = str_replace('specific__', '', $key);
-				$specific_data[$key] = $dat;
+			if (str_starts_with($key, 'seller_')) {
+				$key = str_replace('seller_', '', $key);
+				Seller::where('id', '=', $data['seller_id'])->update([ $key => $dat]);
+				if ($key == 'name') {
+					$name = explode(' ', $dat);
+					$estatedetailsadapte->firstName = $name[0];
+					$estatedetailsadapte->lastName = ((isset($name[1])) ? $name[1] : '') . ' ' . ((isset($name[2])) ? $name[2] : '');
+				}
+				if ($key == 'email') {
+					$estatedetailsadapte->email = $dat;
+				}
+				if ($key == 'phone') {
+					$estatedetailsadapte->tel = $dat;
+				}
 			}
-			if (str_starts_with($key, 'basic_data__')) {
-				$key = str_replace('basic_data__', '', $key);
-				$basic_data[$key] = $dat;
-			}
-			if (str_starts_with($key, 'interior_layout__')) {
-				$key = str_replace('interior_layout__', '', $key);
-				$interior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'exterior_layout__')) {
-				$key = str_replace('exterior_layout__', '', $key);
-				$exterior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'technical_layout__')) {
-				$key = str_replace('technical_layout__', '', $key);
-				$technical_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'seller_data__')) {
-				$key = str_replace('seller_data__', '', $key);
-				$seller_data[$key] = $dat;
-			}
-			//NODELETESANDY
 			if (str_starts_with($key, 'save__')) {
 				$key = str_replace('save__', '', $key);
 				EstateDetail::where('estate_id', '=', $data['estate_id'])->update([$key => $dat]);
@@ -1976,144 +1813,23 @@ class EstateController extends Controller {
 			if ($key == 'estate__street') {
 				Estate::where('id', '=', $data['estate_id'])->update(['street' => $dat]);
 			}
-		}
-		$details['estateDetails'] = array(
-			"specific_data" => $specific_data,
-			"basic_data" => $basic_data,
-			"technical_layout" => $technical_layout,
-			"interior_layout" => $interior_layout,
-			"exterior_layout" => $exterior_layout,
-			"seller_data" => $seller_data
-		);
-		//Get estate details
-		$estateDetails = EstateDetail::where('estate_id', '=', $data['estate_id'])->get();
-		$estateDetails = json_decode($estateDetails[0]->encode, true);
-		if (isset($estateDetails['estateDetails'])) {
-			foreach ($estateDetails['estateDetails']['specific_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['specific_data'][$key]) && $oldValue != $details['estateDetails']['specific_data'][$key]) {
-					$estateDetails['estateDetails']['specific_data'][$key] = $details['estateDetails']['specific_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['specific_data'][$key],
-						'field' => $key,
-					]);
-					if ($details['estateDetails']['specific_data'][$key] != $estate_type && $key == 'estate_type') {
-						$isOtherType = true;
-						break;
-					}
-				}
+			if ($key == 'year_construction') {
+				EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['year_construction' => $dat]);
+				$estatedetailsadapte->year_construction = $dat;
 			}
-			foreach ($estateDetails['estateDetails']['basic_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['basic_data'][$key]) && $oldValue != $details['estateDetails']['basic_data'][$key]) {
-					$estateDetails['estateDetails']['basic_data'][$key] = $details['estateDetails']['basic_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['basic_data'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			foreach ($estateDetails['estateDetails']['technical_layout'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['technical_layout'][$key]) && $oldValue != $details['estateDetails']['technical_layout'][$key]) {
-					$estateDetails['estateDetails']['technical_layout'][$key] = $details['estateDetails']['technical_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['technical_layout'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			foreach ($estateDetails['estateDetails']['interior_layout'] as $key => $oldValue) {
-				if(is_array($oldValue)) {
-					if (isset($details['estateDetails']['interior_layout'][$key]) && is_array($details['estateDetails']['interior_layout'][$key])) {
-						$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => json_encode($oldValue),
-							'new_value' => json_encode($details['estateDetails']['interior_layout'][$key]),
-							'field' => $key,
-						]);
-					}
-				}
-				else {
-					if (isset($details['estateDetails']['interior_layout'][$key]) && $oldValue != $details['estateDetails']['interior_layout'][$key]) {
-						$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => $oldValue,
-							'new_value' => $details['estateDetails']['interior_layout'][$key],
-							'field' => $key,
-						]);
-					}
-				}
-			}
-			foreach ($estateDetails['estateDetails']['exterior_layout'] as $key => $oldValue) {
-				if(is_array($oldValue)) {
-					if (isset($details['estateDetails']['exterior_layout'][$key])) {
-						$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => json_encode($oldValue),
-							'new_value' => json_encode($details['estateDetails']['exterior_layout'][$key]),
-							'field' => $key,
-						]);
-					}
-				}
-				else {
-					if (isset($details['estateDetails']['exterior_layout'][$key]) && $oldValue != $details['estateDetails']['exterior_layout'][$key]) {
-						$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => $oldValue,
-							'new_value' => $details['estateDetails']['exterior_layout'][$key],
-							'field' =>( $key == NULL) ? '': $key,
-						]);
-					}
-				}
-			}
-			foreach ($estateDetails['estateDetails']['seller_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['seller_data'][$key]) && ($oldValue != $details['estateDetails']['seller_data'][$key])) {
-					$estateDetails['estateDetails']['seller_data'][$key] = $details['estateDetails']['seller_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['seller_data'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			if ($isOtherType) {
-				$estateDetails['estateDetails']['specific_data'] = $details['estateDetails']['specific_data'];
+			if ($key == 'year_renovation') {
+				EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['year_renovation' => $dat]);
 			}
 		}
+
 		//Save json of the details in the DB
 		try {
-			// Update value where
-			EstateDetail::where('estate_id', '=', $data['estate_id'])
-				->update(['encode' => json_encode($estateDetails)]);
+			$estatedetailsadapte = json_encode($estatedetailsadapte);
 			$response = array(
 				'status' => true,
 				'message' => 'Les informations a été mise à jour'
 			);
+			EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['adapte' => $estatedetailsadapte]);
 			if (isset($data['estate_description'])) {
 				EstateDetail::where('id', '=', $data['estate_id'])->update([ 'description' => $data['estate_description'] ]);
 			}
@@ -2137,14 +1853,7 @@ class EstateController extends Controller {
 	public function editDetailsAdapte (Request $request) {
 		// Get all data of request
 		$data = $request->all();
-		$isOtherType = false;
-		$specific_data = array();
-		$basic_data = array();
-		$interior_layout = array();
-		$exterior_layout = array();
-		$technical_layout = array();
-		$seller_data = array();
-		$estate_type = $data['type_estate'];
+		$details = array();
 		// Init updated
 		$updated = false;
 		// Init the reponse
@@ -2152,190 +1861,28 @@ class EstateController extends Controller {
 			'status' => false, // Reponse status
 			'message' => 'Les informations n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
 		);
-		// Get keys of data
-		foreach($data as $key => $dat) { // Foreach key of data
-			if (str_starts_with($key, 'specific__')) {
-				$key = str_replace('specific__', '', $key);
-				$specific_data[$key] = $dat;
-			}
-			if (str_starts_with($key, 'basic_data__')) {
-				$key = str_replace('basic_data__', '', $key);
-				$basic_data[$key] = $dat;
-			}
-			if (str_starts_with($key, 'interior_layout__')) {
-				$key = str_replace('interior_layout__', '', $key);
-				$interior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'exterior_layout__')) {
-				$key = str_replace('exterior_layout__', '', $key);
-				$exterior_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'technical_layout__')) {
-				$key = str_replace('technical_layout__', '', $key);
-				$technical_layout[$key] = $dat;
-			}
-			if (str_starts_with($key, 'seller_data__')) {
-				$key = str_replace('seller_data__', '', $key);
-				$seller_data[$key] = $dat;
-			}
-		}
-		$details['estateDetails'] = array(
-			"specific_data" => $specific_data,
-			"basic_data" => $basic_data,
-			"technical_layout" => $technical_layout,
-			"interior_layout" => $interior_layout,
-			"exterior_layout" => $exterior_layout,
-			"seller_data" => $seller_data
-		);
 
-		//Get estate details
-		$estateDetails = EstateDetail::where('estate_id', '=', $data['estate_id'])->get();
-		if (!empty($estateDetails[0]->adapte)) {
-			$estateDetails = json_decode($estateDetails[0]->adapte, true);
-			foreach ($estateDetails['estateDetails']['specific_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['specific_data'][$key]) && $oldValue != $details['estateDetails']['specific_data'][$key]) {
-					$estateDetails['estateDetails']['specific_data'][$key] = $details['estateDetails']['specific_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['specific_data'][$key],
-						'field' => $key,
-					]);
-					if ($details['estateDetails']['specific_data'][$key] != $estate_type && $key == 'estate_type') {
-						$isOtherType = true;
-						break;
-					}
+		//Save json of the details in the DB
+		try {
+			// Get keys of data
+			foreach($data as $key => $dat) { // Foreach key of data
+				// TO SAVE DETAILS IN JSON
+				if (str_starts_with($key, 'details__')) {
+					$key = str_replace('details__', '', $key);
+					$details[$key] = $dat;
 				}
 			}
-			foreach ($estateDetails['estateDetails']['basic_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['basic_data'][$key]) && $oldValue != $details['estateDetails']['basic_data'][$key]) {
-					$estateDetails['estateDetails']['basic_data'][$key] = $details['estateDetails']['basic_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['basic_data'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			foreach ($estateDetails['estateDetails']['technical_layout'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['technical_layout'][$key]) && $oldValue != $details['estateDetails']['technical_layout'][$key]) {
-					$estateDetails['estateDetails']['technical_layout'][$key] = $details['estateDetails']['technical_layout'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['technical_layout'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			foreach ($estateDetails['estateDetails']['interior_layout'] as $key => $oldValue) {
-				if(is_array($oldValue)) {
-					if (isset($details['estateDetails']['interior_layout'][$key]) && is_array($details['estateDetails']['interior_layout'][$key])) {
-						$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => json_encode($oldValue),
-							'new_value' => json_encode($details['estateDetails']['interior_layout'][$key]),
-							'field' => $key,
-						]);
-					}
-				}
-				else {
-					if (isset($details['estateDetails']['interior_layout'][$key]) && $oldValue != $details['estateDetails']['interior_layout'][$key]) {
-						$estateDetails['estateDetails']['interior_layout'][$key] = $details['estateDetails']['interior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => $oldValue,
-							'new_value' => $details['estateDetails']['interior_layout'][$key],
-							'field' => $key,
-						]);
-					}
-				}
-			}
-			foreach ($estateDetails['estateDetails']['exterior_layout'] as $key => $oldValue) {
-				if(is_array($oldValue)) {
-					if (isset($details['estateDetails']['exterior_layout'][$key])) {
-						$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => json_encode($oldValue),
-							'new_value' => json_encode($details['estateDetails']['exterior_layout'][$key]),
-							'field' => $key,
-						]);
-					}
-				}
-				else {
-					if (isset($details['estateDetails']['exterior_layout'][$key]) && $oldValue != $details['estateDetails']['exterior_layout'][$key]) {
-						$estateDetails['estateDetails']['exterior_layout'][$key] = $details['estateDetails']['exterior_layout'][$key];
-						//Create new log about update
-						EstateLog::create([
-							'estate_id' => $data['estate_id'],
-							'user_id' => Auth::user()->id,
-							'old_value' => $oldValue,
-							'new_value' => $details['estateDetails']['exterior_layout'][$key],
-							'field' =>( $key == NULL) ? '': $key,
-						]);
-					}
-				}
-			}
-			foreach ($estateDetails['estateDetails']['seller_data'] as $key => $oldValue) {
-				if (isset($details['estateDetails']['seller_data'][$key]) && ($oldValue != $details['estateDetails']['seller_data'][$key])) {
-					$estateDetails['estateDetails']['seller_data'][$key] = $details['estateDetails']['seller_data'][$key];
-					//Create new log about update
-					EstateLog::create([
-						'estate_id' => $data['estate_id'],
-						'user_id' => Auth::user()->id,
-						'old_value' => $oldValue,
-						'new_value' => $details['estateDetails']['seller_data'][$key],
-						'field' => $key,
-					]);
-				}
-			}
-			if ($isOtherType) {
-				$estateDetails['estateDetails']['specific_data'] = $details['estateDetails']['specific_data'];
-			}
-			//Save json of the details in the DB
-			try {
-				// Update value where
-				EstateDetail::where('estate_id', '=', $data['estate_id'])
-					->update(['adapte' => json_encode($estateDetails)]);
-				$response = array(
-					'status' => true,
-					'message' => 'Les informations a été mise à jour'
-				);
-			}
-			catch(\Exception $e) {
-				// Updated false
-				$this->updated = false;
-			}
-		} else {
-			//Save json of the details in the DB
-			try {
-				// Update value where
-				EstateDetail::where('estate_id', '=', $data['estate_id'])
-					->update(['adapte' => json_encode($details)]);
-				$response = array(
-					'status' => true,
-					'message' => 'Les informations a été mise à jour'
-				);
-			}
-			catch(\Exception $e) {
-				// Updated false
-				$this->updated = false;
-			}
+			// Update value where
+			EstateDetail::where('estate_id', '=', $data['estate_id'])
+				->update(['adapte' => json_encode($details)]);
+			$response = array(
+				'status' => true,
+				'message' => 'Les informations a été mise à jour'
+			);
+		}
+		catch(\Exception $e) {
+			// Updated false
+			$this->updated = false;
 		}
 
 		// Return response

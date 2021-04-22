@@ -174,7 +174,7 @@
 						</div>
 						<div class="row mb-2">
 							<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-1">
-								<span class="ffhnm">INFORMATIONS VENDEUR</span>
+								<span class="ffhnm">CLIENT</span>
 								<div class="wrapper__content mb-5">
 									<div class="row mb-2">
 										<div class="col-12 text-right">
@@ -187,32 +187,77 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="text" name="seller_name" class="form-control" value="{!! $seller['name'] !!}" data-save>
+											<input data-change-input  type="text" name="details__lastName" class="form-control" value="@isset($details['lastName']){!! $details['lastName'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Prénom :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="number" name="seller_phone" class="form-control" value="{!! $seller['phone'] !!}" data-save>
+											<input data-change-input  type="text" name="details__firstName" class="form-control" value="@isset($details['firstName']){!! $details['firstName'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Mail :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="text" name="seller_email" class="form-control" value="{!! $seller['email'] !!}" data-save>
+											<input data-change-input  type="email" name="details__email" class="form-control" value="@isset($details['email']){!! $details['email'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Téléphone :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input  data-change-input type="text" name="seller_type" class="form-control" value="{!! $seller['phone'] !!}" data-save>
+											<input  data-change-input type="tel" name="details__phone" class="form-control" value="@isset($details['phone']){!! $details['phone'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Êtes-vous le propriétaire du bien ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_owner" value="Oui" {!! ($details['owner'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_owner" value="Non" {!! ($details['owner'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Oui" {!! ($details['owner'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Non" {!! ($details['owner'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+										</div>
+									</div>
+									<div class="row mb-2 ml-2">
+										<div class="col-xs-12 col-md-12 col-lg-12 col-xl-12 mb-2">
+											<select data-change-select class="form-control" name="sale__type_of_sale" data-sale>
+												<option value="">Choisis une option</option>
+												<option {!! ($estate['type_of_sale'] == 'Par agence') ? 'selected' : '' !!} value="Par agence">Par agence</option>
+												<option {!! ($estate['type_of_sale'] == 'Par lui même') ? 'selected' : '' !!} value="Par lui même">Par lui même</option>
+												<option {!! ($estate['type_of_sale'] == 'Le deux') ? 'selected' : '' !!} value="Le deux">Le deux</option>
+												<option {!! ($estate['type_of_sale'] == 'Non') ? 'selected' : '' !!} value="Non">Non</option>
+											</select>
+										</div>
+									</div>
+									<div class="row mb-2 ml-2" data-both>
+										<div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+											<strong><label class="ffhnm">Par agence</label></strong>
+										</div>
+									</div>
+									<div class="row mb-5 ml-2" data-by-agence>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom de l'agence :</div>
+										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+											<input data-change-input type="text" name="sale__agency_name" class="form-control" value="{!! $estate['agency_name'] !!}">
+										</div>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Prix publié :</div>
+										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+											<input data-change-input type="number" name="sale__price_published_agence" class="form-control" value="{!! $estate['price_published_agence'] !!}">
+										</div>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Date du début de la vente :</div>
+										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+											<input data-change-input type="date" name="sale__date_of_sale_agence" class="form-control" value="{!! $estate['date_of_sale_agence'] !!}">
+										</div>
+									</div>
+									<div class="row mb-2 ml-2" data-both>
+										<div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+											<strong><label class="ffhnm">Par lui même</label></strong>
+										</div>
+									</div>
+									<div class="row mb-5 ml-2" data-by-the-same>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Prix publié :</div>
+										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+											<input data-change-input type="number" name="sale__price_published_himself" class="form-control" value="{!! $estate['price_published_himself'] !!}">
+										</div>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Date du début de la vente :</div>
+										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
+											<input data-change-input type="date" name="sale__date_of_sale_himself" class="form-control" value="{!! $estate['date_of_sale_himself'] !!}">
 										</div>
 									</div>
 								</div>
@@ -231,7 +276,7 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Type de bien :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<select data-change-select name="specific__estate_type" id="type_de_bien" class="form-control" data-save>
+											<select data-change-select name="details__type_bien" id="type_de_bien" class="form-control" data-save>
 												<option {!! ($details['type_bien'] == 'Maison') ? 'selected' : '' !!} value="Maison">Maison</option>
 												<option {!! ($details['type_bien'] == 'Appartement') ? 'selected' : '' !!} value="Appartement">Appartement</option>
 												<option {!! ($details['type_bien'] == 'Immeuble de rapport') ? 'selected' : '' !!} value="Immeuble de rapport">Immeuble de rapport</option>
@@ -242,91 +287,117 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Année de construction :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="number" name="details_year_construction" class="form-control" value="{!! $details['year_construction'] !!}" data-save>
+											<input data-change-input  type="number" name="details__year_construction" class="form-control" value="{!! $details['year_construction'] !!}" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Surface approximative :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="text" name="details_surface" class="form-control" value="{!! $details['surface'] !!}" data-save>
+											<input data-change-input  type="text" name="details__surface" class="form-control" value="{!! $details['surface'] !!}" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Jardin ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_garden" value="Oui" {!! ($details['garden'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_garden" value="Non" {!! ($details['garden'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garden" value="Oui" {!! ($details['garden'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garden" value="Non" {!! ($details['garden'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Terrasse ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_terrase" value="Oui" {!! ($details['terrase'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_terrase" value="Non" {!! ($details['terrase'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__terrase" value="Oui" {!! ($details['terrase'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__terrase" value="Non" {!! ($details['terrase'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Garage ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_garage" value="Oui" {!! ($details['garage'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_garage" value="Non" {!! ($details['garage'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garage" value="Oui" {!! ($details['garage'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garage" value="Non" {!! ($details['garage'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Infraction urbanistique ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_town_planning" value="Oui" {!! ($details['town_planning'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_town_planning" value="Non" {!! ($details['town_planning'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_town_planning" value="Je ne sais pas" {!! ($details['town_planning'] == 'Je ne sais pas') ? 'checked' : '' !!} data-save> Je ne sais pas</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Oui" {!! ($details['town_planning'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Non" {!! ($details['town_planning'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Je ne sais pas" {!! ($details['town_planning'] == 'Je ne sais pas') ? 'checked' : '' !!} data-save> Je ne sais pas</label>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Le bien comporte une/plusieurs habitations ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_more_habitations" value="Oui" {!! ($details['more_habitations'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
-											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details_more_habitations" value="Non" {!! ($details['more_habitations'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__more_habitations" value="Oui" {!! ($details['more_habitations'] == 'Oui') ? 'checked' : '' !!} data-save> Oui</label>
+											<label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__more_habitations" value="Non" {!! ($details['more_habitations'] == 'Non') ? 'checked' : '' !!} data-save> Non</label>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de sdb :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="number" name="details_number_bathroom" class="form-control" value="{!! $details['number_bathroom'] !!}" data-save>
+											<input data-change-input  type="number" name="details__number_bathroom" class="form-control" value="{!! $details['number_bathroom'] !!}" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de chambres :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="number" name="details_number_rooms" class="form-control" value="{!! $details['number_rooms'] !!}" data-save>
+											<input data-change-input  type="number" name="details__number_rooms" class="form-control" value="{!! $details['number_rooms'] !!}" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de compteurs de gaz :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="number" name="details_number_gas" class="form-control" value="{!! $details['number_gas'] !!}" data-save>
+											<input data-change-input  type="number" name="details__number_gas" class="form-control" value="{!! $details['number_gas'] !!}" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de compteurs électriques :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="number" name="details_number_electric" class="form-control" value="{!! $details['number_electric'] !!}" data-save>
+											<input data-change-input  type="number" name="details__number_electric" class="form-control" value="{!! $details['number_electric'] !!}" data-save>
 										</div>
 									</div>
-									<div class="row mb-2 ml-2">
+									<div class="row mb-3 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Evaluez l’état intérieur :</div>
-										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<span>Entièrement à rénover</span><input data-change-input  type="number" name="details_state_interior" class="form-control" value="{!! $details['state_interior'] !!}" data-save><span>Neuf</span>
-										</div>
 									</div>
 									<div class="row mb-2 ml-2">
+										<div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+											<span class="ffhnm mr-4">Entièrement à rénover</span>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($details['state_interior'] == '1') ? 'checked' : '' !!} value="1 data-save">1</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '2') ? 'checked' : '' !!} value="2" data-save>2</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '3') ? 'checked' : '' !!} value="3" data-save>3</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '4') ? 'checked' : '' !!} value="4" data-save>4</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '5') ? 'checked' : '' !!} value="5" data-save>5</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '6') ? 'checked' : '' !!} value="6" data-save>6</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '7') ? 'checked' : '' !!} value="7" data-save>7</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '8') ? 'checked' : '' !!} value="8" data-save>8</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '9') ? 'checked' : '' !!} value="9" data-save>9</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_interior" {!! ($details['state_interior'] == '10') ? 'checked' : '' !!} value="10" data-save>10</label>
+											<span class="ffhnm ml-4">Neuf</span>
+										</div>
+									</div>
+									<div class="row mb-3 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Evaluez l’état intérieur :</div>
-										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<span>Entièrement à rénover</span><input data-change-input  type="number" name="details_state_exterior" class="form-control" value="{!! $details['state_exterior'] !!}" data-save><span>Neuf</span>
+									</div>
+									<div class="row mb-2 ml-2">
+										<div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
+											<span class="ffhnm mr-4">Entièrement à rénover</span>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($details['state_exterior'] == '1') ? 'checked' : '' !!} value="1 data-save">1</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '2') ? 'checked' : '' !!} value="2" data-save>2</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '3') ? 'checked' : '' !!} value="3" data-save>3</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '4') ? 'checked' : '' !!} value="4" data-save>4</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '5') ? 'checked' : '' !!} value="5" data-save>5</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '6') ? 'checked' : '' !!} value="6" data-save>6</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '7') ? 'checked' : '' !!} value="7" data-save>7</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '8') ? 'checked' : '' !!} value="8" data-save>8</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '9') ? 'checked' : '' !!} value="9" data-save>9</label>
+											<label><input data-change-radio type="radio" class="radio-middle mr-1"name="details__state_exterior" {!! ($details['state_exterior'] == '10') ? 'checked' : '' !!} value="10" data-save>10</label>
+											<span class="ffhnm ml-4">Neuf</span>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Un commentaire ? :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<textarea  data-change-input name="details_commentaire" class="form-control" data-save rows="4">{!! $details['commentaire'] !!}</textarea>
+											<textarea  data-change-input name="details__commentaire" class="form-control" data-save rows="4">{!! $details['commentaire'] !!}</textarea>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -1419,7 +1490,6 @@
 					</div>
 				</form>
 			@endisset
-			
 		</div>
 		<div class="tab-pane fade mb-5{!! ($tabActive === 'estate-tickets') ? ' active show' : '' !!}" role="tabpanel" id="estate-tickets" aria-labelledby="estate-tickets-tab">
 			<div class="card font-body-content">

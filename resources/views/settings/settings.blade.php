@@ -900,7 +900,8 @@
 							<div class="card-header">Edit : {!! $reminder['name'] !!}</div>
 							<div class="card-body">
 								@foreach($infos as $info)
-									<div class="row">
+								<div id="rappel-{!! $info['position'] !!}">
+									<div class="row" >
 										<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
 											<strong>Rappel {!! $info['position'] + 1 !!}</strong>
 										</div>
@@ -916,8 +917,8 @@
 												<option {!! ($info['type_template'] == 'task') ? 'selected' : ''!!} value="task">Tâches</option>
 											</select>
 										</div>
-									</div><br>
-									<div class="row">
+									</div>
+									<div class="row mb-3">
 										<div class="col-xs-12 col-sm-12 col-md-2 col-lg-12 col-xl-2">
 											Template
 										</div>
@@ -944,9 +945,11 @@
 												@endforeach
 											</select>
 										</div>
-									</div><br>
-									<input type="hidden" name="days[]">
-									<div id="new_rappels{!! $reminder['id'] !!}{!! $info['position'] !!}" class="mb-4"></div>
+									</div>
+									<div class="text-left mb-4">
+										<button type="button" data-id-delete="rappel-{!! $info['position'] !!}" class="btn btn-danger">Supprimer ce rappel</button>
+									</div>
+								</div>
 								@endforeach
 								<div class="text-left">
 									<button type="button" id="add_rappel{!! $reminder['id'] !!}" class="btn btn-success">Ajouter une nouvelle étape</button>
