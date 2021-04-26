@@ -69,11 +69,9 @@
 					<li class="menu__item">
 						<a class="{{ Request::is('visits*') ? 'active' : '' }}" href="{!! route('visits') !!}">@include('svg.iconvisit')<span>Module Visite</span></a>
 					</li>
-					@if(Auth::user()->type != 2 && Auth::user()->type != 3)
 					<li class="menu__item">
 						<a class="{{ Request::is('settings*') ? 'active' : '' }}" href="{!! route('settings') !!}">@include('svg.iconconfig')<span>Paramètres</span></a>
 					</li>
-					@endif
 					<li class="menu__item">
 						<a class="{{ Request::is('logout*') ? 'active' : '' }}" href="{!! route('viewTickets') !!}"><i style="font-size: 25px;" class="bi bi-card-checklist"></i><span>Tickets</span></a>
 					</li>

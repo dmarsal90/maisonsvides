@@ -63,32 +63,54 @@
 				if (result.isConfirmed && icon === 'success' && !isModify) {
 					location.reload();
 				}
-			});
-			if(action) { // If action is true
-				swal.then(function(result) {
-					console.log(result);
-					if (result.isConfirmed) {
-						$.ajax({
-							url: urlDelete,
-							type: 'GET',
-							beforeSend: function() { // Before send request
-								showWaitMe('Suppression des informations, veuillez patienter...', 'facebook')
-							},
-							success: function(response) {
-								$("body").waitMe('hide'); // Hide popup waitMe
-								if(response.status) {
-									location.reload();
-								}
-							},
-							error: function(error) {
-								$("body").waitMe('hide'); // Hide popup waitMe
-								console.log(error); 
+				if (result.isConfirmed == true) {
+					console.log(urlDelete);
+					$.ajax({
+						url: urlDelete,
+						type: 'GET',
+						beforeSend: function() { // Before send request
+							showWaitMe('Suppression des informations, veuillez patienter...', 'facebook')
+						},
+						success: function(response) {
+							$("body").waitMe('hide'); // Hide popup waitMe
+							if(response.status) {
+								location.reload();
 							}
-						});
-					}
-				});
-			}
+						},
+						error: function(error) {
+							$("body").waitMe('hide'); // Hide popup waitMe
+							console.log(error); 
+						}
+					});
+				}
+			});
 		}
+		$("[data-change-menu]").on('change', function(){
+			var data = { // Saving parameters to the function in the controller
+				_token: $("#_token_savemenu").text(),
+				menu: $('input[name=menu]:checked', '#form-menu').val()
+			};
+			$.ajax({
+				url: $("#form-menu").attr('action'),
+				type: 'POST',
+				data: data,
+				beforeSend: function() { // Before send request
+					
+				},
+				success: function(response) {
+					$("#ok-savemenu").removeClass("d-none");
+					setTimeout(function(){
+						$("#ok-savemenu").addClass("d-none");
+					}, 2000);
+				},
+				error: function(error) {
+					$("#not-ok-savemenu").removeClass("d-none");
+					setTimeout(function(){
+						$("#not-ok-savemenu").addClass("d-none");
+					}, 2000);
+				}
+			});
+		});
 		$("[data-open-menu]").on("click", function(e){ // Listener to open / hide menu only mobile
 			var menu = $(this).attr("data-open-menu"); // Get name of menu
 			var wrapper = $(this).attr("data-close-wrapper"); // Get name of wrapper
@@ -477,10 +499,6 @@
 					});
 				}
 			}
-		});
-		$(document).on("click", "[data-delete]", function(e){ // Listener in button to delete data
-			e.preventDefault(); // Prevent default
-			urlDelete = $(this).attr("href"); // Save url to function ajax
 		});
 		$("[data-password]").on("click", function(e){ // Listener to change password by text
 			e.preventDefault(); // Prevent default
@@ -971,7 +989,7 @@
 		});
 		$(document).on("click", "[data-delete]", function(e){ // Listener to delete a any element
 			e.preventDefault(); // Prevent Default
-			var deteleURL = $(this).attr("data-delete"); // Get URL of element to delete
+			urlDelete = $(this).attr("href"); // Get URL of element to delete
 			showSwal('Effacer', 'Tu es sûr ?', 'question', true, true); // Call popup confirm
 		});
 		if($("#setVisit").length) { // If setvisit ID exists
@@ -1144,6 +1162,19 @@
 			} else {
 				$("#choose_agents").hide();
 			}
+			if ($("#typeUser").val() == 2 || $("#typeUser").val() == 1) { // If is a manager (secretary)
+				$("[data-ed-us]").show();
+			} else {
+				$("[data-ed-us]").hide();
+			}
+			if ($("#typeUser").val() == 3) { // If is a agent
+				if (aUser.id == $("#currentUser").val()) {
+					$("[data-ed-us]").show();
+				} else {
+					$("[data-ed-us]").hide();
+				}
+			}
+
 		});
 		if ($("#choose_agents").length) {
 			$("#choose_agents").hide();
@@ -1871,10 +1902,15 @@
 			var link = $(this).attr("data-send-form"); // Get link of attribute data
 			$("#templates_create").attr("action", link); // Put the link in the form
 		});
-		// Edit 
+		// Edit
+		$("[data-reminder]").on('click', function(){
+			var id = $(this).attr("data-reminder");
+			var reminders, content;
+			
+		})
+
 		if ($("[data-edit-process]").length) {
 			var val = $("[data-edit-process]").val();
-			console.log(val);
 		}
 		$("[data-edit-process").on('change', function(){
 			var id = $(this).attr('id');
@@ -1906,18 +1942,24 @@
 				$("#rappel_sms").show();
 				$("#rappel_email").hide();
 				$("#rappel_task").hide();
+				$("#rappel_email").attr('disabled', true);
+				$("#rappel_task").attr('disabled', true);
 				document.getElementById("add_rappel").disabled = false;
 			}
 			if (l == 'email') {
 				$("#rappel_sms").hide();
 				$("#rappel_email").show();
 				$("#rappel_task").hide();
+				$("#rappel_sms").attr('disabled', true);
+				$("#rappel_task").attr('disabled', true);
 				document.getElementById("add_rappel").disabled = false;
 			}
 			if (l == 'task') {
 				$("#rappel_sms").hide();
 				$("#rappel_email").hide();
 				$("#rappel_task").show();
+				$("#rappel_sms").attr('disabled', true);
+				$("#rappel_email").attr('disabled', true);
 				document.getElementById("add_rappel").disabled = true;
 			}
 		});
@@ -1999,19 +2041,28 @@
 		$(document).on("change", "[data-template]", function(){
 			var id = $(this).attr("data-template"); // Take id to show or hide
 			if ($(this).val() == 'email') { // If value of the option is email
+				console.log('is email');
 				$("#rappel_email_" + id).show(); // Show templates of email
 				$("#rappel_sms_" + id).hide(); // Hide templates of sms
 				$("#rappel_task_" + id).hide(); // Hide templates of task
+				$("#rappel_sms_" + id).atrr('disabled'); // Disabled fields templates of sms
+				$("#rappel_task_" + id).atrr('disabled'); // Disabled fields templates of task
 			}
 			if ($(this).val() == 'sms') { // If value of the option is sms
+				console.log('is sms');
 				$("#rappel_email_" + id).hide(); // Hide templates of email
 				$("#rappel_sms_" + id).show(); // Show templates of sms
 				$("#rappel_task_" + id).hide(); // Hide templates of task
+				$("#rappel_email_" + id).atrr('disabled'); // Disabled fields templates of email
+				$("#rappel_task_" + id).atrr('disabled'); // Disabled fields templates of task
 			}
 			if ($(this).val() == 'task') { // If value of the option is task
+				console.log('is task');
 				$("#rappel_email_" + id).hide(); // Hide templates of email
 				$("#rappel_sms_" + id).hide(); // Hide templates of sms
 				$("#rappel_task_" + id).show(); // Show templates of task
+				$("#rappel_email_" + id).atrr('disabled'); // Disabled fields templates of email
+				$("#rappel_sms_" + id).atrr('disabled'); // Disabled fields templates of sms
 			}
 		});
 		$(document).on('click', "[data-id-delete]", function(){ // If click in delete...
@@ -2918,7 +2969,6 @@
 						
 					},
 					success: function(response) {
-						console.log(response);
 						$("#ok").removeClass("d-none");
 						setTimeout(function(){
 						$("#ok").addClass("d-none");

@@ -18,6 +18,7 @@ class Template extends Model
 		'name',
 		'subject',
 		'file',
-		'type'
+		'type',
+		'user'
 	];
 }

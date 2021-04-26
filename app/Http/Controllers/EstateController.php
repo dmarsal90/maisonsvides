@@ -337,10 +337,8 @@ class EstateController extends Controller {
 	 */
 	public function view($id = 0) {
 		// Get type of menu
-		$typemenu = Setting::where('type', '=', 'menu')
-			->where('value', '=', 1)
-			->get();
-		$typemenu = $typemenu[0]->name;
+		$user = User::where('id', '=', Auth::user()->id)->get();
+		$typemenu = $user[0]->menu;
 		// Save the client
 		$client = $this->getClient(Auth::user()->google_token);
 		// Create the service instance of Google Calendar

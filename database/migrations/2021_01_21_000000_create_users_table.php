@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
 			$table->string('google_email')->unique(); // Email of google
 			$table->longText('google_token')->nullable(); // Token of google
 			$table->boolean('active'); // Status 1 => active, 0 => inactive
+			$table->string('menu')->default('Menu individuel'); // Type of menu -> Menu déroulant or Menu individuel
 			$table->timestamp('created_at')->useCurrent(); // Created at
 			$table->timestamp('updated_at')->useCurrent(); // Updated at
 			$table->timestamp('deleted_at')->nullable(); // Deleted at
@@ -39,7 +40,7 @@ class CreateUsersTable extends Migration
 				'password' => Hash::make('1234567890'),
 				'type' => 3,
 				'google_email' => 'noagent.flexvision@gmail.com',
-				'active' => 1,
+				'active' => 1
 			),
 		);
 
@@ -51,7 +52,7 @@ class CreateUsersTable extends Migration
 				'password' => Hash::make('1234567890'),
 				'type' => 1,
 				'google_email' => 'cesar.flexvision@gmail.com',
-				'active' => 1,
+				'active' => 1
 			),
 		);
 	}

@@ -19,6 +19,7 @@ class CreateTemplatesTable extends Migration
 			$table->string('subject'); // Subject of template
 			$table->string('file'); // Name of file
 			$table->string('type'); // Type of template Email, SMS
+			$table->longText('user'); // User who created th template
 			$table->timestamp('created_at')->useCurrent(); // Created at
 			$table->timestamp('updated_at')->useCurrent(); // Updated at
 		});
@@ -29,6 +30,7 @@ class CreateTemplatesTable extends Migration
 				'subject' => '',
 				'file' => 'Wesold vous propose une offre d\'achat pour votre bien',
 				'type' => 'subject',
+				'user' => 1
 			),
 		);
 	}

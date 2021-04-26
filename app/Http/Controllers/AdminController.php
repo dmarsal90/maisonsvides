@@ -46,18 +46,6 @@ class AdminController extends Controller {
 	 * Settings
 	 */
 	public function index() {
-		// Get the settings type reminders
-		$reminders = Setting::where('type', '=', 'reminders')
-					->get();
-		$remindersArray = array();
-		foreach($reminders as $reminder) {
-			$remindersArray[] = array(
-				'id' => $reminder->id,
-				'key' => $reminder->type."_".$reminder->id,
-				'name' => $reminder->name,
-				'days' => unserialize($reminder->value),
-			);
-		}
 		// Get users
 		$users = $this->getUsers();
 		// Get user types
@@ -78,14 +66,26 @@ class AdminController extends Controller {
 		$reminders = $this->getReminders();
 		// Get agents without Gestionnaire de zone
 		$agentsW = $this->getAgents();
+		$teamOfManager = array();
+		if (Auth::user()->type == 2) { // If the user logged is secretary
+			$teamOfManager = $this->getAgentsOfAManager(Auth::user()->id);
+			$teamOfManager[] = Auth::user()->id;
+		}
+		$teamOfAgent = array();
+		if (Auth::user()->type == 3) { // If the user logged is secretary
+			$managerid = $this->getManagerOfAgent(Auth::user()->id);
+			$teamOfAgent = $this->getAgentsOfAManager($managerid);
+			$teamOfAgent[] = $managerid;
+		}
 		// Get hollydays dates
 		$dates = $this->getDateSpecial();
 		// Get relation with agent and manager
 		$agentManager = $this->getAgentManager();
-		// Get type of menu details estate
-		$typemenu = Setting::where('type', '=', 'menu')->get();
+		// Get type of menu
+		$user = User::where('id', '=', Auth::user()->id)->get();
+		$typemenu = $user[0]->menu;
 		// Return view Settings
-		return view('settings.settings', ['reminders' => $remindersArray, 'users' => $users, 'userTypes' => $userTypes, 'categories' => $categories, 'realestates' => $realestates, 'aCategories' => $aCategories, 'templates' => $templates, 'notaries' => $notaries, 'reminders' => $reminders, 'agentsW' => $agentsW, 'agentManager' => $agentManager, 'dates' => $dates, 'typemenu' => $typemenu]);
+		return view('settings.settings', ['users' => $users, 'userTypes' => $userTypes, 'categories' => $categories, 'realestates' => $realestates, 'aCategories' => $aCategories, 'templates' => $templates, 'notaries' => $notaries, 'reminders' => $reminders, 'agentsW' => $agentsW, 'agentManager' => $agentManager, 'dates' => $dates, 'typemenu' => $typemenu, 'teamOfManager' => $teamOfManager, 'teamOfAgent' => $teamOfAgent]);
 	}
 
 	/**
@@ -134,7 +134,8 @@ class AdminController extends Controller {
 				$this->updated = true;
 			}
 			catch(\Exception $e) {
-				// Updated false
+				// // Updated false
+				// var_dump($e->getMessage());
 				$this->updated = false;
 			}
 		}
@@ -150,7 +151,7 @@ class AdminController extends Controller {
 	 * @var id is the id for register to update the password
 	 * @var field is the field to password default is password NOTE : this parameter is optional in case of name differente put the correct name
 	 */
-	private function updatePassword($model, $new, $old, $id, $field = "password") {
+	private function updatePassword($model, $new, $new_confirm, $id, $field = "password") {
 		// Init the reponse
 		$response = array(
 			'status' => false, // Reponse status
@@ -158,10 +159,9 @@ class AdminController extends Controller {
 		);
 		// Get user to update
 		$user = $model::find($id);
-		// Get the hash of current password
 		$currentPassword = $user->password;
 		// Check if the old password entered matches the one registered
-		if(\Hash::check($old, $currentPassword)) {
+		if($new == $new_confirm) {
 			// Check if the new password is not the current password
 			if(!\Hash::check($new, $currentPassword)) {
 				// Update password
@@ -222,7 +222,6 @@ class AdminController extends Controller {
 			"user_types.name as type_name",
 			"google_email"
 		)->join("user_types", "user_types.id", "=", "users.type")
-		->where("users.id", "!=", Auth::user()->id)
 		->where('users.id', "!=", 1)
 		->orderBy("users.id", "asc")
 		->get();
@@ -334,6 +333,30 @@ class AdminController extends Controller {
 	}
 
 	/**
+	 * Get agents without Gestionnaire de zone
+	 */
+	private function getAgentsOfAManager($idManager){
+		$agents = Agent::where("maneger_id", "=", $idManager)->get();
+		$arrayAgents = array();
+		foreach ($agents as $agent) {
+			$arrayAgents[] = $agent->agent_id;
+		}
+		return $arrayAgents;
+	}
+
+	/**
+	 * Get agents without Gestionnaire de zone
+	 */
+	private function getManagerOfAgent($idAgent){
+		$manager = Agent::where("agent_id", "=", $idAgent)->get();
+		$r = 0;
+		if (isset($manager[0]->maneger_id)) {
+			$r = $manager[0]->maneger_id;
+		}
+		return $r;
+	}
+
+	/**
 	 * Update user
 	 */
 	public function updateUser(Request $request) {
@@ -361,7 +384,7 @@ class AdminController extends Controller {
 			}
 			// Get keys of data
 			foreach($data as $key => $dat) { // Foreach key of data
-				if($key !== "_token" && $key !== "id" && $key !== "old_password" && $key !== 'new_password' && $key !== 'firstname') { // Keys to prevent update
+				if($key !== "_token" && $key !== "id" && $key !== "new_password_confirm" && $key !== 'new_password' && $key !== 'firstname') { // Keys to prevent update
 					if($key === "name") { // If name
 						$updated = $this->updateData(app("App\\Models\\User"), $key, $data['firstname']." ".$dat, $data['id']); // Concat firstname and name
 					}
@@ -375,10 +398,19 @@ class AdminController extends Controller {
 					'status' => true,
 					'message' => 'L\'utilisateur a été mis à jour'
 				);
+			if($data['new_password'] && $data['new_password_confirm']) {
+				$response = $this->updatePassword(app("App\\Models\\User"), $data['new_password'], $data['new_password_confirm'], $data['id']);
+				if($response['status'] && $updated) {
+					$response = array(
+						'status' => true,
+						'message' => 'L\'utilisateur a été mis à jour'
+					);
+				}
+			}
 		} else {
 			// Get keys of data
 			foreach($data as $key => $dat) { // Foreach key of data
-				if($key !== "_token" && $key !== "id" && $key !== "old_password" && $key !== 'new_password' && $key !== 'firstname') { // Keys to prevent update
+				if($key !== "_token" && $key !== "id" && $key !== "new_password_confirm" && $key !== 'new_password' && $key !== 'firstname') { // Keys to prevent update
 					if($key === "name") { // If name
 						$updated = $this->updateData(app("App\\Models\\User"), $key, $data['firstname']." ".$dat, $data['id']); // Concat firstname and name
 					}
@@ -399,8 +431,8 @@ class AdminController extends Controller {
 					'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
 				);
 			}
-			if($data['old_password'] && $data['new_password']) {
-				$response = $this->updatePassword(app("App\\Models\\User"), $data['new_password'], $data['old_password'], $data['id']);
+			if($data['new_password'] && $data['new_password_confirm']) {
+				$response = $this->updatePassword(app("App\\Models\\User"), $data['new_password'], $data['new_password_confirm'], $data['id']);
 				if($response['status'] && $updated) {
 					$response = array(
 						'status' => true,
@@ -482,6 +514,44 @@ class AdminController extends Controller {
 				'data' => $data,
 			);
 		}
+		// Return response
+		return response($response)->header('Content-Type', 'application/json');
+	}
+
+	/**
+	 * Create notary
+	 */
+	public function updateNotary(Request $request) {
+		// Get all data of request
+		$data = $request->all();
+		// Init updated
+		$updated = false;
+		// Init the reponse
+		$response = array(
+			'status' => false, // Reponse status
+			'message' => 'Le notaire n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
+		);
+
+		// Get keys of data
+		foreach($data as $key => $dat) { // Foreach key of data
+			if ($key !== 'notary_id' && $key !== '_token') {
+				$updated = $this->updateData(app("App\\Models\\Notary"), $key, $dat, $data['notary_id']); // Updatate data
+			}
+		}
+		if($updated) { // If updated is true
+			$response = array(
+				'status' => true,
+				'message' => 'Le notaire été mise à jour'
+			);
+		}
+
+		if(!$updated) { // If updated is false
+			$reponse = array(
+				'status' => false,
+				'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
+			);
+		}
+
 		// Return response
 		return response($response)->header('Content-Type', 'application/json');
 	}
@@ -823,7 +893,8 @@ class AdminController extends Controller {
 			'name' => $data['templateName'],
 			'subject' => $data['templateSubject'],
 			'file' => $file,
-			'type' => $data['type']
+			'type' => $data['type'],
+			'user' => Auth::user()->id
 		]);
 		$response = array(
 			'status' => true, // Status true
@@ -855,10 +926,20 @@ class AdminController extends Controller {
 				'name' => $template->name,
 				'subject' => $template->subject,
 				'file' => $template->file,
-				'type' => $template->type
+				'type' => $template->type,
+				'user' => $this->getUser($template->user),
+				'user_id' => $template->user
 			);
 		}
 		return $templatesArray;
+	}
+
+	/**
+	 * Get templates
+	 */
+	private function getUser($idUser) {
+		$user = User::where('id', '=', $idUser)->get();
+		return $user[0]->name;
 	}
 
 	/**
@@ -902,7 +983,8 @@ class AdminController extends Controller {
 			'name' => $data['templateName'],
 			'subject' => '',
 			'file' => $file,
-			'type' => $data['type']
+			'type' => $data['type'],
+			'user' => Auth::user()->id
 		]);
 
 		$response = array(
@@ -928,7 +1010,8 @@ class AdminController extends Controller {
 			'name' => $data['templateName'],
 			'subject' => $data['estatus_task'],
 			'file' => $file,
-			'type' => $data['type']
+			'type' => $data['type'],
+			'user' => Auth::user()->id
 		]);
 		$response = array(
 			'status' => true, // Status true
@@ -1027,7 +1110,8 @@ class AdminController extends Controller {
 			Template::create([
 				'name' => $data['form_template_name'],
 				'file' => $file,
-				'type' => $data['type']
+				'type' => $data['type'],
+				'user' => Auth::user()->id
 			]);
 		}
 		$response = array(
@@ -1054,7 +1138,8 @@ class AdminController extends Controller {
 				'name' => $data['file'],
 				'file' => $file,
 				'subject' => '',
-				'type' => $data['type']
+				'type' => $data['type'],
+				'user' => Auth::user()->id
 			]);
 		}
 		$response = array(
@@ -1181,6 +1266,7 @@ class AdminController extends Controller {
 	public function saveReminderA(Request $request) {
 		// Get all data of request
 		$data = $request->all();
+		dd($data);
 		// dd($data);
 		$totalReminders = count($data['type_rappel']);
 		$reminders = array();
@@ -1195,16 +1281,17 @@ class AdminController extends Controller {
 		try {
 			$a = TemplateReminder::create([
 				'name' => $data['templateName'],
-				'reminder' => $reminders
+				'reminder' => $reminders,
+				'user' => Auth::user()->id
 			]);
 			$response = array(
 				'status' => true,
-				'message' => 'Le sms a été envoyé'
+				'message' => 'Le processus a été créé'
 			);
 		} catch (Exception $e) {
 			$reponse = array(
 				'status' => false,
-				'message' => $e
+				'message' => 'Le processus n\'a pas pu être créé'
 			);
 		}
 		// Return response
@@ -1221,7 +1308,8 @@ class AdminController extends Controller {
 			$remindersArray[] = array(
 				'id' => $reminder->id,
 				'name' => $reminder->name,
-				'reminder' => $reminder->reminder
+				'reminder' => unserialize($reminder->reminder),
+				'user' => $this->getUser($reminder->user)
 			);
 		}
 		return $remindersArray;
@@ -1316,14 +1404,7 @@ class AdminController extends Controller {
 			'message' => 'Le menu n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
 		);
 
-		//Checked
-		$updated = Setting::where('type', '=', 'menu')
-					->where('name', '=', $data['type'])
-					->update(['value' => 1]);
-		//Unchecked
-		$updated = Setting::where('type', '=', 'menu')
-					->where('name', '!=', $data['type'])
-					->update(['value' => 0]);
+		$updated = $this->updateData(app("App\\Models\\User"), 'menu', $data['menu'], Auth::user()->id); // Updated data
 
 		if($updated) { // If updated is true
 			$response = array(

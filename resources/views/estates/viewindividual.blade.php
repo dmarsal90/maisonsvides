@@ -84,12 +84,12 @@
 							<div class="col-xs-12 col-sm-12 col-md-5 col-lg-5 col-xl-5 mb-1">
 								<span class="ffhnm">STATUTS</span>
 								<div class="wrapper__content mb-5">
-									<div class="row mb-2">
+									<!-- <div class="row mb-2">
 										<div class="col-12 text-right">
 											<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_technic_layout" id="estate_include_status" disabled>
 										</div>
-									</div>
-									<div class="row mb-2">
+									</div> -->
+									<div class="row mb-2 mt-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5"></div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -131,12 +131,12 @@
 							<div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 mb-1">
 								<span class="ffhnm">LOCALISATION</span>
 								<div class="wrapper__content">
-									<div class="row mb-2">
+									<!-- <div class="row mb-2">
 										<div class="col-12 text-right">
 											<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_localisation" id="estate_include_localisation">
 										</div>
-									</div>
-									<div class="row mb-2">
+									</div> -->
+									<div class="row mb-2 mt-2">
 										<div class="col-xs-12 col-md-3 col-lg-3 col-xl-3"></div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -176,12 +176,12 @@
 							<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-1">
 								<span class="ffhnm">CLIENT</span>
 								<div class="wrapper__content mb-5">
-									<div class="row mb-2">
+									<!-- <div class="row mb-2">
 										<div class="col-12 text-right">
 											<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_seller" id="estate_include_seller" disabled>
 										</div>
-									</div>
-									<div class="row mb-2">
+									</div> -->
+									<div class="row mb-2 mt-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5"></div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -262,15 +262,15 @@
 									</div>
 								</div>
 							</div>
-							<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-1 mt-2">
+							<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 mb-1">
 								<span class="ffhnm">DONNEES DE BASE</span>
 								<div class="wrapper__content mb-5">
-									<div class="row mb-2">
+									<!-- <div class="row mb-2">
 										<div class="col-12 text-right">
 											<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_technic_layout" id="estate_include_client" disabled>
 										</div>
-									</div>
-									<div class="row mb-2">
+									</div> -->
+									<div class="row mb-2 mt-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5"></div>
 									</div>
 									<div class="row mb-2 ml-2">
@@ -422,11 +422,11 @@
 				<div class="card font-body-content">
 					<div class="card-header">
 						Photographies du bien et documents
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-12 text-right">
 								<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_documents_photos" id="estate_include_documents_photos">
 							</div>
-						</div>
+						</div> -->
 					</div>
 					<div class="card-body">
 						@php
@@ -1240,11 +1240,11 @@
 				<div class="card font-body-content">
 					<div class="card-header">
 						Problèmes signalés par le requéreur
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col-12 text-right">
 								<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_problems" id="estate_include_problems">
 							</div>
-						</div>
+						</div> -->
 					</div>
 					<div class="card-body">
 						<div class="mb-4">

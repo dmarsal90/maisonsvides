@@ -17,6 +17,7 @@ class CreateTemplatesRemindersTable extends Migration
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
 			$table->string('name'); // Name of template
 			$table->longText('reminder'); // Data of each reminder
+			$table->longText('user'); // User who created th template
 			$table->timestamp('created_at')->useCurrent(); // Created at
 			$table->timestamp('updated_at')->useCurrent(); // Updated at
 		});
