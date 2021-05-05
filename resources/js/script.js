@@ -63,8 +63,7 @@
 				if (result.isConfirmed && icon === 'success' && !isModify) {
 					location.reload();
 				}
-				if (result.isConfirmed == true) {
-					console.log(urlDelete);
+				if (result.isConfirmed && action) {
 					$.ajax({
 						url: urlDelete,
 						type: 'GET',
