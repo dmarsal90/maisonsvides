@@ -203,7 +203,7 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Téléphone :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input  data-change-input type="tel" name="details__phone" class="form-control" value="@isset($details['tel']){!! $details['tel'] !!}@endisset" data-save>
+											<input  data-change-input type="tel" name="details__tel" class="form-control" value="@isset($details['tel']){!! $details['tel'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
