@@ -145,17 +145,18 @@ img {
   display: none;
 }
 .header .header__logo img:first-of-type {
-  max-width: 255px;
+  max-width: 190px;
   display: none;
 }
 .header .header__logo img:last-of-type {
-  max-width: 40px;
+  max-width: 60px;
   display: block;
 }
 .header .navbar {
   height: 100%;
   padding: 20px 160px;
   background-color: #6C90D8;
+  justify-content: flex-end;
 }
 .header .navbar input {
   width: 171px;
@@ -176,6 +177,9 @@ img {
   visibility: hidden;
   padding: 0;
 }
+.header .header__profile-nav {
+  display: none;
+}
 @media screen and (max-width: 575px) {
   .header .navbar input {
     width: 130px;
@@ -190,9 +194,16 @@ img {
   }
   .header .navbar {
     padding: 20px 5vw;
+    justify-content: space-between;
+  }
+  .header .navbar form {
+    display: none !important;
   }
   .header .navbar-toggler {
     visibility: visible;
+  }
+  .header .header__profile-nav {
+    display: block;
   }
 }
 @media screen and (min-width: 992px) and (max-width: 1200px) {
@@ -385,6 +396,10 @@ img {
   will-change: left;
   right: 0;
   padding: 10px 8vw;
+  justify-content: space-between;
+}
+.wrapper .wrapper__breadcrumbs > div:last-child {
+  display: block;
 }
 .wrapper .btn.btn-success {
   background-color: #28A745;
@@ -621,6 +636,9 @@ img {
   .wrapper .wrapper__breadcrumbs {
     top: 85px;
     left: 0;
+  }
+  .wrapper .wrapper__breadcrumbs > div:last-child {
+    display: none;
   }
 }
 @media screen and (min-width: 992px) and (max-width: 1440px) {
@@ -941,5 +959,9 @@ img {
        * element that contains the map. */
 #map {
   height: 500px;
+}
+.form-change-data-contact {
+  margin-right: 0px;
+  margin-left: 0px;
 }
 

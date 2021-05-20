@@ -48,6 +48,9 @@
 						<input class="form-control me-2" type="search" name="s" autocomplete="off" placeholder="Rechercher" aria-label="Search" value="{!! $s !!}" required>
 						<button class="btn btn-outline-success" type="submit">Rechercher</button>
 					</form>
+					<span class="ml-5" style="font-size: 14px;">
+						<a class="text-white" href="{!! route('settings') !!}?tab-name=settings-users" data-url-modal="{!! route('settings') !!}" data-my-profile> Mon profil ({!! Auth::user()->name !!})</a> <span class="text-white mr-2 ml-2"> | </span> <a class="text-white {{ Request::is('logout*') ? 'active' : '' }}" href="{!! route('logout') !!}">Déconnexion</a>
+					</span>
 				</nav>
 			</header>
 			<!-- End Header -->

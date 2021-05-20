@@ -555,6 +555,7 @@
 			</div>
 		</div>
 		<div id="settings-users" class="tab-pane fade" role="tabpanel" aria-labelledby="settings-users-tab">
+			<input type="hidden" id="user_id_open_modal" value="{!! Auth::user()->id !!}">
 			<div class="card">
 				<div class="card-header">Utilisateurs</div>
 				<div class="card-body">
@@ -766,7 +767,6 @@
 							<div class="wrapper__content__date col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 mt-2 ml-3 mr-3">
 								<span class="ffhn">Dates</span>
 								<ul id="dates_added">
-									
 									@foreach($dates as $date)
 										@php
 											$months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];

@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 
 use App\Models\User;
 use App\Models\Seller;
+use App\Models\Date;
 use App\Models\Estate;
 use App\Models\EstateLog;
 use App\Models\EstateTicket;
@@ -57,41 +58,51 @@ class SendReminder extends Command
 	public function handle()
 	{
 		$reminders = EstateReminder::where('sent', '!=', 1)->get();
+		$datesSpecials = Date::select('date_special')->get();
+		$auxDateSpecial = array();
+		foreach ($datesSpecials as $value) {
+			$pieces = explode('-', $value->date_special);
+			$auxDateSpecial[] = date("Y-").$pieces[1].'-'.$pieces[0];
+		}
 		$currentDate = date("Y-m-d");
-		foreach($reminders as $reminder) {
-			$content = unserialize($reminder['content']);
-			foreach ($content as $key => $value) {
-				if ($currentDate == $value['date'] && $key == $reminder['next_reminder']) {
-					if ($value['type'] == 'email' || $value['type'] == 'task') {
-						$seller = $this->getSeller($value['seller_id']);
-						$ticket_id = $this->objectTicket->create(
-							[
-								"name" => $seller['name'],// Name to which the ticket will be sent
-								"email" => $seller['email'],// Email to which the ticket will be sent
-							],
-							$value['subject'],// Subject to the email
-							$value['content'],// Content to the email
-							[]
-						);
-						// Save the union of the ticket wiht the estate
-						EstateTicket::create([
-							'estate_id' => $reminder['estate_id'],
-							'ticket_id' => $ticket_id
-						]);
-						// Updatate data to next reminder
-						$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-					}
-					if ($value['type'] == 'sms') {
-						// $basic  = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-						// $client = new \Nexmo\Client($basic);
-						// // Sending SMS 
-						// $message = $client->message()->send([
-						// 	'to' => '527731951309', // $seller['phone']
-						// 	'from' => 'Wesold',
-						// 	'text' => $reminder['content']
-						// ]);
-						// Updatate data to next reminder
-						$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+		if (!empty($reminders)) {
+			foreach($reminders as $reminder) {
+				$content = unserialize($reminder['content']);
+				foreach ($content as $key => $value) {
+					if ($currentDate == $value['date'] && $key == $reminder['next_reminder']) {
+						if (!in_array($currentDate, $auxDateSpecial)) {
+							if ($value['type'] == 'email' || $value['type'] == 'task') {
+								$seller = $this->getSeller($value['seller_id']);
+								$ticket_id = $this->objectTicket->create(
+									[
+										"name" => $seller['name'],// Name to which the ticket will be sent
+										"email" => $seller['email'],// Email to which the ticket will be sent
+									],
+									$value['subject'],// Subject to the email
+									$value['content'],// Content to the email
+									[]
+								);
+								// Save the union of the ticket wiht the estate
+								EstateTicket::create([
+									'estate_id' => $reminder['estate_id'],
+									'ticket_id' => $ticket_id
+								]);
+								// Updatate data to next reminder
+								$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+							}
+							if ($value['type'] == 'sms') {
+								// $basic  = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+								// $client = new \Nexmo\Client($basic);
+								// // Sending SMS 
+								// $message = $client->message()->send([
+								// 	'to' => '527731951309', // $seller['phone']
+								// 	'from' => 'Wesold',
+								// 	'text' => $reminder['content']
+								// ]);
+								// Updatate data to next reminder
+								$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+							}
+						}
 					}
 				}
 			}
@@ -99,35 +110,38 @@ class SendReminder extends Command
 		// Code to send reminder of the visit at 08:30
 		$objectTicket = new Ticket();
 		$estates = Estate::where('send_reminder_half_past_eight', '=', 1)->get();
-		foreach ($estates as $estate) {
-			$visit = explode("de", $estate->visit_date_at);
-			$date = str_replace('Visite le', '', $visit[0]);
-			$date = str_replace(' ', '', $date);
-			if ($date == $currentDate) {
-				$seller = $this->getSeller($estate->seller);
+		if (!empty($estates)) {
+			foreach ($estates as $estate) {
 				$visit = explode("de", $estate->visit_date_at);
-				$ticket_id = $this->objectTicket->create(
-					[
-						"name" => $seller['name'],// Name to which the ticket will be sent
-						"email" => $seller['email'],// Email to which the ticket will be sent
-					],
-					"Rappel de ".$estate->visit_date_at,// Subject to the email
-					"Nous vous rappelons que vous avez un rendez-vous aujourd'hui à partir de".$visit[1],// Content to the email
-					[]
-				);
-				// Save the union of the ticket wiht the estate
-				EstateTicket::create([
-					'estate_id' => $estate->id,
-					'ticket_id' => $ticket_id
-				]);
-				// Save information in the log
-				EstateLog::create([
-					'estate_id' => $data['estate_id'],
-					'user_id' => 'Automatique',
-					'old_value' => '',
-					'new_value' => 'Rappel de visite envoyer à ' . $seller['email'],
-					'field' => 'remindervisit'
-				]);
+				$date = str_replace('Visite le', '', $visit[0]);
+				$date = str_replace(' ', '', $date);
+				if ($date == $currentDate) {
+					dd('ok');
+					$seller = $this->getSeller($estate->seller);
+					$visit = explode("de", $estate->visit_date_at);
+					$ticket_id = $this->objectTicket->create(
+						[
+							"name" => $seller['name'],// Name to which the ticket will be sent
+							"email" => $seller['email'],// Email to which the ticket will be sent
+						],
+						"Rappel de ".$estate->visit_date_at,// Subject to the email
+						"Nous vous rappelons que vous avez un rendez-vous aujourd'hui à partir de".$visit[1],// Content to the email
+						[]
+					);
+					// Save the union of the ticket wiht the estate
+					EstateTicket::create([
+						'estate_id' => $estate->id,
+						'ticket_id' => $ticket_id
+					]);
+					// Save information in the log
+					EstateLog::create([
+						'estate_id' => $data['estate_id'],
+						'user_id' => 'Automatique',
+						'old_value' => '',
+						'new_value' => 'Rappel de visite envoyer à ' . $seller['email'],
+						'field' => 'remindervisit'
+					]);
+				}
 			}
 		}
 		return response(['isValidRequest' => true])->header('Content-Type', 'application/json');

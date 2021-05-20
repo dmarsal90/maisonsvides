@@ -3147,7 +3147,16 @@
 			$("#tinyCorps").val(content);
 			tinymce.get("tinyCorps").setContent(content);
 		});
-
-		
+		// Open popup to see data of a user
+		var urlProfile = location.href;
+		if (urlProfile.indexOf('?tab-name=settings-users') >= 0) {
+			var id = $("#user_id_open_modal").val();
+			$('#tab-main .nav-link[href="#' + 'settings-users' + '"]').tab('show');
+			console.log('[data-user-id="'+id+'"]');
+			$('[data-user-id="'+id+'"]').click();
+		}
+		function load_page(url){
+			$('#editUser').load(url,function(){});
+		}
 	});
 })(jQuery);

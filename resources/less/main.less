@@ -216,11 +216,11 @@ z-index: 100;
 		}
 		img {
 			&:first-of-type {
-			max-width: 255px;
+			max-width: 190px;
 			display: none;
 			}
 			&:last-of-type {
-			max-width: 40px;
+			max-width: 60px;
 			display: block;
 			}
 		}
@@ -229,6 +229,7 @@ z-index: 100;
 	height: 100%;
 	padding: 20px 160px;
 	background-color: @theme;
+	justify-content: flex-end;
 		input {
 		width: 171px;
 		margin-right: 8px;
@@ -249,6 +250,9 @@ z-index: 100;
 	visibility: hidden;
 	padding: 0;
 	}
+	.header__profile-nav {
+	display: none;
+	}
 @media screen and (max-width: 575px) {
 	.navbar {
 		input {
@@ -263,9 +267,16 @@ height: 85px;
 	}
 	.navbar {
 	padding: 20px 5vw;
+	justify-content: space-between;
+		form {
+		display: none !important;
+		}
 	}
 	.navbar-toggler {
 	visibility: visible;
+	}
+	.header__profile-nav {
+	display: block;
 	}
 }
 @media screen and (min-width: 992px) and (max-width: 1200px) {
@@ -459,6 +470,10 @@ position: relative;
 	will-change: left;
 	right: 0;
 	padding: 10px 8vw;
+	justify-content: space-between;
+		>div:last-child{
+			display: block;
+		}
 	}
 	.btn {
 		&.btn-success {
@@ -727,6 +742,9 @@ position: relative;
 	.wrapper__breadcrumbs {
 	top: 85px;
 	left: 0;
+		>div:last-child{
+		display: none;
+		}
 	}
 }
 @media screen and (min-width: 992px) and (max-width: 1440px) {
@@ -1134,4 +1152,9 @@ justify-content: center;
        * element that contains the map. */
 #map {
 height: 500px;
+}
+
+.form-change-data-contact {
+margin-right: 0px;
+margin-left: 0px;
 }

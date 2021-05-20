@@ -47,11 +47,20 @@ class LoginController extends Controller {
 	 */
 	protected function credentials(Request $request)
 	{
-		return [
-			'login' => request()->login,
-			'password' => request()->password,
-			'active' => 1
-		];
+		$username = $request->login;
+		if(filter_var($username, FILTER_VALIDATE_EMAIL)) {
+			return [
+				'email' => request()->login,
+				'password' => request()->password,
+				'active' => 1
+			];
+		} else {
+			return [
+				'login' => request()->login,
+				'password' => request()->password,
+				'active' => 1
+			];
+		}
 	}
 
 	/**
@@ -60,6 +69,7 @@ class LoginController extends Controller {
 	public function login(Request $request) {
 		// If method is post create a session
 		$credentials = $this->credentials($request);
+		// dd($credentials);
 		if(Auth::attempt($credentials)) {
 			$this->user = Auth::user();
 			return redirect()->route('dashboard');

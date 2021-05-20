@@ -43,6 +43,9 @@
 					<button class="navbar-toggler" type="button" data-open-menu="menu" data-close-wrapper="wrapper">
 						<span class="navbar-toggler-icon"></span>
 					</button>
+					<span class="header__profile-nav" style="font-size: 13px;">
+						<a class="text-white " href="{!! route('settings') !!}?tab-name=settings-users" data-url-modal="{!! route('settings') !!}" data-my-profile> Mon profil ({!! Auth::user()->name !!})</a> <span class="text-white mr-2 ml-2"> | </span> <a class="text-white {{ Request::is('logout*') ? 'active' : '' }}" href="{!! route('logout') !!}">Déconnexion</a>
+					</span>
 				</nav>
 			</header>
 			<!-- End Header -->
@@ -87,6 +90,11 @@
 				<div>
 					<span>{!! $seller['name'] !!}</span> - <span>{!! $estate['street'] !!}</span> - <span>{!!  date('ymdh.i', strtotime($estate['reference'])) !!}</span>
 					<br>Statut : <span>{!! $estate['category']['name'] !!}</span>
+				</div>
+				<div>
+					<span style="font-size: 13px;">
+						<a style="color:#000000" href="{!! route('settings') !!}?tab-name=settings-users"  class="text-decoration-none"> Mon profil ({!! Auth::user()->name !!})</a> <span style="color:#000000" class="mr-2 ml-2"> | </span> <a style="color:#000000" class="text-decoration-none {{ Request::is('logout*') ? 'active' : '' }}" href="{!! route('logout') !!}">Déconnexion</a>
+					</span>
 				</div>
 			</nav>
 			@if(session()->get('requireGoogleToken') && auth()->check())
