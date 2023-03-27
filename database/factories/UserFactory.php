@@ -27,7 +27,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'login' => $this->faker->unique()->userName,
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'type' => 1,
+            'type' => $this->faker->numberBetween(1,3),
             'google_email'=> $this->faker->unique()->safeEmail,
             'google_token' => Str::random(10),
             'active'=>$this->faker->boolean(),
