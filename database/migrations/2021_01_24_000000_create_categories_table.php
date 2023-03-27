@@ -118,13 +118,6 @@ class CreateCategoriesTable extends Migration
 		);
 		DB::table('categories')->insert( // Create category
 			array(
-				'name' => 'RDV pris',
-				'slug' => 'rdv-pris',
-				'parent' => 5,
-			)
-		);
-		DB::table('categories')->insert( // Create category
-			array(
 				'name' => 'Visite fini',
 				'slug' => 'visite-fini',
 				'parent' => 0,
