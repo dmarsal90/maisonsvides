@@ -47,11 +47,23 @@ class CreateUsersTable extends Migration
 		DB::table('users')->insert( // Create the first register to access the system
 			array(
 				'name' => 'Administrateur Administrateur',
-				'email' => 'cesar@flexvision.be',
+				'email' => 'david@flexvision.be',
 				'login' => 'sadmin',
 				'password' => Hash::make('1234567890'),
 				'type' => 1,
-				'google_email' => 'cesar.flexvision@gmail.com',
+				'google_email' => 'david.flexvision@gmail.com',
+				'active' => 1
+			),
+		);
+
+        DB::table('users')->insert( // Create the first register to access the system
+			array(
+				'name' => 'Administrateur Administrateur',
+				'email' => 'david.flex@flexvision.be',
+				'login' => 'david',
+				'password' => Hash::make('1234567890'),
+				'type' => 1,
+				'google_email' => 'davidmarsalivars@gmail.com',
 				'active' => 1
 			),
 		);
