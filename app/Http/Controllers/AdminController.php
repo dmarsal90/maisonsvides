@@ -325,11 +325,17 @@ class AdminController extends Controller {
 		foreach ($agents as $agent) {
 			$idsagentsArray[] = $agent->agent_id;
 		}
-		$agentsWithoutManager = User::where('type', '=', 3)->whereNotIn('id', $idsagentsArray)->get();
-		foreach ($agentsWithoutManager as $agent) {
-			$auxAgents[] = $agent->id;
-		}
-		return $auxAgents;
+        if ($idsagentsArray =!  empty($idsagentsArray)) {
+            $agentsWithoutManager = User::where('type', '=', 3)->whereNotIn('id', $idsagentsArray)->get();
+            foreach ($agentsWithoutManager as $agent) {
+                $auxAgents[] = $agent->id;
+            }
+            return $auxAgents;
+        }
+        else{
+            return "No agents";
+        }
+
 	}
 
 	/**
@@ -655,7 +661,7 @@ class AdminController extends Controller {
 			);
 			// Code to save the total estates that they have a category
 			$categories = $this->getCategories(); // Get categories
-			foreach ($categories as $category) { 
+			foreach ($categories as $category) {
 				// Get the category of each estate
 				$estate = Estate::where('category', '=', $category['id'])->get();
 				$value = $estate->count(); // Count total of estates that they have this category
@@ -1103,7 +1109,7 @@ class AdminController extends Controller {
 		$data = $request->all();
 		// Init response
 		$response = array('status' => false);
-		
+
 		if (isset($data['form_template_name'])) {
 			\File::put(public_path().'/templates/'.$data['slug-template-name-condition'].'.txt', $data['form_condition']);
 			$file = $data['slug-template-name-condition'].'.txt';
@@ -1130,7 +1136,7 @@ class AdminController extends Controller {
 		$data = $request->all();
 		// Init response
 		$response = array('status' => false);
-		
+
 		if (isset($data['file'])) {
 			\File::put(public_path().'/templates/'.$data['file'].'.html', $data['form_text_offer']);
 			$file = $data['file'].'.html';
@@ -1238,7 +1244,7 @@ class AdminController extends Controller {
 		try {
 			$basic  = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 			$client = new \Nexmo\Client($basic);
-			// Sending SMS 
+			// Sending SMS
 			$message = $client->message()->send([
 				'to' => $data['sms_test'],
 				'from' => 'Wesold',
@@ -1270,7 +1276,7 @@ class AdminController extends Controller {
 		// dd($data);
 		$totalReminders = count($data['type_rappel']);
 		$reminders = array();
-		for ($i=0; $i < $totalReminders; $i++) { 
+		for ($i=0; $i < $totalReminders; $i++) {
 			$reminder["position"] = $i;
 			$reminder["type_template"] = $data['type_rappel'][$i];
 			$reminder["template"] = $data['type_rappel_choised'][$i];
