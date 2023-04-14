@@ -56,17 +56,35 @@ class CreateUsersTable extends Migration
 			),
 		);
 
-        DB::table('users')->insert( // Create the first register to access the system
-			array(
-				'name' => 'Administrateur Administrateur',
-				'email' => 'david.flex@flexvision.be',
-				'login' => 'david',
-				'password' => Hash::make('1234567890'),
-				'type' => 1,
-				'google_email' => 'davidmarsalivars@gmail.com',
-				'active' => 1
-			),
-		);
+        DB::table('users')->insert([
+            'name' => 'Administrateur',
+            'email' => 'admin@maisonsvides.be',
+            'login' => 'admin',
+            'password' => Hash::make('69Nu1lc54M239074fjVb'),
+            'type' => 1,
+            'google_email' => 'admin@maisonsvides.be',
+            'active' => 1
+        ]);
+
+        DB::table('users')->insert([
+            'name' => 'Liege',
+            'email' => 'liege@maisonsvides.be',
+            'login' => 'liege',
+            'password' => Hash::make('s8qZg78aSo4S5R65ea29'),
+            'type' => 1,
+            'google_email' => 'liege@maisonsvides.be',
+            'active' => 2
+        ]);
+        
+        DB::table('users')->insert([
+            'name' => 'Hainaut',
+            'email' => 'hainaut@maisonsvides.be',
+            'login' => 'hainaut',
+            'password' => Hash::make('PY7Dv6J6w7sCv69iTibW'),
+            'type' => 1,
+            'google_email' => 'hainaut@maisonsvides.be',
+            'active' => 2
+        ]);
 	}
 
 	/**
