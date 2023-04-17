@@ -227,10 +227,12 @@ class AdminController extends Controller {
 		->get();
 		$usersArray = array();
 		foreach ($users as $user) {
+            $nameParts = explode(" ", $user->name);
+            $name = $nameParts[0];
 			$usersArray[] = array(
 				'id' => $user->id,
 				'username' => $user->login,
-				'name' => explode(" ", $user->name)[1],
+				'name' => $name,
 				'firstname' => explode(" ", $user->name)[0],
 				'type' => $user->type,
 				'type_name' => $user->type_name,
