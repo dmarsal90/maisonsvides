@@ -32,7 +32,7 @@ class CreateUsersTable extends Migration
 			$table->foreign('type')->references('id')->on('user_types'); // Add foreign key of user type
 		});
 
-		DB::table('users')->insert( // Create the first register to access the system
+		/* DB::table('users')->insert( // Create the first register to access the system
 			array(
 				'name' => 'No agent',
 				'email' => 'noagent@flexvision.be',
@@ -42,19 +42,7 @@ class CreateUsersTable extends Migration
 				'google_email' => 'noagent.flexvision@gmail.com',
 				'active' => 1
 			),
-		);
-
-		DB::table('users')->insert( // Create the first register to access the system
-			array(
-				'name' => 'Administrateur Administrateur',
-				'email' => 'david@flexvision.be',
-				'login' => 'sadmin',
-				'password' => Hash::make('1234567890'),
-				'type' => 1,
-				'google_email' => 'david.flexvision@gmail.com',
-				'active' => 1
-			),
-		);
+		); */
 
         DB::table('users')->insert([
             'name' => 'Administrateur',
@@ -75,7 +63,7 @@ class CreateUsersTable extends Migration
             'google_email' => 'liege@maisonsvides.be',
             'active' => 2
         ]);
-        
+
         DB::table('users')->insert([
             'name' => 'Hainaut',
             'email' => 'hainaut@maisonsvides.be',
