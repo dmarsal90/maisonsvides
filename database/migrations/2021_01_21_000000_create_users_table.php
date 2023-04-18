@@ -61,7 +61,7 @@ class CreateUsersTable extends Migration
             'password' => Hash::make('s8qZg78aSo4S5R65ea29'),
             'type' => 1,
             'google_email' => 'liege@maisonsvides.be',
-            'active' => 2
+            'active' => 1
         ]);
 
         DB::table('users')->insert([
@@ -71,7 +71,7 @@ class CreateUsersTable extends Migration
             'password' => Hash::make('PY7Dv6J6w7sCv69iTibW'),
             'type' => 1,
             'google_email' => 'hainaut@maisonsvides.be',
-            'active' => 2
+            'active' => 1
         ]);
 	}
 
