@@ -78,7 +78,7 @@
 						},
 						error: function(error) {
 							$("body").waitMe('hide'); // Hide popup waitMe
-							console.log(error); 
+							console.log(error);
 						}
 					});
 				}
@@ -94,7 +94,7 @@
 				type: 'POST',
 				data: data,
 				beforeSend: function() { // Before send request
-					
+
 				},
 				success: function(response) {
 					$("#ok-savemenu").removeClass("d-none");
@@ -168,11 +168,14 @@
 							firstDay: 1,
 							hiddenDays: [0,6],
 							events: events, // Add the events, temporally static
-							eventClick: function(info) { // Event click
-								information = info.event.extendedProps; // Save the estate info on the variable information
-								$("#calendarModal").modal('show'); // Open modal with the all data of the estate clicked
-							}
-						});
+							eventClick: function(info) {
+                                information = info.event.extendedProps;
+                                $("#calendarModal").modal('show');
+                              },
+                              dateClick: function(info) {
+                                $("#calendarModal").modal('show');
+                              }
+                            });
 						$('[data-hide-calendar]').on('click', function(){ // To hide ow show events of each calendar
 							if ($(this).prop('checked')) { // If true hide all events of this calendar
 								var name = ($(this).attr("data-hide-calendar")).replace('@gmail.com', '');
@@ -202,8 +205,14 @@
 				$("[data-contact]").text(information.contact); // Set the name of contact
 				$("[data-phone]").html("<a href='tel:"+information.phone+"'>"+information.phone+"</a>"); // Set the phone
 				$("[data-email]").html("<a href='mailto:"+information.email+"'>"+information.email+"</a>"); // Set the email
-				$("[data-type]").text(information.type); // Set the type 
-				var srcMap = "https://maps.google.com/maps?q=+"+information.coordinates.lat+"+,+"+information.coordinates.long+"+&hl=es&z=14&output=embed&hl=fr"; // URL of the estate
+				$("[data-type]").text(information.type); // Set the type
+                if (information && information.coordinates && information.coordinates.lat) {
+                    var srcMap = "https://maps.google.com/maps?q=+"+information.coordinates.lat+"+,+"+information.coordinates.long+"+&hl=es&z=14&output=embed&hl=fr";
+                  }// URL of the estate
+                   else {
+                    var srcMap = "https://maps.google.com/maps?q=mi+ubicacion&hl=es&z=14&output=embed&hl=fr";
+                  }
+
 				$("[data-coordinates]").attr("src", srcMap); // Set the url on the iframe of map
 			});
 		}
@@ -270,7 +279,7 @@
 								eventc.setProp('backgroundColor', "#3cd47c");
 								eventc.setProp('borderColor', "#3cd47c");
 							}
-							
+
 						});
 						$('[data-hide-calendar]').on('click', function(){ // To hide ow show events of each calendar
 							console.log('click');
@@ -302,7 +311,7 @@
 				$("[data-contact]").text(information.contact); // Set the name of contact
 				$("[data-phone]").html("<a href='tel:"+information.phone+"'>"+information.phone+"</a>"); // Set the phone
 				$("[data-email]").html("<a href='mailto:"+information.email+"'>"+information.email+"</a>"); // Set the email
-				$("[data-type]").text(information.type); // Set the type 
+				$("[data-type]").text(information.type); // Set the type
 				var srcMap = "https://maps.google.com/maps?q=+"+information.coordinates.lat+"+,+"+information.coordinates.long+"+&hl=es&z=14&output=embed&hl=fr"; // URL of the estate
 				$("[data-coordinates]").attr("src", srcMap); // Set the url on the iframe of map
 			});
@@ -377,7 +386,7 @@
 				e.relatedTarget // previous active tab
 				var tabContent = $(e.target).attr("href"); // Get the ID of content tab
 				$(tabContent).find("[data-table]").DataTable().destroy(); // If the content has table is destroyed
-				$(tabContent).find("[data-table]").DataTable(paramentersDataTable); // Reinit the table 
+				$(tabContent).find("[data-table]").DataTable(paramentersDataTable); // Reinit the table
 				if(!$(tabContent).find(".active.show").length) { // If the tab has not classes active and show
 					$(tabContent).find("a[data-toggle='tab']").first().click(); // Click on first sub tab
 				}
@@ -493,7 +502,7 @@
 						},
 						error: function(error) {
 							$("body").waitMe('hide'); // Hide popup waitMe
-							// console.log(error); 
+							// console.log(error);
 						}
 					});
 				}
@@ -726,7 +735,7 @@
 			var url = $('option:selected', $(this)).attr("data-href"); // Getting url to delete template
 			$("#edit_template").attr("data-target", "#editTemplate-"+idTemplate); // Add atribute data to the modal of edit the template
 			var comUrl = url + '/' + idTemplate + '/' + slug(nameTemplate); // Adding parameters to the url to delete the template
-			$("#delete_template").attr("href", comUrl); // Adding the url complete to attribute data 
+			$("#delete_template").attr("href", comUrl); // Adding the url complete to attribute data
 		});
 		if ($("#template_c").length) {
 			var idTemplate = document.getElementById("template_c").value;// Get if of the template
@@ -998,7 +1007,7 @@
 				position: 'c', // Calendar floating
 				customDays: ['Dim', 'Lun','Mar','Mer','Jeu','Ven','Sam'], // Custom name days
 				customMonths: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'], // Custom name of months
-				onSelect: function(instance, date) { // Event select 
+				onSelect: function(instance, date) { // Event select
 					var value = date.toLocaleDateString(); // Convert the value of date to locale date string
 					var day = ("0" + date.getDate()).slice(-2);
 					var month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -1650,7 +1659,7 @@
 			console.log(pricewesold);
 			var months =	['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']; // Custom name of months
 			validateoffer = ("0" + validateoffer.getDate()).slice(-2) + ' ' + months[(validateoffer.getMonth() + 1)] +' '+ validateoffer.getFullYear();
-			
+
 			var body = $("#text-original-offer").val();
 			newBody = body.replace('[texte]', text);
 			if (dataCondition === '') {
@@ -1832,7 +1841,7 @@
 		if ($("#temtext").length) {
 			$("#temtext").hide();
 		}
-		// When the user select a value of type of template 
+		// When the user select a value of type of template
 		$("#newtemplate").on('change', function(){
 			$("#templates_create").attr("action", "");
 			var link = $(this).find("option[value='" + $(this).val() + "']").attr("data-link");
@@ -1905,7 +1914,7 @@
 		$("[data-reminder]").on('click', function(){
 			var id = $(this).attr("data-reminder");
 			var reminders, content;
-			
+
 		})
 
 		if ($("[data-edit-process]").length) {
@@ -2008,7 +2017,7 @@
 							Template\
 						</div>\
 						<div class="col-xs-12 col-sm-12 col-md-10 col-lg-12 col-xl-10">\
-							<select name="type_rappel_choised[]" class="form-control" id="rappel_email_'+ n +'">' 
+							<select name="type_rappel_choised[]" class="form-control" id="rappel_email_'+ n +'">'
 								+ optionsTemplateEmail +
 							'</select>\
 							<select name="type_rappel_choised[]" class="form-control" id="rappel_sms_'+ n +'">'
@@ -2076,7 +2085,7 @@
 			var type = $(this).val(); // Get type of user
 			if (type == 3) { // If the type is 3
 				$("#manager_id").show();
-			} else { 
+			} else {
 				$("#manager_id").hide();
 			}
 			if (type == 2) { // If the type is 2
@@ -2147,7 +2156,7 @@
 								<span class="ffhnl">Template</span>\
 							</div>\
 							<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-9">\
-								<select name="type_rappel_choised[]" data-name-reminder="'+n+'" class="form-control" id="rappel_email_'+ n +'">' 
+								<select name="type_rappel_choised[]" data-name-reminder="'+n+'" class="form-control" id="rappel_email_'+ n +'">'
 									+ optionsTemplateEmail +
 								'</select>\
 								<select name="type_rappel_choised[]" data-name-reminder="'+n+'" class="form-control" id="rappel_sms_'+ n +'">'
@@ -2480,7 +2489,7 @@
 											<span class="ffhnl">Template</span>\
 										</div>\
 										<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-xl-9">\
-											<select name="type_rappel_choised[]" ' + displayemail +' data-name-reminder="'+remin.position+'" class="form-control" id="rappel_email_'+ remin.position +'">' 
+											<select name="type_rappel_choised[]" ' + displayemail +' data-name-reminder="'+remin.position+'" class="form-control" id="rappel_email_'+ remin.position +'">'
 												+ optionsTemplateEmail +
 											'</select>\
 											<select name="type_rappel_choised[]" ' + displaysms +' data-name-reminder="'+remin.position+'" class="form-control" id="rappel_sms_'+ remin.position +'">'
@@ -2563,7 +2572,7 @@
 		$("#add-point-weak-exterior").on('click', function() {
 			$("#weak-points-e").append('<input type="text" name="exterior_weak_point[]" class="form-control mb-2" disabled value="">');
 		});
-		function getQueryVariable(variable) { //function to get variable of url 
+		function getQueryVariable(variable) { //function to get variable of url
 			var query = window.location.search.substring(1);
 			var vars = query.split("&");
 			for (let i = 0; i < vars.length; i++) {
@@ -2926,13 +2935,13 @@
 					url: url,
 					type: 'GET',
 					beforeSend: function() { // Before send request
-						
+
 					},
 					success: function(response) {
-						//showSwal('Succès', response.message, 'success'); // Call popup 
+						//showSwal('Succès', response.message, 'success'); // Call popup
 					},
 					error: function(error) {
-						console.log(error); 
+						console.log(error);
 					}
 				});
 			} else {
@@ -2943,10 +2952,10 @@
 					beforeSend: function() { // Before send request
 					},
 					success: function(response) {
-						//showSwal('Error', response.message, 'error'); // Call popup 
+						//showSwal('Error', response.message, 'error'); // Call popup
 					},
 					error: function(error) {
-						console.log(error); 
+						console.log(error);
 					}
 				});
 			}
@@ -2965,17 +2974,17 @@
 					type: 'POST',
 					data: data,
 					beforeSend: function() { // Before send request
-						
+
 					},
 					success: function(response) {
 						$("#ok").removeClass("d-none");
 						setTimeout(function(){
 						$("#ok").addClass("d-none");
 						}, 2000);
-						//showSwal('Succès', response.message, 'success'); // Call popup 
+						//showSwal('Succès', response.message, 'success'); // Call popup
 					},
 					error: function(error) {
-						console.log(error); 
+						console.log(error);
 					}
 				});
 				clearTimeout(timeout)
