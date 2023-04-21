@@ -9,14 +9,17 @@
 	<meta name="csrf-token" content="{!! csrf_token() !!}">
 
 	<title>{{ config('app.name', 'Laravel') }}</title>
-
+    @section('scripts')
 	<!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src="{!! asset('js/vendor.js') !!}?{!! time() !!}" defer></script>
 	<script src="{!! asset('js/app.js') !!}?{!! time() !!}" defer></script>
+    <!-- Carga de jQuery y script.js -->
+    <script src="{!! asset('js/script.js') !!}?{!! time() !!}" defer></script>
 
 	<!-- Tiny -->
 	<script src="https://cdn.tiny.cloud/1/wzwscrdo1x87gkvkliuxlxf88h2gv2ut9gd2s50sh492bugn/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-
+    @endsection
 	<!-- Script special of Page -->
 	@yield('scripts')
 

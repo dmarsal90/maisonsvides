@@ -18,12 +18,12 @@ mix.js([
 	'node_modules/timepicker/jquery.timepicker.js',
 	'resources/js/waitMe.js',
 	'resources/js/config.js',
-	'resources/js/script.js',
 	'resources/js/map.js',
 	], 'public/js/app.js')
 	.sass('resources/sass/app.scss', 'public/css')
 	.sourceMaps();
 
+mix.js('resources/js/script.js', 'public/js/script.js');
 
 // Custom CSS and JS to certain functionalities
 mix.less('resources/less/style.less', 'public/css/');
