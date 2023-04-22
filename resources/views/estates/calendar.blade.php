@@ -60,7 +60,7 @@
 	</div>
 </div>
 
-<div class="modal fade" id="createEvent" tabindex="-1" aria-labelledby="createEventLabel" aria-hidden="true">
+<div class="modal fade" id="create" tabindex="-1" aria-labelledby="createEventLabel" aria-hidden="true">
 	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -70,10 +70,58 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				
+
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="createEvent" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title ffhnb" id="calendarModalLabel" data-event-title>Créer un événement</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="estateinfo">
+					<div class="estateinfo__card">
+						<span class="ffhnm">Localisation : </span>
+						<input type="text" id="localisation" name="localisation" required>
+					</div>
+					<div class="estateinfo__card">
+						<span class="ffhnm">Contact : </span>
+						<input type="text" id="contact" name="contact" required>
+					</div>
+					<div class="estateinfo__card">
+						<span class="ffhnm">Tel : </span>
+						<input type="phone" id="phone" name="phone" required>
+					</div>
+					<div class="estateinfo__card">
+						<span class="ffhnm">Mail : </span>
+						<input type="email" id="mail" name="mail" required>
+					</div>
+					<div class="estateinfo__card">
+						<span class="ffhnm">Type : </span>
+						<input type="text" id="type" name="type" required>
+					</div>
+					<div class="estateinfo__card">
+						<span class="ffhnm">Descriptif du bien :</span>
+						<input type="text" id="descriptif" name="descriptif" required>
+					</div>
+					<div class="estateinfo__location">
+						<iframe data-coordinates frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Créer</button>
 			</div>
 		</div>
 	</div>
