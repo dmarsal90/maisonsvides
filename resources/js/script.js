@@ -165,15 +165,21 @@
 							locale: 'fr', // Set the language
 							timeZone: 'Europe/Brussels',
 							allDaySlot: false,
-							firstDay: 1,
-							hiddenDays: [0,6],
-							events: events, // Add the events, temporally static
+							firstDay: 0, //el 0 es domingo y el 1 es lunes
+							//hiddenDays: [0,6], //para esconder sabado y domingo
+							events: '/events', // Add the events, temporally static
 							eventClick: function(info) {
                                 information = info.event.extendedProps;
                                 $("#calendarModal").modal('show');
                               },
                               dateClick: function(info) {
-                                $("#calendarModal").modal('show');
+                                var hasEvents = calendar.getEvents().length > 0;
+                                if (hasEvents) {
+                                   information = info.event.extendedProps;
+                                   $("#calendarModal").modal('show');
+                                } else {
+                                   $("#createEvent").modal('show');
+                                }
                               }
                             });
 						$('[data-hide-calendar]').on('click', function(){ // To hide ow show events of each calendar
@@ -261,7 +267,33 @@
 								$("#calendarModal").modal('show'); // Open modal with the all data of the estate clicked
 							},
 							dateClick: function(date, jsEvent) {
-								$("#createEvent").modal("show");
+                                var dateSplit = date.dateStr.split("T");
+                                function hayEventos(fecha) {
+                                    axios.get('/events', {
+                                      params: {
+                                        fecha: fecha
+                                      }
+                                    }).then(response => {
+                                      const eventos = response.data;
+                                      if (eventos.length > 0) {
+                                        // Muestra el modal del evento existente
+                                        $("#calendarModal").modal("show");
+                                        // Aquí debería agregar código para cargar los detalles del evento en el modal
+                                      } else {
+                                        // Muestra el modal para crear un nuevo evento
+                                        $("#createEvent").modal("show");
+                                        // Aquí debería agregar código para configurar el formulario para crear un nuevo evento
+                                      }
+                                    }).catch(error => {
+                                      console.log(error);
+                                    });
+                                  }
+                                  if(hayEventos(fecha)){
+                                  // Muestra el modal del evento existente
+                                  $("#calendarModal").modal("show");
+                                  }else{
+                                    $("#createEvent").modal("show");
+                                  }
 								var dateSplit = date.dateStr.split("T");
 								$("#date_event_click_start").val(dateSplit[0]);
 								$("#date_event_click_end").val(dateSplit[0]);
