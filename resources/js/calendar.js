@@ -21,7 +21,8 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         editable: true,
         selectable: true,
-        draggable: true,
+        eventStartEditable: true, // permitir editar fecha/hora de inicio arrastrando
+        eventDurationEditable: true // permitir editar duración arrastrando
         //dayMaxEvents: 3,
         // otros parámetros
     });
