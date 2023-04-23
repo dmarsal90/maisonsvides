@@ -1,12 +1,37 @@
-.estateinfo__card {
-    input[type="text"],
-    input[type="email"],
-    input[type="phone"] {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
+.estateinfo__card input[type="text"],
+.estateinfo__card input[type="email"],
+.estateinfo__card input[type="phone"] {
+width: 100%;
+padding: .375rem .75rem;
+font-size: 1rem;
+font-weight: 400;
+line-height: 1.5;
+color: #495057;
+background-color: #fff;
+background-clip: padding-box;
+border: 1px solid #ced4da;
+border-radius: .25rem;
+transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.estateinfo__card input[type="text"]:focus,
+.estateinfo__card input[type="email"]:focus,
+.estateinfo__card input[type="phone"]:focus {
+border-color: #80bdff;
+outline: 0;
+box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+.estateinfo__card input[type="text"]::placeholder,
+.estateinfo__card input[type="email"]::placeholder,
+.estateinfo__card input[type="phone"]::placeholder {
+color: #6c757d;
+opacity: 1;
+}
+
+.estateinfo__card input[type="text"]:disabled,
+.estateinfo__card input[type="text"]:disabled,
+.estateinfo__card input[type="text"]:disabled {
+background-color: #e9ecef;
+opacity: 1;
 }
