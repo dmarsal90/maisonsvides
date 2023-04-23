@@ -92,10 +92,6 @@
 			<div class="modal-body">
 				<div class="estateinfo">
 					<div class="estateinfo__card">
-						<span class="ffhnm">Localisation : </span>
-						<input type="text" id="localisation" name="localisation" required>
-					</div>
-					<div class="estateinfo__card">
 						<span class="ffhnm">Contact : </span>
 						<input type="text" id="contact" name="contact" required>
 					</div>
@@ -115,14 +111,20 @@
 						<span class="ffhnm">Descriptif du bien :</span>
 						<input type="text" id="descriptif" name="descriptif" required>
 					</div>
+                    <div class="estateinfo__card">
+						<span class="ffhnm">Localisation : </span>
+						<input type="text" id="localisation" name="localisation" placeholder="Entrez votre emplacement" required>
+                        <button type="button" class="btn btn-primary mt-2" id="search-location">Chercher</button>
+					</div>
 					<div class="estateinfo__location">
-						<iframe data-coordinates frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                        {{-- <div id="map" style="height: 400px;"></div> --}}
+						<iframe id="map" data-coordinates frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Créer</button>
+                <button type="button" class="btn btn-success" data-dismiss="modal">Créer</button>
 			</div>
 		</div>
 	</div>
