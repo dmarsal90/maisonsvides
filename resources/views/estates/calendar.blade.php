@@ -113,22 +113,26 @@
                                 <input type="text" id="type" name="type" required>
                             </div>
                             <div class="estateinfo__card">
-                                <label for="descriptif" class="ffhnm">Descriptif du bien</label>
-                                <textarea id="descriptif" name="descriptif" rows="5" required></textarea>
-                            </div>
-                            <div class="estateinfo__card">
-                                <label for="inicio" class="ffhnm">Heure de début</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="inicio" class="ffhnm">Heure de début</label>
                                 <input type="time" id="inicio" name="inicio">
-
-                                <label for="fin" class="ffhnm">Heure de fin</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="fin" class="ffhnm">Heure de fin</label>
                                 <input type="time" id="fin" name="fin">
+                                    </div>
+                                </div>
+
+
+
                             </div>
                             <div class="estateinfo__card">
                                 <label for="localisation" class="ffhnm">Localisation</label>
                                 <input type="text" id="localisation" name="localisation"
                                     placeholder="Saisissez votre localisation" required>
                             </div>
-                            <div class="estateinfo__location">
+                            {{-- <div class="estateinfo__location">
                                 <!-- Campos ocultos para almacenar la latitud y longitud -->
 
                                 @if (!empty(old('localisation')))
@@ -136,6 +140,10 @@
                                     <input type="hidden" name="longitud" id="longitud">
                                     <div id="map"></div>
                                 @endif
+                            </div> --}}
+                            <div class="estateinfo__card">
+                                <label for="descriptif" class="ffhnm">Descriptif du bien</label>
+                                <textarea id="descriptif" name="descriptif" rows="5" required></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
