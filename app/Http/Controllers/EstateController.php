@@ -506,7 +506,8 @@ class EstateController extends Controller {
 	 * Calendar
 	 */
 	public function calendar() {
-		// Save the client
+        $estate_ids = Estate::pluck('id');
+        // Save the client
 		$client = $this->getClient(Auth::user()->google_token);
 		// Create the service instance of Google Calendar
 		$service = new Google_Service_Calendar($client);
@@ -535,7 +536,7 @@ class EstateController extends Controller {
 				$ids = $ids . $id;
 			}
 		}
-		return view('estates.calendar', ['ids' => $ids]);
+		return view('estates.calendar', ['ids' => $ids,'estate_ids' => $estate_ids]);
 	}
 
 	/**
@@ -744,11 +745,11 @@ class EstateController extends Controller {
 		// Save the client
 		$client = $this->getClient(Auth::user()->google_token);
 		// Get all data of request
-		$data = $request->all();
-		$visit = $data['date_visit'];
-		$start = $visit." ".$data['date_start'];
+        $data = $request->all();
+		$visit = $request->input('date_visit');
+		$start = $request->input('date_start');
 		$start = date('Y-m-d\TH:i:sO', strtotime($start));
-		$end = $visit." ".$data['date_end'];
+		$end = $request->input('date_end');
 		$end = date('Y-m-d\TH:i:sO', strtotime($end));
 		// Init response
 		$response = array('status' => false, 'message' => 'La visite n\'a pas pu être enregistrée, veuillez réessayer plus tard');
@@ -775,7 +776,7 @@ class EstateController extends Controller {
 			);
 		}
 		else {
-			$email = 'sandy@flexvision.be';
+			$email = 'admin@flexvision.be';
 			$guestsCanInviteOthers = true;
 			$account = explode("@", $email);
 			if ($account[1] != 'gmail.com') {
@@ -783,8 +784,8 @@ class EstateController extends Controller {
 			}
 			// Create a event
 			$event = new Google_Service_Calendar_Event(array(
-				'summary' => 'Visite du dossier '.$data['estate_id'],
-				'description' => $data['estate_id'],
+				'summary' => 'Visite du dossier '.$request->input('estate_id'),
+				'description' => $request->input('estate_id'),
 				'status' => 'tentative',
 				'start' => array(
 					'dateTime' => $start,
@@ -795,14 +796,15 @@ class EstateController extends Controller {
 					'timeZone' => 'Europe/Brussels'
 				)
 			));
+            dd($request->input('estate_id'));die;
 			$event = $service->events->insert($this->calendarId, $event, ['sendUpdates' => 'all', 'sendNotifications' => true]);
 			/*$event = $service->events->insert($this->calendarId, $event);*/
 			if(isset($event->id)) {
 				$estateEvent = EstateEvent::create([
-					'estate_id' => $data['estate_id'],
+					'estate_id' => $request->input('estate_id'),
 					'event_id' => $event->id,
 					'user_id' => Auth::user()->id,
-					'seller_id' => $data['seller_id']
+					'seller_id' => $request->input('seller_id') // o $data['seller_id']
 				]);
 				$response = array(
 					'status' => true,
