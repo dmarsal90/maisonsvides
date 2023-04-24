@@ -93,56 +93,42 @@
                 <div class="modal-body">
                     <form method="POST" action="{{ route('setrdv') }}">
                         @csrf
-
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="estateinfo">
                             <div class="estateinfo__card">
-                                <label for="contact" class="ffhnm">Contact</label>
+                                <label for="contact" class="ffhnm">Nom</label>
                                 <input type="text" id="contact" name="contact" required>
                             </div>
                             <div class="estateinfo__card">
-                                <label for="tel" class="ffhnm">Tél</label>
-                                <input type="phone" id="tel" name="tel" required>
+                                <label for="tel" class="ffhnm">Téléphone</label>
+                                <input type="tel" id="tel" name="tel" required>
                             </div>
                             <div class="estateinfo__card">
-                                <label for="mail" class="ffhnm">Mail</label>
+                                <label for="mail" class="ffhnm">E-mail</label>
                                 <input type="email" id="mail" name="mail" required>
-
                             </div>
                             <div class="estateinfo__card">
-                                <label for="type" class="ffhnm">Type</label>
+                                <label for="type" class="ffhnm">Type de visite</label>
                                 <input type="text" id="type" name="type" required>
                             </div>
                             <div class="estateinfo__card">
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="inicio" class="ffhnm">Heure de début</label>
-                                <input type="time" id="inicio" name="inicio">
+                                        <input type="time" id="inicio" name="inicio">
                                     </div>
                                     <div class="col-6">
                                         <label for="fin" class="ffhnm">Heure de fin</label>
-                                <input type="time" id="fin" name="fin">
+                                        <input type="time" id="fin" name="fin">
                                     </div>
                                 </div>
-
-
-
                             </div>
                             <div class="estateinfo__card">
                                 <label for="localisation" class="ffhnm">Localisation</label>
-                                <input type="text" id="localisation" name="localisation"
-                                    placeholder="Saisissez votre localisation" required>
+                                <input type="text" id="localisation" name="localisation" placeholder="Saisissez votre localisation" required>
                             </div>
-                            {{-- <div class="estateinfo__location">
-                                <!-- Campos ocultos para almacenar la latitud y longitud -->
-
-                                @if (!empty(old('localisation')))
-                                    <input type="hidden" name="latitud" id="latitud">
-                                    <input type="hidden" name="longitud" id="longitud">
-                                    <div id="map"></div>
-                                @endif
-                            </div> --}}
                             <div class="estateinfo__card">
-                                <label for="descriptif" class="ffhnm">Descriptif du bien</label>
+                                <label for="descriptif" class="ffhnm">Description du bien</label>
                                 <textarea id="descriptif" name="descriptif" rows="5" required></textarea>
                             </div>
                         </div>
