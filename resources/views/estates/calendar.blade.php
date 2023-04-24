@@ -90,42 +90,48 @@
 				</button>
 			</div>
 			<div class="modal-body">
-				<div class="estateinfo">
-					<div class="estateinfo__card">
-						<span class="ffhnm">Contact : </span>
-						<input type="text" id="contact" name="contact" required>
-					</div>
-					<div class="estateinfo__card">
-						<span class="ffhnm">Tel : </span>
-						<input type="phone" id="phone" name="phone" required>
-					</div>
-					<div class="estateinfo__card">
-						<span class="ffhnm">Mail : </span>
-						<input type="email" id="mail" name="mail" required>
-					</div>
-					<div class="estateinfo__card">
-						<span class="ffhnm">Type : </span>
-						<input type="text" id="type" name="type" required>
-					</div>
-					<div class="estateinfo__card">
-						<span class="ffhnm">Descriptif du bien :</span>
-						<input type="text" id="descriptif" name="descriptif" required>
-					</div>
-                    <div class="estateinfo__card">
-						<span class="ffhnm">Localisation : </span>
-						<input type="text" id="localisation" name="localisation" placeholder="Entrez votre emplacement" required>
-                        <button type="button" class="btn btn-primary mt-2" id="search-location">Chercher</button>
-					</div>
-					<div class="estateinfo__location">
-                        {{-- <div id="map" style="height: 400px;"></div> --}}
-						<iframe id="map" data-coordinates frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-success" data-dismiss="modal">Créer</button>
-			</div>
+                <form method="POST" action="{{ route('setrdv') }}">
+                    @csrf
+
+                    <div class="estateinfo">
+                        <div class="estateinfo__card">
+                            <label for="contact" class="ffhnm">Contact</label>
+                            <input type="text" id="contact" name="contact" required>
+                        </div>
+                        <div class="estateinfo__card">
+                            <label for="tel" class="ffhnm">Tél</label>
+                            <input type="phone" id="tel" name="tel" required>
+                        </div>
+                        <div class="estateinfo__card">
+                            <label for="mail" class="ffhnm">Mail</label>
+                            <input type="email" id="mail" name="mail" required>
+
+                        </div>
+                        <div class="estateinfo__card">
+                            <label for="type" class="ffhnm">Type</label>
+                            <input type="text" id="type" name="type" required>
+                        </div>
+                        <div class="estateinfo__card">
+                            <label for="descriptif" class="ffhnm">Descriptif du bien</label>
+                            <textarea id="descriptif" name="descriptif" rows="5" required></textarea>
+                        </div>
+                        <div class="estateinfo__card">
+                            <label for="localisation" class="ffhnm">Localisation</label>
+                            <input type="text" id="localisation" name="localisation"
+                                placeholder="Saisissez votre localisation" required>
+                        </div>
+                        <div class="estateinfo__location">
+                            <!-- Campos ocultos para almacenar la latitud y longitud -->
+                            <input type="hidden" name="latitud" id="latitud">
+                            <input type="hidden" name="longitud" id="longitud">
+                            <div id="map"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Créer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    </div>
+                </form>
 		</div>
 	</div>
 </div>
