@@ -95,6 +95,8 @@
                         @csrf
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="estateinfo">
+                            <input type="hidden" name="estate_id" value="{{ $estate->id }}" />
+                            <input type="hidden" name="seller_id" value="{{ $seller->id }}" />
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
                                 <input type="text" id="contact" name="contact" placeholder="Entrez votre nom complet (ex. Jean Dupont)" required>
@@ -109,17 +111,22 @@
                             </div>
                             <div class="estateinfo__card">
                                 <label for="type" class="ffhnm">Type de visite</label>
-                                <input type="text" id="type" name="type" required>
+                                <select id="type-visite" name="type-visite">
+                                    <option selected>Sélectionnez le type de visite :</option>
+                                    <option value="visite">Première visite</option>
+                                    <option value="revisite">Revisite</option>
+                                    <option value="signature">Visite pour signature</option>
+                                  </select>
                             </div>
                             <div class="estateinfo__card">
                                 <div class="row">
                                     <div class="col-6">
                                         <label for="inicio" class="ffhnm">Heure de début</label>
-                                        <input type="time" id="inicio" name="inicio">
+                                        <input type="time" id="date_start" name="date_start">
                                     </div>
                                     <div class="col-6">
                                         <label for="fin" class="ffhnm">Heure de fin</label>
-                                        <input type="time" id="fin" name="fin">
+                                        <input type="time" id="date_end" name="date_end">
                                     </div>
                                 </div>
                             </div>
@@ -133,7 +140,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Créer</button>
+                            <button type="submit" class="btn btn-success" id="register-visit-button" data-register-visit="form-1">Créer</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
                         </div>
                     </form>
