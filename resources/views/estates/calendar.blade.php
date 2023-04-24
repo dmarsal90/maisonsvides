@@ -97,15 +97,15 @@
                         <div class="estateinfo">
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
-                                <input type="text" id="contact" name="contact" required>
+                                <input type="text" id="contact" name="contact" placeholder="Entrez votre nom complet (ex. Jean Dupont)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="tel" class="ffhnm">Téléphone</label>
-                                <input type="tel" id="tel" name="tel" required>
+                                <input type="phone" id="tel" name="tel" placeholder="Entrez votre numéro de téléphone (ex. +32 2 123 45 67)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="mail" class="ffhnm">E-mail</label>
-                                <input type="email" id="mail" name="mail" required>
+                                <input type="email" id="mail" name="mail" placeholder="Entrez votre adresse e-mail (ex. nom@example.com)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="type" class="ffhnm">Type de visite</label>
@@ -129,7 +129,7 @@
                             </div>
                             <div class="estateinfo__card">
                                 <label for="descriptif" class="ffhnm">Description du bien</label>
-                                <textarea id="descriptif" name="descriptif" rows="5" required></textarea>
+                                <textarea id="descriptif" name="descriptif" rows="5" placeholder="Entrez une description détaillée de votre bien immobilier ici"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
