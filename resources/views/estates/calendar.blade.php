@@ -91,23 +91,30 @@
                     </button>
                 </div>
                 <div class="modal-body">
+
+
                     <form method="POST" action="{{ route('setrdv') }}">
                         @csrf
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="estateinfo">
-                            <input type="hidden" name="estate_id" value="{{ $estate->id }}" />
+                            @foreach ($estate_ids as $estate_id)
+                                <input type="hidden" name="estate_id" value="{{ $estate_id }}" />
+                            @endforeach
                             <input type="hidden" name="seller_id" value="{{ $seller->id }}" />
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
-                                <input type="text" id="contact" name="contact" placeholder="Entrez votre nom complet (ex. Jean Dupont)" required>
+                                <input type="text" id="contact" name="contact"
+                                    placeholder="Entrez votre nom complet (ex. Jean Dupont)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="tel" class="ffhnm">Téléphone</label>
-                                <input type="phone" id="tel" name="tel" placeholder="Entrez votre numéro de téléphone (ex. +32 2 123 45 67)" required>
+                                <input type="phone" id="tel" name="tel"
+                                    placeholder="Entrez votre numéro de téléphone (ex. +32 2 123 45 67)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="mail" class="ffhnm">E-mail</label>
-                                <input type="email" id="mail" name="mail" placeholder="Entrez votre adresse e-mail (ex. nom@example.com)" required>
+                                <input type="email" id="mail" name="mail"
+                                    placeholder="Entrez votre adresse e-mail (ex. nom@example.com)" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="type" class="ffhnm">Type de visite</label>
@@ -116,7 +123,7 @@
                                     <option value="visite">Première visite</option>
                                     <option value="revisite">Revisite</option>
                                     <option value="signature">Visite pour signature</option>
-                                  </select>
+                                </select>
                             </div>
                             <div class="estateinfo__card">
                                 <div class="row">
@@ -132,15 +139,18 @@
                             </div>
                             <div class="estateinfo__card">
                                 <label for="localisation" class="ffhnm">Localisation</label>
-                                <input type="text" id="localisation" name="localisation" placeholder="Saisissez votre localisation" required>
+                                <input type="text" id="localisation" name="localisation"
+                                    placeholder="Saisissez votre localisation" required>
                             </div>
                             <div class="estateinfo__card">
                                 <label for="descriptif" class="ffhnm">Description du bien</label>
-                                <textarea id="descriptif" name="descriptif" rows="5" placeholder="Entrez une description détaillée de votre bien immobilier ici"></textarea>
+                                <textarea id="descriptif" name="descriptif" rows="5"
+                                    placeholder="Entrez une description détaillée de votre bien immobilier ici"></textarea>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-success" id="register-visit-button" data-register-visit="form-1">Créer</button>
+                            <button type="submit" class="btn btn-success" id="register-visit-button"
+                                data-register-visit="form-1">Créer</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
                         </div>
                     </form>
