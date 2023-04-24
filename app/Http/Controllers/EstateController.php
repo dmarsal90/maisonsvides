@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Google_Service_Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +48,7 @@ class EstateController extends Controller {
 	private $calendarId;
 	private $updated;
 	private $deleted;
+    private $objectTicket;
 
 	/**
 	 * Set variables
@@ -671,7 +673,7 @@ class EstateController extends Controller {
 				'events' => $auxAllEvents,
 			);
 		}
-	
+
 		/*dd($events);*/
 		return response($response)->header('Content-Type', 'application/json');
 	}
@@ -834,7 +836,7 @@ class EstateController extends Controller {
 		$infos = $this->getEstateEvent($event_id);
 		// Variables to service of google calendar
 		$user = $this->getUser($infos['user_id']);
-		$client = $this->getClient($user['google_token']);// Save the client 
+		$client = $this->getClient($user['google_token']);// Save the client
 		$service = new Google_Service_Calendar($client);
 
 		// Confirm event in the DB
@@ -892,7 +894,7 @@ class EstateController extends Controller {
 				$infos = $this->getEstateEvents($estateid);
 				$events = array();
 				if (!empty($infos)) {
-					// Save the client 
+					// Save the client
 					$user = $this->getUser($infos[0]['user_id']);
 					$client = $this->getClient($user['google_token']);
 					foreach ($infos as $info) {
@@ -1713,7 +1715,7 @@ class EstateController extends Controller {
 	private function countEstatesCategory() {
 		// Code to save the total estates that they have a category
 		$categories = $this->getCategories(); // Get categories
-		foreach ($categories as $category) { 
+		foreach ($categories as $category) {
 			// Get the category of each estate
 			$estate = Estate::where('category', '=', $category['id'])->get();
 			$value = $estate->count(); // Count total of estates that they have this category
@@ -2213,7 +2215,7 @@ class EstateController extends Controller {
 		}
 		// If the image start with main_photo
 		if (str_starts_with($photo['namePhoto'], 'main_photo')) {
-			// Get estate id to send in the function updateData 
+			// Get estate id to send in the function updateData
 			$estate_id = str_replace('main_photo_', '', $photo['namePhoto']);
 			$updated = $this->updateData(app("App\\Models\\Estate"), 'main_photo', $photo['namePhoto'].'.'.$type, $estate_id, $estate_id, 'main_photo'); // Updatate data
 		} else {
@@ -2376,7 +2378,7 @@ class EstateController extends Controller {
 					'data' => $data,
 				);
 			} catch (\Exception $e) {
-				$message = ""; // If 
+				$message = ""; // If
 				if ($e->getCode() == 23000) {
 					$message = 'Le offre site immobilier existe déjà';
 				}
@@ -2584,7 +2586,7 @@ class EstateController extends Controller {
 		try {
 			$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 			$client = new \Nexmo\Client($basic);
-			// Sending SMS 
+			// Sending SMS
 			$message = $client->message()->send([
 				'to' => '527731951309',
 				'from' => 'Wesold',
@@ -2838,7 +2840,7 @@ class EstateController extends Controller {
 				'status' => true,
 				'message' => 'Le offer a été envoyé'
 			);
-			
+
 			// $offer = $this->getOffre($request->estate_id);
 			// $data->files[] = asset('pdfs/'.$offer['pdf']);
 			// $data->emails = $request->emails;
@@ -2931,7 +2933,7 @@ class EstateController extends Controller {
 						$secondReminder = array(
 							'id' => $d->format("His.u"),
 							'type' => $data['type_tem_create'],
-							'subject' => ($data['subject_template_s'] == null) ? '' : $data['subject_template_s'], 
+							'subject' => ($data['subject_template_s'] == null) ? '' : $data['subject_template_s'],
 							'content' => $data['body_mail_reminder_r'],
 							'date' => $this->isWeekend(date('Y-m-d', strtotime($currentDate."+ ".$data['days_reminder_r']."days"))),
 							'seller_id' => $data['seller_id'],
@@ -2984,7 +2986,7 @@ class EstateController extends Controller {
 					// if ($data['type_template_r'] == 'sms') {
 					// 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 					// 	$client = new \Nexmo\Client($basic);
-					// 	// Sending SMS 
+					// 	// Sending SMS
 					// 	$message = $client->message()->send([
 					// 		'to' => '527731951309',//$data['seller_phone'],
 					// 		'from' => 'Wesold',
@@ -3014,7 +3016,7 @@ class EstateController extends Controller {
 						$secondReminder = array(
 							'id' => $d->format("His.u"),
 							'type' => $data['type_tem_create'],
-							'subject' => ($data['subject_template_s'] == null) ? '' : $data['subject_template_s'], 
+							'subject' => ($data['subject_template_s'] == null) ? '' : $data['subject_template_s'],
 							'content' => $data['body_mail_reminder_r'],
 							'date' => $this->isWeekend(date('Y-m-d', strtotime($data['date_changed']."+ ".$data['days_reminder_r']."days"))),
 							'seller_id' => $data['seller_id'],
@@ -3045,7 +3047,7 @@ class EstateController extends Controller {
 							$allReminders[] = $reminder;
 						}
 					}
-					
+
 				} // End - If the reminder isn't instant
 
 				// Save reminder in the DB
@@ -3115,7 +3117,7 @@ class EstateController extends Controller {
 								// if ($reminder == 'sms') {
 								// 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 								// 	$client = new \Nexmo\Client($basic);
-								// 	// Sending SMS 
+								// 	// Sending SMS
 								// 	$message = $client->message()->send([
 								// 		'to' => '527731951309',
 								// 		'from' => 'Wesold',
@@ -3161,7 +3163,7 @@ class EstateController extends Controller {
 								if ($reminder == 'sms') {
 									$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 									$client = new \Nexmo\Client($basic);
-									// Sending SMS 
+									// Sending SMS
 									$message = $client->message()->send([
 										'to' => '527731951309',
 										'from' => 'Wesold',
@@ -3221,7 +3223,7 @@ class EstateController extends Controller {
 								// if ($reminder == 'sms') {
 								// 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 								// 	$client = new \Nexmo\Client($basic);
-								// 	// Sending SMS 
+								// 	// Sending SMS
 								// 	$message = $client->message()->send([
 								// 		'to' => '527731951309',
 								// 		'from' => 'Wesold',
@@ -3265,7 +3267,7 @@ class EstateController extends Controller {
 								// if ($reminder == 'sms') {
 								// 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 								// 	$client = new \Nexmo\Client($basic);
-								// 	// Sending SMS 
+								// 	// Sending SMS
 								// 	$message = $client->message()->send([
 								// 		'to' => '527731951309',
 								// 		'from' => 'Wesold',
@@ -3848,7 +3850,7 @@ class EstateController extends Controller {
 		try {
 			$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
 			$client = new \Nexmo\Client($basic);
-			// Sending SMS 
+			// Sending SMS
 			$message = $client->message()->send([
 				'to' => '527731951309',
 				'from' => 'Wesold',
@@ -4004,7 +4006,7 @@ class EstateController extends Controller {
 	}
 
 	public function saveReminderHalfEight($id, $val) {
-		
+
 		try {
 			// Save date of the visit in DB
 			$up = Estate::where('id', '=', $id)
