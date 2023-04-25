@@ -1,42 +1,71 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateSellersTable extends Migration
 {
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up() {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('sellers', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->bigInteger('phone');
+            $table->string('type');
+            $table->string('contact_by');
+            $table->string('reason_sale');
+            $table->string('looking_property');
+            $table->boolean('want_stay_tenant');
+            $table->string('when_to_buy');
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
-		Schema::create('sellers', function (Blueprint $table) {
-			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->string('name'); // Name of Contact
-			$table->string('email')->unique(); // Email of contact
-			$table->bigInteger('phone'); // Phone of contact
-			$table->string('type'); // Type of contact free text
-			$table->string('contact_by'); // Method of contact
-			$table->string('reason_sale'); // Reason for sale
-			$table->string('looking_property'); // Looking for another property
-			$table->boolean('want_stay_tenant'); // Want to stay a tenant 1 => Yes, 0 => No
-			$table->string('when_to_buy'); // When to buy
-			$table->timestamp('created_at')->useCurrent(); // Created at
-			$table->timestamp('updated_at')->useCurrent(); // Updated at
-			$table->timestamp('deleted_at')->nullable(); // Deleted at
-		});
-	}
+        // Insert 2 sellers
+        DB::table('sellers')->insert([
+            [
+                'name' => 'Seller 1',
+                'email' => 'seller1@example.com',
+                'phone' => '123456789',
+                'type' => 'Individual',
+                'contact_by' => 'Email',
+                'reason_sale' => 'Moving to another city',
+                'looking_property' => 'Yes',
+                'want_stay_tenant' => false,
+                'when_to_buy' => 'Within the next year',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Seller 2',
+                'email' => 'seller2@example.com',
+                'phone' => '987654321',
+                'type' => 'Company',
+                'contact_by' => 'Phone',
+                'reason_sale' => 'Downsizing',
+                'looking_property' => 'No',
+                'want_stay_tenant' => true,
+                'when_to_buy' => 'Not sure yet',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::dropIfExists('sellers');
-	}
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('sellers');
+    }
 }

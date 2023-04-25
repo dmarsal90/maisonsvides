@@ -2,68 +2,94 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateEstatesTable extends Migration
 {
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up() {
+    public function up()
+    {
+        Schema::create('estates', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->timestamp('reference')->useCurrent();
+            $table->string('name');
+            $table->string('type_estate');
+            $table->bigInteger('category');
+            $table->string('visit_date_at')->nullable();
+            $table->string('main_photo');
+            $table->string('street');
+            $table->integer('number');
+            $table->integer('box');
+            $table->integer('code_postal');
+            $table->string('city');
+            $table->bigInteger('seller');
+            $table->longText('when_want_sell');
+            $table->longText('want_tenant_after_sell');
+            $table->longText('want_buy_wesold');
+            $table->bigInteger('agent');
+            $table->bigInteger('notary');
+            $table->double('estimate');
+            $table->double('market');
+            $table->string('type_of_sale');
+            $table->boolean('attempt_via_agency');
+            $table->boolean('attempt_via_client');
+            $table->string('agency_name');
+            $table->float('price_published_agence');
+            $table->string('date_of_sale_agence');
+            $table->float('price_published_himself');
+            $table->string('date_of_sale_himself');
+            $table->longText('information_additional');
+            $table->boolean('module_visit')->default(0);
+            $table->string('date_send_reminder')->default('14:00:00');
+            $table->boolean('send_reminder_half_past_eight')->default(0);
+            $table->boolean('rdv')->default(0);
+            $table->timestamps();
+            $table->softDeletes();
+            $table->foreign('seller')->references('id')->on('sellers');
+            $table->foreign('notary')->references('id')->on('notaries');
+            $table->foreign('agent')->references('id')->on('users');
+            $table->foreign('category')->references('id')->on('categories');
+        });
 
-		Schema::create('estates', function (Blueprint $table) {
-			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->timestamp('reference')->useCurrent(); // Name of estate
-			$table->string('name'); // Name of estate
-			$table->string('type_estate'); // Type of estate
-			$table->bigInteger('category'); // Category ID
-			$table->string('visit_date_at')->nullable(); // Date of visit
-			$table->string('main_photo'); // Main photo to show in the view
-			$table->string('street'); // Street of estate
-			$table->integer('number'); // Number of estate
-			$table->integer('box'); // Box = Boite of estate
-			$table->integer('code_postal'); // Code postal of estate
-			$table->string('city'); // City of estate
-			$table->bigInteger('seller'); // Seller ID
-			$table->longText('when_want_sell'); // When want to sell
-			$table->longText('want_tenant_after_sell'); // Want to remain a tenant after sell
-			$table->longText('want_buy_wesold'); // Want to by Wesold
-			$table->bigInteger('agent'); // Agent ID
-			$table->bigInteger('notary'); // Notary ID
-			$table->double('estimate'); // Estimate
-			$table->double('market'); // Market
-			$table->string('type_of_sale'); // Type of sale of the estate
-			$table->boolean('attempt_via_agency'); // Attempt via agency 1 => Yes, 0 => No
-			$table->boolean('attempt_via_client'); // Attempt via agency 1 => Yes, 0 => No
-			$table->string('agency_name'); // Agency name
-			$table->float('price_published_agence'); // Price published
-			$table->string('date_of_sale_agence'); // Start date of sale
-			$table->float('price_published_himself'); // Price published
-			$table->string('date_of_sale_himself'); // Start date of sale
-			$table->longText('information_additional'); // Information additional
-			$table->boolean('module_visit')->default(0); // Module visit 1 => Yes, 0 => No
-			$table->string('date_send_reminder')->default('14:00:00'); // Time to send the cron
-			$table->boolean('send_reminder_half_past_eight')->default(0); // Send reminder 8:30 1 => Yes, 0 => No
-			$table->boolean('rdv')->default(0); // Module visit 1 => Yes, 0 => No
-			$table->timestamp('created_at')->useCurrent(); // Created at
-			$table->timestamp('updated_at')->useCurrent(); // Updated at
-			$table->timestamp('deleted_at')->nullable(); // Deleted at
-			$table->foreign('seller')->references('id')->on('sellers'); // Add foreign key of seller type
-			$table->foreign('notary')->references('id')->on('notaries'); // Add foreign key of seller type
-			$table->foreign('agent')->references('id')->on('users'); // Add foreign key of agent type
-			$table->foreign('category')->references('id')->on('categories'); // Add foreign key of category type
-		});
-	}
+        DB::table('estates')->insert([
+            'reference' => now(),
+            'name' => 'Estate Name',
+            'type_estate' => 'Type of Estate',
+            'category' => 1,
+            'main_photo' => 'main_photo.jpg',
+            'street' => 'Estate Street',
+            'number' => 123,
+            'box' => 0,
+            'code_postal' => 1000,
+            'city' => 'Estate City',
+            'seller' => 1,
+            'when_want_sell' => 'When the seller wants to sell the estate',
+            'want_tenant_after_sell' => 'What the seller wants to do with the estate after selling it',
+            'want_buy_wesold' => 'If the seller wants to buy another estate from us after selling this one',
+            'agent' => 1,
+            'notary' => 1,
+            'estimate' => 100000,
+            'market' => 120000,
+            'type_of_sale' => 'Type of Sale',
+            'attempt_via_agency' => true,
+            'attempt_via_client' => false,
+            'agency_name' => 'Agency Name',
+            'price_published_agence' => 110000,
+            'date_of_sale_agence' => '2022-01-01',
+            'price_published_himself' => 115000,
+            'date_of_sale_himself' => '2022-01-02',
+            'information_additional' => 'Additional information about the estate',
+            'module_visit' => false,
+            'date_send_reminder' => '14:00:00',
+            'send_reminder_half_past_eight' => false,
+            'rdv' => false,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::dropIfExists('estates');
-	}
+    public function down()
+    {
+        Schema::dropIfExists('estates');
+    }
 }
