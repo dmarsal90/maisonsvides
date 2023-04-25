@@ -52,6 +52,7 @@ Route::get('/search', 'EstateController@search')->name('search')->middleware('au
 Route::get('calendar', 'EstateController@calendar')->name('calendar')->middleware('auth');
 Route::get('connect', 'EstateController@connect')->name('connect')->middleware('auth');
 Route::get('events', 'EstateController@getEvents')->name('events')->middleware('auth');
+Route::get('showevents', 'EstateController@showEvents')->name('showevents')->middleware('auth');
 Route::post('setrdv', 'EstateController@setRdv')->name('setrdv')->middleware('auth');
 Route::post('createevent', 'EstateController@createEvent')->name('createevent')->middleware('auth');
 
