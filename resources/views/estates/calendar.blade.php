@@ -100,7 +100,9 @@
                             @foreach ($estate_ids as $estate_id)
                                 <input type="hidden" name="estate_id" value="{{ $estate_id }}" />
                             @endforeach
-                            <input type="hidden" name="seller_id" value="{{ $seller->id }}" />
+                            @foreach ($seller_ids as $seller_id)
+                                <input type="hidden" name="seller_id" value="{{ $seller_id }}" />
+                            @endforeach
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
                                 <input type="text" id="contact" name="contact"
