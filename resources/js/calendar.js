@@ -9,10 +9,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const calendarEl = document.getElementById("calendar");
 
     let calendar = new Calendar(calendarEl, {
+        lazyFetching: true,
         locale: frLocale,
         plugins: [ dayGridPlugin, timeGridPlugin, listPlugin ],
         initialView: 'dayGridMonth',
-        events: '/eventos',
+        events: '/events',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
@@ -20,8 +21,10 @@ document.addEventListener('DOMContentLoaded', function() {
         },
         editable: true,
         selectable: true,
-        dayMaxEvents: 3,
-        // Continúa con otros parámetros
+        eventStartEditable: true, // permitir editar fecha/hora de inicio arrastrando
+        eventDurationEditable: true // permitir editar duración arrastrando
+        //dayMaxEvents: 3,
+        // otros parámetros
     });
 
     calendar.render();
