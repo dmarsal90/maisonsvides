@@ -847,8 +847,8 @@ class EstateController extends Controller
                  $updated = $this->updateData(app("App\\Models\\Estate"), $category, 1 , $estate['offre'], $estate['offre'], [$category]); // Update data
              }
          }*/
-        return response($response)->header('Content-Type', 'application/json');
-
+       // return response($response)->header('Content-Type', 'application/json');
+        return redirect()->route('calendar')->with('response', $response);
     }
 
     /**
