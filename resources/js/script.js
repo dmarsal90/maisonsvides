@@ -165,8 +165,8 @@
 							locale: 'fr', // Set the language
 							timeZone: 'Europe/Brussels',
 							allDaySlot: false,
-							firstDay: 0, //el 0 es domingo y el 1 es lunes
-							//hiddenDays: [0,6], //para esconder sabado y domingo
+							firstDay: 1, //el 0 es domingo y el 1 es lunes
+							hiddenDays: [0,6], //para esconder sabado y domingo
 							events: '/events', // Add the events, temporally static
 							eventClick: function(info) {
                                 information = info.event.extendedProps;
