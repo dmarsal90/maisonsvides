@@ -20,8 +20,6 @@
 	<!-- Tiny -->
 	<script src="https://cdn.tiny.cloud/1/wzwscrdo1x87gkvkliuxlxf88h2gv2ut9gd2s50sh492bugn/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
     @endsection
-	<!-- Script special of Page -->
-	@yield('scripts')
 
 	<!-- Styles -->
 	<link href="{!! asset('css/app.css') !!}?{!! time() !!}" rel="stylesheet">
@@ -105,6 +103,8 @@
 			@endif
 			@yield('content')
 			@yield('modals')
+            <!-- Script special of Page -->
+	        @yield('scripts')
 		</main>
 	</div>
 </body>
