@@ -161,40 +161,4 @@
         </div>
     </div>
 @endsection
-{{-- @section('scripts')
-    <script>
-        function validarFormulario() {
-            // Obtener los campos del formulario
-            var contacto = document.getElementById("contact");
-            var telefono = document.getElementById("tel");
-            var correo = document.getElementById("mail");
-            var tipo = document.getElementById("type");
-            var descriptif = document.getElementById("descriptif");
-            var localizacion = document.getElementById("localisation");
 
-            // Verificar que los campos obligatorios estén completos
-            if (contacto.value == "" || telefono.value == "" || correo.value == "" || tipo.value == "" || descriptif
-                .value == "" || localizacion.value == "") {
-                alert("Veuillez remplir tous les champs obligatoires");
-                return false;
-            }
-
-            // Verificar que el correo tenga un formato válido
-            var correoRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-            if (!correoRegex.test(correo.value)) {
-                alert("Veuillez saisir une adresse e-mail valide");
-                return false;
-            }
-
-            // Verificar que el número de teléfono tenga un formato válido
-            var telefonoRegex = /^\+?\d{0,15}$/;
-            if (!telefonoRegex.test(telefono.value)) {
-                alert("Veuillez saisir un numéro de téléphone valide (y compris le préfixe international + si nécessaire)");
-                return false;
-            }
-
-            // Si todas las validaciones pasan, enviar el formulario
-            return true;
-        }
-    </script>
-@endsection --}}
