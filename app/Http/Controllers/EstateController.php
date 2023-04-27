@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use Google_Service_Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -589,6 +590,7 @@ class EstateController extends Controller
     {
         // Save the client
         $client = $this->getClient(Auth::user()->google_token);
+
         // Init response
         $response = array(
             'status' => false,
@@ -596,6 +598,14 @@ class EstateController extends Controller
         );
         // Create the service instance of Google Calendar
         $service = new Google_Service_Calendar($client);
+        $calendarId = 'primary';
+        $optParams = [
+            'maxResults' => 10,
+            'orderBy' => 'startTime',
+            'singleEvents' => true,
+            'timeZone' => 'Europe/Brussels',
+        ];
+        $events = $service->events->listEvents($calendarId, $optParams);
         // Optional params to create a request to get envents
         $optParams = array(
             'maxResults' => 250, // Number of max results to obtain default is 250,
@@ -606,7 +616,7 @@ class EstateController extends Controller
         // ///////MI CODE
         // Return view with the data of calendar
         $calendarList = $service->calendarList->listCalendarList();
-
+        //dd($events);die;
         while (true) {
             // foreach ($calendarList->getItems() as $calendarListEntry) {
             // 	echo $calendarListEntry->getSummary();
@@ -690,6 +700,7 @@ class EstateController extends Controller
 
         /*dd($events);*/
         return response($response)->header('Content-Type', 'application/json');
+
     }
 
     /**
@@ -768,7 +779,7 @@ class EstateController extends Controller
         $end = date('Y-m-d\TH:i:sO', strtotime($end));
         // Init response
         $response = array('status' => false, 'message' => 'La visite n\'a pas pu être enregistrée, veuillez réessayer plus tard');
-        $apiKey = env('GOOGLE_MAPS_API_KEY');
+        $apiKey = env('GOOGLE_API_KEY');
         $client->setDeveloperKey($apiKey);
         $service = new Google_Service_Calendar($client);
         // Optional params to create a request to get envents
@@ -800,8 +811,12 @@ class EstateController extends Controller
             }
             // Create a event
             $event = new Google_Service_Calendar_Event(array(
-                'summary' => 'Visite du dossier ' . $request->input('estate_id'),
-                'description' => $request->input('estate_id'),
+                'summary' => 'Visite du dossier ' ,//. $request->input('estate_id'),
+                'description' => 'Visite de type: '.$request->input('type-visite')
+                .' '.'à l\'adresse suivante: '.$request->input('localisation')
+                .'. '.'Et les données du propriétaire sont '.$request->input('contact')
+                .', avec téléphone: '.$request->input('tel')
+                .' et e-mail: '.$request->input('mail'),
                 'status' => 'tentative',
                 'start' => array(
                     'dateTime' => $start,
@@ -810,22 +825,38 @@ class EstateController extends Controller
                 'end' => array(
                     'dateTime' => $end,
                     'timeZone' => 'Europe/Brussels'
+                ),
+                'attendees' => array(
+                    array('name'=> $request->input('contact'),
+                        'email' => $request->input('mail') )
                 )
             ));
             // dd($request->input('estate_id'));die;
             $event = $service->events->insert($this->calendarId, $event, ['sendUpdates' => 'all', 'sendNotifications' => true]);
             /*$event = $service->events->insert($this->calendarId, $event);*/
             if (isset($event->id)) {
-                $estateEvent = EstateEvent::create([
+                /* $estateEvent = EstateEvent::create([
                     'estate_id' => $request->input('estate_id'),
                     'event_id' => $event->id,
                     'user_id' => Auth::user()->id,
                     'seller_id' => $request->input('seller_id') // o $data['seller_id']
+                ]); */
+                $event_created = Event::create([
+                    'estate_id' => $request->input('estate_id'),
+                    //'event_id' => $event->id,
+                    'name'=>$request->input('contact'),
+                    'telephone'=>$request->input('tel'),
+                    'email'=>$request->input('mail'),
+                    'type_visit'=>$request->input('type-visite'),
+                    'localization'=>$request->input('localisation'),
+                    'description'=>$request->input('descriptif'),
+                    'user_id' => Auth::user()->id,
+                    //'seller_id' => $request->input('seller_id') // o $data['seller_id']
                 ]);
                 $response = array(
                     'status' => true,
                     'message' => 'La visite a été enregistrée.',
-                    'data' => $data,
+                    'data' => $event_created,
                     'start' => $start,
                     'end' => $end,
                 );
