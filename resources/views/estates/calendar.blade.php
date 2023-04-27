@@ -100,9 +100,9 @@
                             @foreach ($estate_ids as $estate_id)
                                 <input type="hidden" name="estate_id" value="{{ $estate_id }}" />
                             @endforeach
-                            @foreach ($seller_ids as $seller_id)
+                           {{--  @foreach ($seller_ids as $seller_id)
                                 <input type="hidden" name="seller_id" value="{{ $seller_id }}" />
-                            @endforeach
+                            @endforeach --}}
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
                                 <input type="text" id="contact" name="contact"
@@ -122,9 +122,9 @@
                                 <label for="type" class="ffhnm">Type de visite</label>
                                 <select id="type-visite" name="type-visite">
                                     <option selected>Sélectionnez le type de visite :</option>
-                                    <option value="visite">Première visite</option>
-                                    <option value="revisite">Revisite</option>
-                                    <option value="signature">Visite pour signature</option>
+                                    <option value="Première visite">Première visite</option>
+                                    <option value="Revisite">Revisite</option>
+                                    <option value="Visite pour signature">Visite pour signature</option>
                                 </select>
                             </div>
                             <div class="estateinfo__card">
