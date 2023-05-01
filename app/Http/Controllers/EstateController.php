@@ -613,47 +613,31 @@ class EstateController extends Controller
         // Create the service instance of Google Calendar
         $service = new Google_Service_Calendar($client);
         $calendarId = 'primary';
-         $optParams = [
+          $optParams = [
             'maxResults' => 50,
             'orderBy' => 'startTime',
             'singleEvents' => true,
             'timeZone' => 'Europe/Brussels',
         ];
         $events = $service->events->listEvents($calendarId, $optParams);
-        // Optional params to create a request to get envents
-        $optParams = array(
-            'maxResults' => 250, // Number of max results to obtain default is 250,
-            'orderBy' => 'startTime', // Set the order,
-            'singleEvents' => true, // To allow the order startTime
-            'timeZone' => 'Europe/Brussels',
-            //'timeMin' => date('c'), // Set the current time to obtain results
-        );
+
+
         // ///////MI CODE
         // Return view with the data of calendar
         $calendarList = $service->calendarList->listCalendarList();
 
-        while (true) {
-            // foreach ($calendarList->getItems() as $calendarListEntry) {
-            // 	echo $calendarListEntry->getSummary();
-            // }
-            $pageToken = $calendarList->getNextPageToken();
-            if ($pageToken) {
-                $optParams = array('pageToken' => $pageToken);
-                $calendarList = $service->calendarList->listCalendarList($optParams);
-            } else {
-                break;
-            }
-        }
+
        // dd($calendarList);die;
         $ids = array();
         $aux = array();
         foreach ($calendarList as $value) {
             $account = explode("@", $value->id);
-            if ($account[1] == 'gmail.com') {
+            if ($account[1] == 'maisonsvides.be') {
                 $ids['id'] = $value->id;
                 $ids['backgroundColor'] = $value->backgroundColor;
                 $ids['name'] = $value->summary;
                 $aux[] = $ids;
+                //dd($aux);die;
             }
         }
         $response = Event::all();
@@ -672,11 +656,13 @@ class EstateController extends Controller
         $allEvents = array();
         foreach ($aux as $id) {
             // Get result of events
-            $results = $service->events->listEvents($eventC[], $optParams);
+            $results = $service->events->listEvents($id['id'], $optParams);
+
             // Save the events
             $arrayEvents = array();
             $events = $results->getItems();
             foreach ($events as $event) {
+                
                 $arrayEvents[] = array(
                     'title' => $event->summary,
                     'id' => $event->id, // Id of the event
@@ -686,7 +672,7 @@ class EstateController extends Controller
                     'borderColor' => $id['backgroundColor'], // Border color of de event,
                     'textColor' => '#000000', // Border color of de event,
                     'className' => array(
-                        str_replace('.', '-', str_replace('@gmail.com', '', $id['id']))
+                        str_replace('.', '-',str_replace('@maisonsvides.be', '', $id['id']))
                     ),
                     'extendedProps' => array(
                         'contact' => $id['id'], // Name of contact,
@@ -702,6 +688,7 @@ class EstateController extends Controller
                     ),
                     'description' => '<p>' . $event->description . '</p>', // Estate description
                 );
+
             }
             $allEvents[] = $arrayEvents;
         }
@@ -710,6 +697,7 @@ class EstateController extends Controller
             if (!empty($eventc)) {
                 foreach ($eventc as $event) {
                     $auxAllEvents[] = $event;
+                   // dd($auxAllEvents);die;
                 }
             }
         }
