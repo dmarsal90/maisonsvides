@@ -670,6 +670,7 @@ class EstateController extends Controller
                 return $subject;
             }
             foreach ($events as $event) {
+                //In cse of any error change $className to other value(ex. ' admin')
                 $className = '.' . str_replace('.', '@', str_replace_last('.', '-', ltrim($id['id'], '.')));
                 $arrayEvents[] = array(
                     'title' => $event->summary,
