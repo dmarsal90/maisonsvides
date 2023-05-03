@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use Google_Service_Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -542,6 +543,18 @@ class EstateController extends Controller
             }
         }
         $ids = '';
+        $response = Event::all();
+        foreach ($response as $event) {
+            $events[] = [
+                'name' => $event->name,
+                'telephone' => $event->name,
+                'email' => $event->name,
+                'type_visit' => $event->name,
+                'start' => $event->name,
+                'end' => $event->name,
+                'localization' => $event->name
+            ];
+        }
         foreach ($calendarList as $value) {
             $account = explode("@", $value->id);
             if ($account[1] == 'gmail.com') {
@@ -549,6 +562,8 @@ class EstateController extends Controller
                 $ids = $ids . $id;
             }
         }
+        //dd($response);
+
         return view('estates.calendar', ['ids' => $ids, 'estate_ids' => $estate_ids, 'seller_ids' => $seller_ids]);
     }
 
@@ -570,7 +585,7 @@ class EstateController extends Controller
             // Create the service instance of Google Calendar
             $service = new Google_Service_Calendar($client);
             // Get data of events of the DB
-            $events = EstateEvent::where('estate_id', '=', $estate_id)->get();
+            $events = Event::all();
             foreach ($events as $event) {
                 $allEvents['events'][] = $service->events->get('primary', $event->event_id);
             }
@@ -589,6 +604,7 @@ class EstateController extends Controller
     {
         // Save the client
         $client = $this->getClient(Auth::user()->google_token);
+
         // Init response
         $response = array(
             'status' => false,
@@ -596,49 +612,66 @@ class EstateController extends Controller
         );
         // Create the service instance of Google Calendar
         $service = new Google_Service_Calendar($client);
-        // Optional params to create a request to get envents
-        $optParams = array(
-            'maxResults' => 250, // Number of max results to obtain default is 250,
-            'orderBy' => 'startTime', // Set the order,
-            'singleEvents' => true, // To allow the order startTime
-            'timeMin' => date('c'), // Set the current time to obtain results
-        );
+        $calendarId = 'primary';
+        $optParams = [
+            'maxResults' => 50,
+            'orderBy' => 'startTime',
+            'singleEvents' => true,
+            'timeZone' => 'Europe/Brussels',
+        ];
+        $events = $service->events->listEvents($calendarId, $optParams);
+
+
         // ///////MI CODE
         // Return view with the data of calendar
         $calendarList = $service->calendarList->listCalendarList();
 
-        while (true) {
-            // foreach ($calendarList->getItems() as $calendarListEntry) {
-            // 	echo $calendarListEntry->getSummary();
-            // }
-            $pageToken = $calendarList->getNextPageToken();
-            if ($pageToken) {
-                $optParams = array('pageToken' => $pageToken);
-                $calendarList = $service->calendarList->listCalendarList($optParams);
-            } else {
-                break;
-            }
-        }
+
+        // dd($calendarList);die;
         $ids = array();
         $aux = array();
         foreach ($calendarList as $value) {
             $account = explode("@", $value->id);
-            if ($account[1] == 'gmail.com') {
+            if ($account[1] == 'maisonsvides.be') {
                 $ids['id'] = $value->id;
                 $ids['backgroundColor'] = $value->backgroundColor;
                 $ids['name'] = $value->summary;
                 $aux[] = $ids;
+                //dd($aux);die;
             }
+        }
+        $response = Event::all();
+        foreach ($response as $event) {
+            $eventC[] = [
+                'name' => $event->name,
+                'telephone' => $event->telephone,
+                'email' => $event->email,
+                'type_visit' => $event->type_visit,
+                'start' => $event->start,
+                'end' => $event->end,
+                'localization' => $event->localization
+            ];
         }
         // ///////MI CODE
         $allEvents = array();
         foreach ($aux as $id) {
             // Get result of events
             $results = $service->events->listEvents($id['id'], $optParams);
+
             // Save the events
             $arrayEvents = array();
             $events = $results->getItems();
+            function str_replace_last($search, $replace, $subject)
+            {
+                $pos = strrpos($subject, $search);
+                if ($pos !== false) {
+                    $subject = substr_replace($subject, $replace, $pos, strlen($search));
+                }
+                return $subject;
+            }
             foreach ($events as $event) {
+                //In cse of any error change $className to other value(ex. ' admin')
+                $className = '.' . str_replace('.', '@', str_replace_last('.', '-', ltrim($id['id'], '.')));
                 $arrayEvents[] = array(
                     'title' => $event->summary,
                     'id' => $event->id, // Id of the event
@@ -648,7 +681,7 @@ class EstateController extends Controller
                     'borderColor' => $id['backgroundColor'], // Border color of de event,
                     'textColor' => '#000000', // Border color of de event,
                     'className' => array(
-                        str_replace('.', '-', str_replace('@gmail.com', '', $id['id']))
+                        $className
                     ),
                     'extendedProps' => array(
                         'contact' => $id['id'], // Name of contact,
@@ -672,6 +705,7 @@ class EstateController extends Controller
             if (!empty($eventc)) {
                 foreach ($eventc as $event) {
                     $auxAllEvents[] = $event;
+                    //dd($auxAllEvents);die;
                 }
             }
         }
@@ -768,7 +802,7 @@ class EstateController extends Controller
         $end = date('Y-m-d\TH:i:sO', strtotime($end));
         // Init response
         $response = array('status' => false, 'message' => 'La visite n\'a pas pu être enregistrée, veuillez réessayer plus tard');
-        $apiKey = env('GOOGLE_MAPS_API_KEY');
+        $apiKey = env('GOOGLE_API_KEY');
         $client->setDeveloperKey($apiKey);
         $service = new Google_Service_Calendar($client);
         // Optional params to create a request to get envents
@@ -783,6 +817,7 @@ class EstateController extends Controller
         $results = $service->events->listEvents($this->calendarId, $optParams);
         // Save the events
         $events = $results->getItems();
+        // dd($events);die;
         if (is_array($events) && count($events) >= 1) {
             $response = array(
                 'status' => false,
@@ -792,16 +827,27 @@ class EstateController extends Controller
                 'end' => $end
             );
         } else {
-            $email = 'admin@flexvision.be';
+            $email = auth()->user()->email;
             $guestsCanInviteOthers = true;
             $account = explode("@", $email);
             if ($account[1] != 'gmail.com') {
                 $guestsCanInviteOthers = false;
             }
+            /* // Crear el objeto de fecha y hora de inicio del evento
+            $startDateTime = new DateTime($clickedDate);
+            $startDateTime->setTime($start, 0, 0);
+
+            // Crear el objeto de fecha y hora de fin del evento
+            $endDateTime = new DateTime($clickedDate);
+            $endDateTime->setTime($end, 0, 0); */
             // Create a event
             $event = new Google_Service_Calendar_Event(array(
-                'summary' => 'Visite du dossier ' . $request->input('estate_id'),
-                'description' => $request->input('estate_id'),
+                'summary' => 'Visite du dossier ', //. $request->input('estate_id'),
+                'description' => 'Visite de type: ' . $request->input('type-visite')
+                    . ' ' . 'à l\'adresse suivante: ' . $request->input('localisation')
+                    . '. ' . 'Et les données du propriétaire sont ' . $request->input('contact')
+                    . ', avec téléphone: ' . $request->input('tel')
+                    . ' et e-mail: ' . $request->input('mail'),
                 'status' => 'tentative',
                 'start' => array(
                     'dateTime' => $start,
@@ -810,22 +856,44 @@ class EstateController extends Controller
                 'end' => array(
                     'dateTime' => $end,
                     'timeZone' => 'Europe/Brussels'
-                )
+                ),
+                /* 'attendees' => array(
+                    array(
+                        'name' => $request->input('contact'),
+                        'email' => $request->input('mail')
+                    )
+                ) */
             ));
-            // dd($request->input('estate_id'));die;
+
             $event = $service->events->insert($this->calendarId, $event, ['sendUpdates' => 'all', 'sendNotifications' => true]);
+            // dd(isset($event->id));
             /*$event = $service->events->insert($this->calendarId, $event);*/
             if (isset($event->id)) {
-                $estateEvent = EstateEvent::create([
+                /* $estateEvent = EstateEvent::create([
                     'estate_id' => $request->input('estate_id'),
                     'event_id' => $event->id,
                     'user_id' => Auth::user()->id,
                     'seller_id' => $request->input('seller_id') // o $data['seller_id']
+                ]); */
+                $event_created = Event::create([
+                    'estate_id' => $request->input('estate_id'),
+                    //'event_id' => $event->id,
+                    'name' => $request->input('contact'),
+                    'telephone' => $request->input('tel'),
+                    'email' => $request->input('mail'),
+                    'type_visit' => $request->input('type-visite'),
+                    'start'=> $start,
+                    'end'=> $end,
+                    'localization' => $request->input('localisation'),
+                    'description' => $request->input('descriptif'),
+                    'user_id' => Auth::user()->id,
+                    //'seller_id' => $request->input('seller_id') // o $data['seller_id']
                 ]);
+
                 $response = array(
                     'status' => true,
                     'message' => 'La visite a été enregistrée.',
-                    'data' => $data,
+                    'data' => $event_created,
                     'start' => $start,
                     'end' => $end,
                 );
@@ -847,7 +915,7 @@ class EstateController extends Controller
                  $updated = $this->updateData(app("App\\Models\\Estate"), $category, 1 , $estate['offre'], $estate['offre'], [$category]); // Update data
              }
          }*/
-       // return response($response)->header('Content-Type', 'application/json');
+        // return response($response)->header('Content-Type', 'application/json');
         return redirect()->route('calendar')->with('response', $response);
     }
 

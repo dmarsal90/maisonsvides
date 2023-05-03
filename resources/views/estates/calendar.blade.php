@@ -100,9 +100,9 @@
                             @foreach ($estate_ids as $estate_id)
                                 <input type="hidden" name="estate_id" value="{{ $estate_id }}" />
                             @endforeach
-                            @foreach ($seller_ids as $seller_id)
+                           {{--  @foreach ($seller_ids as $seller_id)
                                 <input type="hidden" name="seller_id" value="{{ $seller_id }}" />
-                            @endforeach
+                            @endforeach --}}
                             <div class="estateinfo__card">
                                 <label for="contact" class="ffhnm">Nom</label>
                                 <input type="text" id="contact" name="contact"
@@ -122,9 +122,9 @@
                                 <label for="type" class="ffhnm">Type de visite</label>
                                 <select id="type-visite" name="type-visite">
                                     <option selected>Sélectionnez le type de visite :</option>
-                                    <option value="visite">Première visite</option>
-                                    <option value="revisite">Revisite</option>
-                                    <option value="signature">Visite pour signature</option>
+                                    <option value="Première visite">Première visite</option>
+                                    <option value="Revisite">Revisite</option>
+                                    <option value="Visite pour signature">Visite pour signature</option>
                                 </select>
                             </div>
                             <div class="estateinfo__card">
@@ -161,40 +161,4 @@
         </div>
     </div>
 @endsection
-{{-- @section('scripts')
-    <script>
-        function validarFormulario() {
-            // Obtener los campos del formulario
-            var contacto = document.getElementById("contact");
-            var telefono = document.getElementById("tel");
-            var correo = document.getElementById("mail");
-            var tipo = document.getElementById("type");
-            var descriptif = document.getElementById("descriptif");
-            var localizacion = document.getElementById("localisation");
 
-            // Verificar que los campos obligatorios estén completos
-            if (contacto.value == "" || telefono.value == "" || correo.value == "" || tipo.value == "" || descriptif
-                .value == "" || localizacion.value == "") {
-                alert("Veuillez remplir tous les champs obligatoires");
-                return false;
-            }
-
-            // Verificar que el correo tenga un formato válido
-            var correoRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-            if (!correoRegex.test(correo.value)) {
-                alert("Veuillez saisir une adresse e-mail valide");
-                return false;
-            }
-
-            // Verificar que el número de teléfono tenga un formato válido
-            var telefonoRegex = /^\+?\d{0,15}$/;
-            if (!telefonoRegex.test(telefono.value)) {
-                alert("Veuillez saisir un numéro de téléphone valide (y compris le préfixe international + si nécessaire)");
-                return false;
-            }
-
-            // Si todas las validaciones pasan, enviar el formulario
-            return true;
-        }
-    </script>
-@endsection --}}
