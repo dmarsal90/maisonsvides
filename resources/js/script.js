@@ -335,46 +335,34 @@
                         $("#chosen_calendar").append(options);
                         var calendar = new FullCalendar.Calendar(calendarEl, {
                             // Create a new Fullcalendar instance
+                            initialView: "dayGridMonth", // Initial view
                             locale: "fr", // Set the language
                             timeZone: "Europe/Brussels",
-                            initialView: "timeGridWeek",
                             allDaySlot: false,
-                            firstDay: 1,
-                            hiddenDays: [0, 6],
-                            slotMinTime: "06:00:00",
-                            slotMaxTime: "23:00:00",
+                            firstDay: 1, //el 0 es domingo y el 1 es lunes
+                            hiddenDays: [0, 6], //para esconder sabado y domingo
                             events: events, // Add the events, temporally static
                             eventClick: function (info) {
-                                // Event click
-                                information = info.event.extendedProps; // Save the estate info on the variable information
-                                $("#calendarModal").modal("show"); // Open modal with the all data of the estate clicked
+                                information = info.event.extendedProps;
+                                $("#calendarModal").modal("show");
                             },
                             dateClick: function () {
-
-                                // Acceder a la propiedad event del objeto info
-                                var event = info.event;
-
-                                // Acceder a la propiedad extendedProps del objeto event
-                                var hasEvents = calendar.getEvents();
-                                if (hasEvents.length > 0) {
-                                    $("#calendarModal").modal("show");
-                                } else {
                                     $("#createEvent").modal("show");
-                                }
+                                    var dateSplit = date.dateStr.split("T");
+                                    $("#date_event_click_start").val(dateSplit[0]);
+                                    $("#date_event_click_end").val(dateSplit[0]);
+                                    $("#time_event_click_start").val(dateSplit[1]);
+                                    var time = new Date(date.dateStr);
+                                    var minutes = time.getMinutes();
+                                    time.setMinutes(minutes + 45);
+                                    $("#time_event_click_end").val(
+                                        ("0" + time.getHours()).slice(-2) +
+                                            ":" +
+                                            time.getMinutes()
+                                    );
+                                },
 
-                                var dateSplit = date.dateStr.split("T");
-                                $("#date_event_click_start").val(dateSplit[0]);
-                                $("#date_event_click_end").val(dateSplit[0]);
-                                $("#time_event_click_start").val(dateSplit[1]);
-                                var time = new Date(date.dateStr);
-                                var minutes = time.getMinutes();
-                                time.setMinutes(minutes + 45);
-                                $("#time_event_click_end").val(
-                                    ("0" + time.getHours()).slice(-2) +
-                                        ":" +
-                                        time.getMinutes()
-                                );
-                            },
+
                         });
                         // Change color to confirmed events
                         aEventConfirmed.forEach(function (event) {
@@ -391,14 +379,14 @@
                                 // If true hide all events of this calendar
                                 var name = $(this)
                                     .attr("data-hide-calendar")
-                                    .replace("@gmail.com", "");
+                                    .replace("@maisonsvides.be", "");
                                 var classn = name.replaceAll(".", "-");
                                 $("." + classn).hide();
                             } else {
                                 // If not checked show all events of this calendar
                                 var name = $(this)
                                     .attr("data-hide-calendar")
-                                    .replace("@gmail.com", "");
+                                    .replace("@maisonsvides.be", "");
                                 var classn = name.replaceAll(".", "-");
                                 $("." + classn).show();
                             }
