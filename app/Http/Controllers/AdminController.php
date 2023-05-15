@@ -50,26 +50,36 @@ class AdminController extends Controller {
 		$users = $this->getUsers();
 		// Get user types
 		$userTypes = UserType::get();
+        $userTypes = $userTypes->toArray();
 		// Get categories
 		$categories = $this->getCategories();
-		$aCategories = array();
+        $aCategories = array();
 		foreach ($categories as $category) {
 			$aCategories[$category['id']] = $category;
 		}
+
 		// Get templates
 		$templates = $this->getTemplates();
+        //dd($templates);die;
 		// Get all RealEstates
 		$realestates = $this->getRealestate();
 		// Get notaries
 		$notaries = $this->getNotaires();
 		// Get reminders
-		$reminders = $this->getReminders();
+        $reminders = TemplateReminder::all();
+        $reminders = $reminders->toArray();
+
+        //dd($reminders);die;
+		//$reminders = $this->getReminders();
+
 		// Get agents without Gestionnaire de zone
 		$agentsW = $this->getAgents();
+        //dd(Auth::user());die;
 		$teamOfManager = array();
-		if (Auth::user()->type == 2) { // If the user logged is secretary
+		if (Auth::user()->type == 2 || Auth::user()->type == 1) { // If the user logged is secretary
 			$teamOfManager = $this->getAgentsOfAManager(Auth::user()->id);
 			$teamOfManager[] = Auth::user()->id;
+           // dd($teamOfManager);die;
 		}
 		$teamOfAgent = array();
 		if (Auth::user()->type == 3) { // If the user logged is secretary
@@ -252,7 +262,7 @@ class AdminController extends Controller {
 		foreach ($agents as $agent) {
 			$agentsArray[] = array(
 				'agent_id' => $agent->agent_id,
-				'maneger_id' => $agent->maneger_id
+				'manager_id' => $agent->manager_id
 			);
 		}
 		return $agentsArray;
@@ -283,7 +293,7 @@ class AdminController extends Controller {
 				if ($data['type'] == 3) {
 					$join = Agent::create([
 						'agent_id' => $user->id,
-						'maneger_id' => $data['manager_id']
+						'manager_id' => $data['manager_id']
 					]);
 				}
 			}
@@ -292,7 +302,7 @@ class AdminController extends Controller {
 					foreach ($data['agent_id'] as $agent) {
 						$join = Agent::create([
 							'agent_id' => $agent,
-							'maneger_id' => $user->id
+							'manager_id' => $user->id
 						]);
 					}
 				}
@@ -321,30 +331,36 @@ class AdminController extends Controller {
 	/**
 	 * Get agents without Gestionnaire de zone
 	 */
-	private function getAgents(){
-		$agents = Agent::get();
-		$agentsArray = array();
-		foreach ($agents as $agent) {
-			$idsagentsArray[] = $agent->agent_id;
-		}
-        if ($idsagentsArray =!  empty($idsagentsArray)) {
-            $agentsWithoutManager = User::where('type', '=', 3)->whereNotIn('id', $idsagentsArray)->get();
-            foreach ($agentsWithoutManager as $agent) {
-                $auxAgents[] = $agent->id;
-            }
-            return $auxAgents;
-        }
-        else{
-            return "No agents";
-        }
+	public function getAgents(){
+        // Obtener todos los agentes
+        $agents = Agent::all();
 
-	}
+        // Obtener los IDs de los agentes
+        $agentIds = $agents->pluck('agent_id');
+
+        // Obtener los usuarios que son agentes sin un manager asignado
+        $agentsWithoutManager = User::where('type', 3)
+                                     ->whereNotIn('id', $agentIds)
+                                     ->get();
+
+        // Obtener los IDs de los usuarios que son agentes sin un manager asignado
+        $agentIdsWithoutManager = $agentsWithoutManager->pluck('id');
+
+        // Verificar si hay usuarios que sean agentes sin un manager asignado
+        if ($agentIdsWithoutManager->isNotEmpty()) {
+            // Retornar los IDs de los usuarios que son agentes sin un manager asignado
+            return $agentIdsWithoutManager->toArray();
+        } else {
+            // Retornar un mensaje indicando que no hay agentes sin un manager asignado
+            return "Il n'y a pas d'agents";
+        }
+    }
 
 	/**
 	 * Get agents without Gestionnaire de zone
 	 */
-	private function getAgentsOfAManager($idManager){
-		$agents = Agent::where("maneger_id", "=", $idManager)->get();
+	public function getAgentsOfAManager($idManager){
+		$agents = Agent::where("manager_id", "=", $idManager)->get();
 		$arrayAgents = array();
 		foreach ($agents as $agent) {
 			$arrayAgents[] = $agent->agent_id;
@@ -358,8 +374,8 @@ class AdminController extends Controller {
 	private function getManagerOfAgent($idAgent){
 		$manager = Agent::where("agent_id", "=", $idAgent)->get();
 		$r = 0;
-		if (isset($manager[0]->maneger_id)) {
-			$r = $manager[0]->maneger_id;
+		if (isset($manager[0]->manager_id)) {
+			$r = $manager[0]->manager_id;
 		}
 		return $r;
 	}
@@ -381,13 +397,13 @@ class AdminController extends Controller {
 		);
 		if ($data['type'] == 2) {
 			// Delete all his agents
-			$var = Agent::where('maneger_id', '=', $data['id'])
+			$var = Agent::where('manager_id', '=', $data['id'])
 				->delete();
 			// Add all his agents
 			foreach ($data['agent_id'] as $value) {
 				Agent::create([
 					"agent_id" => $value,
-					"maneger_id" => $data['id']
+					"manager_id" => $data['id']
 				]);
 			}
 			// Get keys of data
@@ -844,7 +860,7 @@ class AdminController extends Controller {
 	 * Get all sities immibiliers
 	 */
 	private function getRealestate(){
-		$sities = RealEstate::get();
+		$sities = RealEstate::all();
 		$sitiesArray = array();
 		foreach ($sities as $site) {
 			$sitiesArray[] = array(
@@ -1310,18 +1326,31 @@ class AdminController extends Controller {
 	 * Send SMS Template
 	 */
 	public function getReminders() {
-		$reminders = TemplateReminder::get();
-		$remindersArray = array();
-		foreach ($reminders as $reminder) {
-			$remindersArray[] = array(
-				'id' => $reminder->id,
-				'name' => $reminder->name,
-				'reminder' => unserialize($reminder->reminder),
-				'user' => $this->getUser($reminder->user)
-			);
-		}
-		return $remindersArray;
-	}
+        $reminders = TemplateReminder::all();
+        $remindersArray = array();
+
+        foreach ($reminders as $reminder) {
+            $reminderArray = [
+                'id' => $reminder->id,
+                'name' => $reminder->name,
+                'reminder' => null,
+                'user' => $this->getUser($reminder->user)
+            ];
+
+            // Verificar si la cadena está serializada
+            if (strpos($reminder->reminder, 's:') === 0) {
+                // Si está serializada, deserializar la cadena
+                $reminderArray['reminder'] = unserialize($reminder->reminder);
+            } else {
+                // Si no está serializada, guardar la cadena tal cual
+                $reminderArray['reminder'] = $reminder->reminder;
+            }
+
+            $remindersArray[] = $reminderArray;
+        }
+
+        return $remindersArray;
+    }
 
 	/**
 	 * Delete template reminder
