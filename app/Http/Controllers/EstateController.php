@@ -1349,12 +1349,12 @@ class EstateController extends Controller
      */
     private function getAgentManager($managerid)
     {
-        $agents = Agent::where('maneger_id', '=', $managerid)->get();
+        $agents = Agent::where('manager_id', '=', $managerid)->get();
         $agentsArray = array();
         foreach ($agents as $agent) {
             $agentsArray[] = array(
                 'agent_id' => $agent->agent_id,
-                'maneger_id' => $agent->maneger_id
+                'manager_id' => $agent->manager_id
             );
         }
         return $agentsArray;
