@@ -29,7 +29,7 @@ class TicketsController extends Controller
 	public function viewTickets() {
 		// Get list of tickets of a user
 		$tickets = $this->listTickets();
-		if (Auth::user()->type == 2) {
+		if (Auth::user()->type == 2 || Auth::user()->type == 1) {
 			$tickets = $this->listTicketsToManager(Auth::user()->id);
 		}
 		$auxTickets = array();
@@ -40,7 +40,8 @@ class TicketsController extends Controller
 		}
 		// Get list of tickets solved
 		$ticketsSolved = $this->listTicketsSolved();
-		if (Auth::user()->type == 2) {
+
+		if (Auth::user()->type == 2 || Auth::user()->type == 1) {
 			$ticketsSolved = $this->listTicketsSolvedToManager(Auth::user()->id);
 		}
 		$auxTicketsSolved= array();
@@ -87,7 +88,7 @@ class TicketsController extends Controller
 	 */
 	private function listTickets() {
 		$estate = Estate::where('agent', '=', Auth::user()->id)->get();
-		$estateArray = array();
+        $estateArray = array();
 		$tickets = array();
 		foreach ($estate as $_estate) {
 			$estateArray[] = $this->getSeller($_estate->seller)['email'];
@@ -175,12 +176,12 @@ class TicketsController extends Controller
 	 * Get agents relation with his manager
 	 */
 	private function getAgentManager($managerid) {
-		$agents = Agent::where('maneger_id', '=', $managerid)->get();
+		$agents = Agent::where('manager_id', '=', $managerid)->get();
 		$agentsArray = array();
 		foreach ($agents as $agent) {
 			$agentsArray[] = array(
 				'agent_id' => $agent->agent_id,
-				'maneger_id' => $agent->maneger_id
+				'manager_id' => $agent->manager_id
 			);
 		}
 		return $agentsArray;
@@ -231,6 +232,50 @@ class TicketsController extends Controller
 			if ($e->getCode() == 23000) {
 				$message = 'Le ticket existe déjà';
 			}
+            var_dump($e->getMessage());
+			$response = array(
+				'status' => false,
+				'message' => $message, //$e->getMessage(),
+				'data' => $data
+			);
+		}
+       // dd($e->getMessage());
+		//Return response
+         //return redirect()->route('viewTickets')->with('response', $response);
+		return response($response)->header('Content-Type', 'application/json');
+	}
+
+    /**
+	 * Create new ticket
+	 */
+	public function createNewTicket(Request $request) {
+		// Save all data of request
+		$data = $request->all();
+		//Init the response
+		$response = array(
+			'status' => false,
+			'message' => 'Le ticket n\'a pas pu être créé. Réessayez plus tard.'
+		);
+		try {
+			$ticket_id = $this->objectTicket->create(
+				[
+					"name" => $data['name_ticket'],
+					"email" => $data['email'],
+				],
+				$data['subject'],
+				$data['body'],
+				[]
+			);
+			$response = array(
+				'status' => true,
+				'message' => 'Le ticket a été créée',
+				'data' => $data,
+			);
+		} catch (\Exception $e) {
+			$message = "";
+			if ($e->getCode() == 23000) {
+				$message = 'Le ticket existe déjà';
+			}
 			$response = array(
 				'status' => false,
 				'message' => $message,
@@ -238,6 +283,7 @@ class TicketsController extends Controller
 			);
 		}
 		//Return response
+         //return redirect()->route('viewTickets')->with('response', $response);
 		return response($response)->header('Content-Type', 'application/json');
 	}
 
