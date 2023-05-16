@@ -1056,7 +1056,8 @@ class EstateController extends Controller
     public function visit($id = 0)
     {
         //Get data of a estate
-        $estate = $this->getEstate($id);
+        $estate = Estate::find($id);
+        //dd($estate);die;
         // If session is of the a manager
         if (Auth::user()->type == 2 || Auth::user()->type == 1) {
             // Get estates to show to manager
