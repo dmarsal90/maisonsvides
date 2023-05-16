@@ -27,6 +27,8 @@ class AddFieldsToEstatesTable extends Migration
             $table->integer('number_electric')->nullable();
             $table->integer('state_interior')->nullable();
             $table->integer('state_exterior')->nullable();
+            $table->year('construction')->nullable();
+            $table->year('renovation')->nullable();
         });
     }
 
