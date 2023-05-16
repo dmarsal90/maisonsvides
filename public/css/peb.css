@@ -1,0 +1,29 @@
+  .peb-a {
+    background-color: #4CAF50; /* verde */
+    color: white;
+  }
+  .peb-b {
+    background-color: #8BC34A; /* verde claro */
+    color: black;
+  }
+  .peb-c {
+    background-color: #FFC107; /* amarillo */
+    color: black;
+  }
+  .peb-d {
+    background-color: #FF9800; /* naranja */
+    color: black;
+  }
+  .peb-e {
+    background-color: #f44336; /* rojo */
+    color: white;
+  }
+  .peb-f {
+    background-color: #d32f2f; /* rojo oscuro */
+    color: white;
+  }
+  .peb-g {
+    background-color: #520a0a; /* rojo oscuro */
+    color: white;
+  }
+

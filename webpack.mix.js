@@ -25,6 +25,8 @@ mix.js([
 
 mix.js('resources/js/script.js', 'public/js/script.js');
 
+
+
 // Custom CSS and JS to certain functionalities
 mix.less('resources/less/style.less', 'public/css/');
 

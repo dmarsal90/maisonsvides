@@ -27,6 +27,7 @@ class EstateOffre extends Model
 		'condition_offer',
 		'validity',
 		'textadded',
-		'pdf'
+		'pdf',
+        'offer_temp',
 	];
 }

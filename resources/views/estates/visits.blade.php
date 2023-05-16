@@ -32,8 +32,8 @@
 					<td>
 						<a href="{!! route('visit', $estate['id']) !!}" class="btn btn-primary">Visite</a>
 					</td>
-					<td><?php echo date('ymdh.i', strtotime($estate['reference'])) ?></td>
-					<td>{!! $estate['name'] !!} Nouv. demande</td>
+					<td><?php echo date('ymd.', strtotime($estate['reference'])) ?></td>
+					<td>{!! $estate['name'] !!}</td>
 					<td>{!! strftime('%a', strtotime($estate['created_at'])) !!} {!! date('d-m-Y', strtotime($estate['created_at'])) !!}</td>
 					<td>{!! date('H:i', strtotime($estate['created_at'])) !!}</td>
 					<td>-</td>
