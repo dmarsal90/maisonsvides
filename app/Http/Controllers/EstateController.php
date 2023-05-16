@@ -1058,7 +1058,7 @@ class EstateController extends Controller
         //Get data of a estate
         $estate = $this->getEstate($id);
         // If session is of the a manager
-        if (Auth::user()->type == 2) {
+        if (Auth::user()->type == 2 || Auth::user()->type == 1) {
             // Get estates to show to manager
             $estates = $this->getEstatesToManager(Auth::user()->id);
         }
@@ -1087,7 +1087,7 @@ class EstateController extends Controller
             return view('estates.visit', ['id' => $id]);
         }
         // Return view edit module visit
-        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'seller' => $seller, 'estateDetails' => $estateDetails, 'details' => $details, 'offer' => $offer, 'remarks' => $remarks]);
+        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'estates' => $estates, 'seller' => $seller, 'estateDetails' => $estateDetails, 'details' => $details, 'offer' => $offer, 'remarks' => $remarks]);
     }
 
     /**
@@ -1441,7 +1441,7 @@ class EstateController extends Controller
     /**
      * Get estates to agent
      */
-    private function getEstatesToAgent($agentid)
+    public function getEstatesToAgent($agentid)
     {
         $estate = Estate::where('agent', '=', $agentid)->get();
         $estatesArray = array();
@@ -1475,6 +1475,7 @@ class EstateController extends Controller
                 'created_at' => $_estate->created_at
             );
         }
+       // dd($estatesArray);die;
         return $estatesArray;
     }
 
@@ -1610,6 +1611,19 @@ class EstateController extends Controller
             );
         }
         return $notairesArray;
+    }
+
+    public function getWhatever($id){
+        $estates = DB::table('estates')
+        ->where('id', '=', $id)
+        ->get();
+//$type= $estates['type_state'];
+        $estates2 = DB::table('estates')
+        ->where('type_estate', '=', 'Type of Estate')
+        ->get();
+
+        dd($estates);die;
+
     }
 
     /**
