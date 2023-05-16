@@ -1070,7 +1070,7 @@ class AdminController extends Controller {
 					'status' => true, // Status true
 					'message' => 'Les informations ont été modifiées'
 				);
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$response = array(
 					'status' => true, // Status true
 					'message' => $e->getMessage()
@@ -1243,7 +1243,7 @@ class AdminController extends Controller {
 				'status' => true,
 				'message' => 'Le e-mail a été envoyé'
 			);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$reponse = array( // If response is false
 				'status' => false,
 				'message' => 'Le e-mail n\'a pas pu être envoyé, veuillez réessayer plus tard...'
@@ -1273,7 +1273,7 @@ class AdminController extends Controller {
 				'status' => true,
 				'message' => 'Le sms a été envoyé'
 			);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$reponse = array(
 				'status' => false,
 				'message' => 'Le sms n\'a pas pu être envoyé, veuillez réessayer plus tard...'
@@ -1290,8 +1290,6 @@ class AdminController extends Controller {
 	public function saveReminderA(Request $request) {
 		// Get all data of request
 		$data = $request->all();
-		dd($data);
-		// dd($data);
 		$totalReminders = count($data['type_rappel']);
 		$reminders = array();
 		for ($i=0; $i < $totalReminders; $i++) {
@@ -1312,7 +1310,7 @@ class AdminController extends Controller {
 				'status' => true,
 				'message' => 'Le processus a été créé'
 			);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$reponse = array(
 				'status' => false,
 				'message' => 'Le processus n\'a pas pu être créé'
@@ -1402,7 +1400,7 @@ class AdminController extends Controller {
 				'status' => true,
 				'message' => 'Les dates ont été enregistrées'
 			);
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$reponse = array(
 				'status' => false,
 				'message' => $e
