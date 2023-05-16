@@ -1499,7 +1499,7 @@ $classTabActive = ' show active';
                                                   id="tinyEditTemplate-{!! $template['id'] !!}" data-height="500"
                                                   data-tiny="tinyEditTemplate-{!! $template['id'] !!}" rows="40"
                                                   disabled>
-                                                  @dd($template['file'])
+                                                
                                                   {!! file_get_contents(asset('templates/' . $template->file)) !!}
 										</textarea>
                                         </div>
