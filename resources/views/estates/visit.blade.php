@@ -7,7 +7,7 @@
 </header>
 <div class="card font-body-content" id="visitStep1">
     <div class="card-header" id="visits-google-map">
-        Dossier: <?php echo date('ymdh.i', strtotime($estate['reference'])) ?>
+        Dossier: <?php echo date('ymd', strtotime($estate['reference'])) ?>
         <div class="wrapper__icons">
             <!-- <span data-action="open-camera">
 					@include('svg.iconcamera')
