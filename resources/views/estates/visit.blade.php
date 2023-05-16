@@ -3,7 +3,7 @@
 @section('content')
 <header>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="{{ asset('css/peb.css') }}">
 </header>
 <div class="card font-body-content" id="visitStep1">
     <div class="card-header" id="visits-google-map">
@@ -62,7 +62,7 @@
                                     <span class="ffhnm">PEB:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="peb" value="{!! $estateDetails['peb'] !!}" class="form-control">
+                                    <input data-change-input type="text" name="peb" value="{!! $estateDetails['peb'] !!}" class="form-control peb-{{ strtolower($estateDetails['peb']) }}">
                                 </div>
                             </div>
                         </div>
@@ -128,9 +128,8 @@
                                     <div class="row mb-2 ml-2">
                                         <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Type de bien :</div>
                                         <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-                                            @foreach ($estates as $estate)
-                                            <input data-change-input type="text" name="details__year_construction" class="form-control" value="{!! $estate['type_estate'] !!}" data-save>
-                                            @endforeach
+                                            <input data-change-input type="text" name="details__year_construction" class="form-control" value="{!! $estate->type_estate !!}" data-save>
+
                                             <!-- @foreach ($estates as $estate)
 												<select data-change-select name="details__type_bien" id="type_de_bien" class="form-control" data-save>
                                                     <option {!! ($estate['type_estate']  == 'Maison') ? 'selected' : '' !!} value="Maison">Maison</option>
