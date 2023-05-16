@@ -65,6 +65,8 @@ class Estate extends Model
         'number_gas',
         'number_electric',
         'state_interior',
-        'state_exterior'
+        'state_exterior',
+        'construction',
+        'renovation'
     ];
 }
