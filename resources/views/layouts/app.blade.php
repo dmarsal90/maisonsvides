@@ -8,10 +8,11 @@
 	<!-- CSRF Token -->
 	<meta name="csrf-token" content="{!! csrf_token() !!}">
 
-	<title>{{ config('app.name', 'Laravel') }}</title>
+	<title>{{ config('app.name', 'MaisonsVides') }}</title>
     @section('scripts')
 	<!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 	<script src="{!! asset('js/vendor.js') !!}?{!! time() !!}" defer></script>
 	<script src="{!! asset('js/app.js') !!}?{!! time() !!}" defer></script>
     <!-- Carga de jQuery y script.js -->
@@ -25,6 +26,9 @@
 	<link href="{!! asset('css/app.css') !!}?{!! time() !!}" rel="stylesheet">
 	<link href="{!! asset('css/vendor.css') !!}?{!! time() !!}" rel="stylesheet">
 	<link href="{!! asset('css/style.css') !!}?{!! time() !!}" rel="stylesheet">
+   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">-->
+
+
 </head>
 <body data-spy="scroll" data-target="#menu-scrolling" data-offset="131">
 	@php
