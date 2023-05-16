@@ -21,8 +21,8 @@ class CreateEstateDetailsTable extends Migration
 			$table->longText('problems')->nulleable(); // Problems reported by seller
 			$table->longText('encode')->nulleable(); // Details
 			$table->longText('adapte')->nulleable(); // Details
-			$table->string('year_construction'); // Year of construction
-			$table->string('year_renovation'); // Year of renovation
+			$table->year('year_construction'); // Year of construction
+			$table->year('year_renovation'); // Year of renovation
 			$table->string('coordinate_x'); // Coordinate x
 			$table->string('coordinate_y'); // Coordinate y
 			$table->string('peb'); // PEB of estate
