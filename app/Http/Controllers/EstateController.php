@@ -480,7 +480,7 @@ class EstateController extends Controller
             }
             foreach ($calendarList as $value) {
                 $account = explode("@", $value->id);
-                if ($account[1] == 'gmail.com') {
+                if ($account[1] == 'maisonsvides.be') {
                     $id_ = 'src=' . $value->id . '&amp;';
                     $emails = $emails . $id_;
                 }
@@ -882,8 +882,8 @@ class EstateController extends Controller
                     'telephone' => $request->input('tel'),
                     'email' => $request->input('mail'),
                     'type_visit' => $request->input('type-visite'),
-                    'start'=> $start,
-                    'end'=> $end,
+                    'start' => $start,
+                    'end' => $end,
                     'localization' => $request->input('localisation'),
                     'description' => $request->input('descriptif'),
                     'user_id' => Auth::user()->id,
@@ -1615,9 +1615,16 @@ class EstateController extends Controller
     /**
      * Get estate details
      */
-    private function getEstateDetails($estate_id)
+    private function getEstateDetails($id)
     {
-        $details = EstateDetail::where('estate_id', '=', $estate_id)->get();
+        $details = DB::table('estate_details')
+        ->where('estate_id', '=', $id)
+        ->get();
+        //dd($details);
+        if ($details->isEmpty()) {
+            throw new \Exception('Aucun détail trouvé pour la propriété avec ID ' . $id);
+        }
+
         $detailsArray = array();
         foreach ($details as $detail) {
             $detailsArray = array(
@@ -1638,6 +1645,11 @@ class EstateController extends Controller
                 'visit_remarks' => $detail->visit_remarks
             );
         }
+
+        if (empty($detailsArray)) {
+            throw new \Exception('Détails vides trouvés pour la propriété avec ID ' . $id);
+        }
+//dd($detailsArray);
         return $detailsArray;
     }
 
