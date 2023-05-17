@@ -1153,7 +1153,7 @@ class EstateController extends Controller
             );
         }
         //Return response
-        return response($response)->header('Content-Type', 'application/json');
+        return back()->with('message', 'Le commentaire a été créé avec succès');
     }
 
     /**
@@ -2700,7 +2700,8 @@ class EstateController extends Controller
         if ($option == 'true') {
             $updated = $this->updateData(app("App\\Models\\Estate"), 'category', 15, $id, $id, 'category'); // Updatate data
         }
-        return redirect()->route('visits');
+        return back()->with('message', 'Propriété mise à jour avec succès.');
+        //return redirect()->route('visits');
     }
 
     /**
