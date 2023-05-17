@@ -14,13 +14,13 @@ class AddFieldsToEstatesTable extends Migration
     public function up()
     {
         Schema::table('estates', function (Blueprint $table) {
-            $table->enum('type_estate', ['Maison', 'Appartement', 'Immeuble de rapport', 'Autre'])->change();
+
             $table->integer('surface')->nullable();
             $table->boolean('garden')->nullable();
             $table->boolean('terrase')->nullable();
             $table->boolean('garage')->nullable();
             $table->string('town_planning')->nullable();
-            $table->text('more_habitations')->nullable();
+            $table->boolean('more_habitations')->nullable();
             $table->integer('number_bathroom')->nullable();
             $table->integer('number_rooms')->nullable();
             $table->integer('number_gas')->nullable();
