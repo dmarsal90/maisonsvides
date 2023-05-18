@@ -1,6 +1,25 @@
 @extends('layouts.app')
 
 @section('content')
+@if (session('response'))
+    @if (session('response')['status'])
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('response')['message'] }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @else
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('response')['message'] }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    <script>
+        // Hide alert after 3 seconds
+        setTimeout(function() {
+            $('.alert').alert('close');
+        }, 3000);
+    </script>
+@endif
 
 	<table data-table="all" class="display responsive nowrap" style="width: 100%;">
 		<thead>
