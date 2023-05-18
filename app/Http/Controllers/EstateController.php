@@ -501,7 +501,7 @@ class EstateController extends Controller
             $auxticketsNoAnswer[] = $ticket->ticket_id;
         }
         // Return view the data of the estate
-        return view('estates.view', ['id' => $id, 'comments' => $comments, 'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'estateDetails' => $estateDetails, 'details' => $details, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails, 'eve_' => $eve_, 'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
+        return view('estates.view', ['id' => $id, 'comments' => $comments, 'estateDetails' => $estateDetails, 'details' => $details, 'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails, 'eve_' => $eve_, 'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
     }
 
     /**
@@ -1071,9 +1071,9 @@ class EstateController extends Controller
         //Get data of a seller
         $seller = $this->getSeller($estate['seller']);
         //Get estate details
-        $estateDetails = $this->getEstateDetails($id);
+        // $estateDetails = $this->getEstateDetails($id);
         // Get details of the json
-        $details = json_decode($estateDetails['adapte'], true);
+        // $details = json_decode($estateDetails['adapte'], true);
         // dd($details);
         // Get remarks of current estate
         $remarks = $this->getEstateRemark($id);
@@ -1088,7 +1088,7 @@ class EstateController extends Controller
             return view('estates.visit', ['id' => $id]);
         }
         // Return view edit module visit
-        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'estates' => $estates, 'seller' => $seller, 'estateDetails' => $estateDetails, 'details' => $details, 'offer' => $offer, 'remarks' => $remarks]);
+        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'estates' => $estates, 'seller' => $seller, 'offer' => $offer, 'remarks' => $remarks]);
     }
 
     /**
@@ -1476,7 +1476,7 @@ class EstateController extends Controller
                 'created_at' => $_estate->created_at
             );
         }
-       // dd($estatesArray);die;
+        // dd($estatesArray);die;
         return $estatesArray;
     }
 
@@ -1614,17 +1614,18 @@ class EstateController extends Controller
         return $notairesArray;
     }
 
-    public function getWhatever($id){
+    public function getWhatever($id)
+    {
         $estates = DB::table('estates')
-        ->where('id', '=', $id)
-        ->get();
-//$type= $estates['type_state'];
+            ->where('id', '=', $id)
+            ->get();
+        //$type= $estates['type_state'];
         $estates2 = DB::table('estates')
-        ->where('type_estate', '=', 'Type of Estate')
-        ->get();
+            ->where('type_estate', '=', 'Type of Estate')
+            ->get();
 
-        dd($estates);die;
-
+        dd($estates);
+        die;
     }
 
     /**
@@ -1633,8 +1634,8 @@ class EstateController extends Controller
     private function getEstateDetails($id)
     {
         $details = DB::table('estate_details')
-        ->where('estate_id', '=', $id)
-        ->get();
+            ->where('estate_id', '=', $id)
+            ->get();
         //dd($details);
         if ($details->isEmpty()) {
             throw new \Exception('Aucun détail trouvé pour la propriété avec ID ' . $id);
@@ -1664,7 +1665,7 @@ class EstateController extends Controller
         if (empty($detailsArray)) {
             throw new \Exception('Détails vides trouvés pour la propriété avec ID ' . $id);
         }
-//dd($detailsArray);
+        //dd($detailsArray);
         return $detailsArray;
     }
 
@@ -1920,74 +1921,102 @@ class EstateController extends Controller
     {
         // Get all data of request
         $data = $request->all();
+
         // Init updated
         $updated = false;
-        // Init the reponse
+
+        // Init the response
         $response = array(
-            'status' => false, // Reponse status
-            'message' => 'Les informations n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
+            'status' => false, // Response status
+            'message' => 'Les informations n\'ont pas été mises à jour ou les informations n\'ont pas été modifiées.' // Response message
         );
-        // Get details of the DB
-        $estatedetailsadapte = EstateDetail::where('estate_id', '=', $data['estate_id'])->get();
-        $estatedetailsadapte = json_decode($estatedetailsadapte[0]->encode);
-        // Get keys of data
-        foreach ($data as $key => $dat) { // Foreach key of data
-            if (str_starts_with($key, 'seller_')) {
-                $key = str_replace('seller_', '', $key);
-                Seller::where('id', '=', $data['seller_id'])->update([$key => $dat]);
-                if ($key == 'name') {
-                    $name = explode(' ', $dat);
-                    $estatedetailsadapte->firstName = $name[0];
-                    $estatedetailsadapte->lastName = ((isset($name[1])) ? $name[1] : '') . ' ' . ((isset($name[2])) ? $name[2] : '');
-                }
-                if ($key == 'email') {
-                    $estatedetailsadapte->email = $dat;
-                }
-                if ($key == 'phone') {
-                    $estatedetailsadapte->tel = $dat;
-                }
+
+        // Update estate_details if estate_id is provided
+        if (isset($data['estate_id'])) {
+            $estateDetails = EstateDetail::where('estate_id', $data['estate_id'])->first();
+
+            if ($estateDetails) {
+                //  $estateDetails->adapte = json_encode($datosAdapte);
+                $estateDetails->description = $data['estate_description'];
+                $estateDetails->year_construction = $data['year_construction'];
+                $estateDetails->year_renovation = $data['year_renovation'];
+                $estateDetails->peb = $data['peb'];
+                $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
+                $estateDetails->rooms = $data['rooms'];
+                $estateDetails->bathrooms = $data['bathrooms'];
+                $estateDetails->estate_street = $data['estate_street'];
+                $estateDetails->coordinate_x = $data['coordinate_x'];
+                $estateDetails->coordinate_y = $data['coordinate_y'];
+                $estateDetails->price_evaluated = $data['price_evaluated'];
+                $estateDetails->jardin = $data['jardin'] == 'oui' ? 1 : 0;
+                $estateDetails->gaz = $data['gaz'];
+                $estateDetails->electrique = $data['electrique'];
+                $estateDetails->details_commentaire = $data['details_commentaire'];
+                $estateDetails->interior_state = $data['interior_state'];
+                $estateDetails->exterior_state = $data['exterior_state'];
+                $estateDetails->district_state = $data['district_state'];
+                $estateDetails->interior_highlights = $data['interior_highlights'];
+                $estateDetails->exterior_highlights = $data['exterior_highlights'];
+                $estateDetails->interior_weak_point = $data['interior_weak_point'];
+                $estateDetails->exterior_weak_point = $data['exterior_weak_point'];
+                $estateDetails->desires_to_sell = $data['desires_to_sell'];
+                $estateDetails->details_state_interior = $data['details_state_interior'];
+                $estateDetails->details_state_exterior = $data['details_state_exterior'];
+                $estateDetails->agent_notice = $data['agent_notice'];
+
+                $estateDetails->save();
+
+                $updated = true;
             }
-            if (str_starts_with($key, 'save__')) {
-                $key = str_replace('save__', '', $key);
-                EstateDetail::where('estate_id', '=', $data['estate_id'])->update([$key => $dat]);
-            }
-            if ($key == 'estate_description') {
-                EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['description' => $dat]);
-            }
-            if ($key == 'estate__street') {
-                Estate::where('id', '=', $data['estate_id'])->update(['street' => $dat]);
-            }
-            if ($key == 'year_construction') {
-                EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['year_construction' => $dat]);
-                $estatedetailsadapte->year_construction = $dat;
-            }
-            if ($key == 'year_renovation') {
-                EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['year_renovation' => $dat]);
+            if (!$estateDetails) {
+                $estateDetails = new EstateDetail;
+
+                $estateDetails->estate_id = $data['estate_id'];
+                $estateDetails->description = $data['estate_description'];
+                $estateDetails->year_construction = $data['year_construction'];
+                $estateDetails->year_renovation = $data['year_renovation'];
+                $estateDetails->peb = $data['peb'];
+                $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
+                $estateDetails->rooms = $data['rooms'];
+                $estateDetails->bathrooms = $data['bathrooms'];
+                $estateDetails->estate_street = $data['estate_street'];
+                $estateDetails->coordinate_x = $data['coordinate_x'];
+                $estateDetails->coordinate_y = $data['coordinate_y'];
+                $estateDetails->price_evaluated = $data['price_evaluated'];
+                $estateDetails->jardin = $data['jardin'] == 'oui' ? 1 : 0;
+                $estateDetails->gaz = $data['gaz'];
+                $estateDetails->electrique = $data['electrique'];
+                $estateDetails->details_commentaire = $data['details_commentaire'];
+                $estateDetails->interior_state = $data['interior_state'];
+                $estateDetails->exterior_state = $data['exterior_state'];
+                $estateDetails->district_state = $data['district_state'];
+                $estateDetails->interior_highlights = $data['interior_highlights'];
+                $estateDetails->exterior_highlights = $data['exterior_highlights'];
+                $estateDetails->interior_weak_point = $data['interior_weak_point'];
+                $estateDetails->exterior_weak_point = $data['exterior_weak_point'];
+                $estateDetails->desires_to_sell = $data['desires_to_sell'];
+                $estateDetails->details_state_interior = $data['details_state_interior'];
+                $estateDetails->details_state_exterior = $data['details_state_exterior'];
+                $estateDetails->agent_notice = $data['agent_notice'];
+
+                $estateDetails->save();
+
+                $updated = true;
             }
         }
 
-        //Save json of the details in the DB
-        try {
-            $estatedetailsadapte = json_encode($estatedetailsadapte);
-            $response = array(
-                'status' => true,
-                'message' => 'Les informations a été mise à jour'
-            );
-            EstateDetail::where('estate_id', '=', $data['estate_id'])->update(['adapte' => $estatedetailsadapte]);
-            if (isset($data['estate_description'])) {
-                EstateDetail::where('id', '=', $data['estate_id'])->update(['description' => $data['estate_description']]);
-            }
-        } catch (\Exception $e) {
-            // Updated false
-            $this->updated = false;
-            $response = array(
-                'status' => false, // Reponse status
-                'message' => $e->getMessage() // Response message
-            );
+        // If updated, set response status and message
+        if ($updated) {
+            $response['status'] = true;
+            $response['message'] = 'Les informations ont été mises à jour avec succès.';
         }
 
+        // Redirect to visits page with response message
+        return redirect()->route('visits')->with('response', $response);
         // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        // return redirect()->route('visits')->with('success', 'La visita ha sido actualizada correctamente.');
     }
 
     /**
