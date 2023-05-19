@@ -1281,6 +1281,7 @@ class EstateController extends Controller
             $estatesArray[] = array(
                 'id' => $_estate->id,
                 'reference' => $_estate->reference,
+                'type_estate' => $_estate->type_estate,
                 'name' => $_estate->name,
                 'category' => $_estate->category,
                 'visit_date_at' => $_estate->visit_date_at,
