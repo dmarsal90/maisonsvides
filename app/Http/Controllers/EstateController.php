@@ -1056,7 +1056,7 @@ class EstateController extends Controller
     public function visit($id = 0)
     {
         //Get data of a estate
-        $estate = Estate::find($id);
+        $estate = $this->getEstate($id);
         //dd($estate);die;
         // If session is of the a manager
         if (Auth::user()->type == 2 || Auth::user()->type == 1) {
@@ -1071,7 +1071,8 @@ class EstateController extends Controller
         //Get data of a seller
         $seller = $this->getSeller($estate['seller']);
         //Get estate details
-        // $estateDetails = $this->getEstateDetails($id);
+        $estateDetails = $this->getEstateDetails($id);
+        //dd($estateDetails);die;
         // Get details of the json
         // $details = json_decode($estateDetails['adapte'], true);
         // dd($details);
@@ -1088,7 +1089,7 @@ class EstateController extends Controller
             return view('estates.visit', ['id' => $id]);
         }
         // Return view edit module visit
-        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'estates' => $estates, 'seller' => $seller, 'offer' => $offer, 'remarks' => $remarks]);
+        return view('estates.visit', ['id' => $id, 'estate' => $estate, 'estates' => $estates, 'details' => $estateDetails, 'seller' => $seller, 'offer' => $offer, 'remarks' => $remarks]);
     }
 
     /**
@@ -1483,16 +1484,33 @@ class EstateController extends Controller
     /**
      * Get estate
      */
-    private function getEstate($estate_id)
+    public function getEstate($estate_id)
     {
         $estate = Estate::where('id', '=', $estate_id)->get();
         $estateArray = array();
         foreach ($estate as $_estate) {
+            $seller = $this->getSeller($_estate->seller);
+
             $estateArray = array(
                 'id' => $_estate->id,
                 'reference' => $_estate->reference,
-                'name' => $_estate->name,
+                'name' => $seller['name'],
+                'phone' => $seller['phone'],
+                'email' => $seller['email'],
                 'category' => $this->getCategory($_estate->category),
+                'construction' => $_estate->construction,
+                'renovation' => $_estate->renovation,
+                'peb' => $_estate->peb,
+                'surface' => $_estate->surface,
+                'town_planning' => $_estate->town_planning,
+                'rooms' => $_estate->rooms,
+                'bathrooms' => $_estate->bathrooms,
+                'garden' => $_estate->garden,
+                'terrase' => $_estate->terrase,
+                'garage' => $_estate->garage,
+                'number_gas' => $_estate->number_gas,
+                'number_electric' => $_estate->number_electric,
+                'type_estate' => $_estate->type_estate,
                 'visit_date_at' => $_estate->visit_date_at,
                 'main_photo' => $_estate->main_photo,
                 'street' => $_estate->street,
@@ -1522,6 +1540,7 @@ class EstateController extends Controller
                 'rdv' => $_estate->rdv
             );
         }
+        //dd($estateArray);die;
         return $estateArray;
     }
 
@@ -1624,7 +1643,7 @@ class EstateController extends Controller
             ->where('type_estate', '=', 'Type of Estate')
             ->get();
 
-        dd($estates);
+        //dd($estates);
         die;
     }
 
@@ -1636,16 +1655,16 @@ class EstateController extends Controller
         $details = DB::table('estate_details')
             ->where('estate_id', '=', $id)
             ->get();
-        //dd($details);
-        if ($details->isEmpty()) {
-            throw new \Exception('Aucun détail trouvé pour la propriété avec ID ' . $id);
-        }
+        // dd($details);
 
         $detailsArray = array();
         foreach ($details as $detail) {
             $detailsArray = array(
                 'id' => $detail->id,
                 'estate_id' => $detail->estate_id,
+                'seller_email' => $detail->seller_email,
+                'seller_phone' => $detail->seller_phone,
+                'seller_name' => $detail->seller_name,
                 'description' => $detail->description,
                 'comment' => $detail->comment,
                 'problems' => $detail->problems,
@@ -1658,12 +1677,32 @@ class EstateController extends Controller
                 'peb' => $detail->peb,
                 'price_evaluated' => $detail->price_evaluated,
                 'price_market' => $detail->price_market,
-                'visit_remarks' => $detail->visit_remarks
+                'visit_remarks' => $detail->visit_remarks,
+                'estate_description' => $detail->estate_description,
+                'town_planning' => $detail->town_planning,
+                'more_habitations' => $detail->more_habitations,
+                'rooms' => $detail->rooms,
+                'bathrooms' => $detail->bathrooms,
+                'estate_street' => $detail->estate_street,
+                'jardin' => $detail->jardin,
+                'electrique' => $detail->electrique,
+                'gaz' => $detail->gaz,
+                'garage' => $detail->garage,
+                'details_commentaire' => $detail->details_commentaire,
+                'interior_state' => $detail->interior_state,
+                'exterior_state' => $detail->exterior_state,
+                'district_state' => $detail->district_state,
+                'interior_highlights' => $detail->interior_highlights,
+                'exterior_highlights' => $detail->exterior_highlights,
+                'interior_weak_point' => $detail->interior_weak_point,
+                'exterior_weak_point' => $detail->exterior_weak_point,
+                'desires_to_sell' => $detail->desires_to_sell,
+                'details_state_interior' => $detail->details_state_interior,
+                'details_state_exterior' => $detail->details_state_exterior,
+                'agent_notice' => $detail->agent_notice,
+                'price_client' => $detail->price_client,
+                'price_market' => $detail->price_market,
             );
-        }
-
-        if (empty($detailsArray)) {
-            throw new \Exception('Détails vides trouvés pour la propriété avec ID ' . $id);
         }
         //dd($detailsArray);
         return $detailsArray;
@@ -1921,7 +1960,7 @@ class EstateController extends Controller
     {
         // Get all data of request
         $data = $request->all();
-
+        //dd($data);die;
         // Init updated
         $updated = false;
 
@@ -1937,24 +1976,28 @@ class EstateController extends Controller
 
             if ($estateDetails) {
                 //  $estateDetails->adapte = json_encode($datosAdapte);
-                $estateDetails->description = $data['estate_description'];
+                $estateDetails->estate_description = $data['estate_description'];
+                $estateDetails->seller_email = $data['seller_email'];
+                $estateDetails->seller_phone = $data['seller_phone'];
+                $estateDetails->seller_name = $data['seller_name'];
                 $estateDetails->year_construction = $data['year_construction'];
                 $estateDetails->year_renovation = $data['year_renovation'];
                 $estateDetails->peb = $data['peb'];
                 $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
                 $estateDetails->rooms = $data['rooms'];
                 $estateDetails->bathrooms = $data['bathrooms'];
                 $estateDetails->estate_street = $data['estate_street'];
                 $estateDetails->coordinate_x = $data['coordinate_x'];
                 $estateDetails->coordinate_y = $data['coordinate_y'];
-                $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->jardin = $data['jardin'] == 'oui' ? 1 : 0;
+                $estateDetails->garage = $data['garage'] == 'oui' ? 1 : 0;
                 $estateDetails->gaz = $data['gaz'];
                 $estateDetails->electrique = $data['electrique'];
                 $estateDetails->details_commentaire = $data['details_commentaire'];
-                $estateDetails->interior_state = $data['interior_state'];
-                $estateDetails->exterior_state = $data['exterior_state'];
+                $estateDetails->details_state_interior = $data['details_state_interior'];
+                $estateDetails->details_state_exterior = $data['details_state_exterior'];
                 $estateDetails->district_state = $data['district_state'];
                 $estateDetails->interior_highlights = $data['interior_highlights'];
                 $estateDetails->exterior_highlights = $data['exterior_highlights'];
@@ -1964,6 +2007,10 @@ class EstateController extends Controller
                 $estateDetails->details_state_interior = $data['details_state_interior'];
                 $estateDetails->details_state_exterior = $data['details_state_exterior'];
                 $estateDetails->agent_notice = $data['agent_notice'];
+                $estateDetails->price_market = $data['price_market'];
+                $estateDetails->price_client = $data['price_client'];
+                //$estateDetails->visit_remarks = $data['visit_remarks'];
+                $estateDetails->type_estate = $data['type_estate'];
 
                 $estateDetails->save();
 
@@ -1972,25 +2019,29 @@ class EstateController extends Controller
             if (!$estateDetails) {
                 $estateDetails = new EstateDetail;
 
-                $estateDetails->estate_id = $data['estate_id'];
-                $estateDetails->description = $data['estate_description'];
+                //  $estateDetails->adapte = json_encode($datosAdapte);
+                $estateDetails->estate_description = $data['estate_description'];
+                $estateDetails->seller_email = $data['seller_email'];
+                $estateDetails->seller_phone = $data['seller_phone'];
+                $estateDetails->seller_name = $data['seller_name'];
                 $estateDetails->year_construction = $data['year_construction'];
                 $estateDetails->year_renovation = $data['year_renovation'];
                 $estateDetails->peb = $data['peb'];
                 $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
                 $estateDetails->rooms = $data['rooms'];
                 $estateDetails->bathrooms = $data['bathrooms'];
                 $estateDetails->estate_street = $data['estate_street'];
                 $estateDetails->coordinate_x = $data['coordinate_x'];
                 $estateDetails->coordinate_y = $data['coordinate_y'];
-                $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->jardin = $data['jardin'] == 'oui' ? 1 : 0;
+                $estateDetails->garage = $data['garage'] == 'oui' ? 1 : 0;
                 $estateDetails->gaz = $data['gaz'];
                 $estateDetails->electrique = $data['electrique'];
                 $estateDetails->details_commentaire = $data['details_commentaire'];
-                $estateDetails->interior_state = $data['interior_state'];
-                $estateDetails->exterior_state = $data['exterior_state'];
+                $estateDetails->details_state_interior = $data['details_state_interior'];
+                $estateDetails->details_state_exterior = $data['details_state_exterior'];
                 $estateDetails->district_state = $data['district_state'];
                 $estateDetails->interior_highlights = $data['interior_highlights'];
                 $estateDetails->exterior_highlights = $data['exterior_highlights'];
@@ -2000,6 +2051,10 @@ class EstateController extends Controller
                 $estateDetails->details_state_interior = $data['details_state_interior'];
                 $estateDetails->details_state_exterior = $data['details_state_exterior'];
                 $estateDetails->agent_notice = $data['agent_notice'];
+                $estateDetails->price_market = $data['price_market'];
+                $estateDetails->price_client = $data['price_client'];
+                // $estateDetails->visit_remarks = $data['visit_remarks'];
+                $estateDetails->type_estate = $data['type_estate'];
 
                 $estateDetails->save();
 
