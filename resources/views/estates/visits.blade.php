@@ -55,7 +55,7 @@
 					<td>{!! $estate['name'] !!}</td>
 					<td>{!! strftime('%a', strtotime($estate['created_at'])) !!} {!! date('d-m-Y', strtotime($estate['created_at'])) !!}</td>
 					<td>{!! date('H:i', strtotime($estate['created_at'])) !!}</td>
-					<td>-</td>
+					<td>{!! $estate['type_estate'] !!}</td>
 					<td>{!! $estate['estimate'] !!}</td>
 					<td>{!! $estate['market'] !!}</td>
 					<td>-</td>
