@@ -41,7 +41,7 @@ class AddFieldsToEstatesDetailsTable extends Migration
             $table->integer('details_state_interior')->nullable();
             $table->integer('details_state_exterior')->nullable();
 
-            $table->foreign('seller_id')->references('id')->on('sellers');
+           // $table->foreign('seller_id')->references('id')->on('sellers');
             // $table->foreign('offer_id')->references('id')->on('estate_offers');
         });
     }
