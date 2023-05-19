@@ -8,20 +8,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Estate extends Model
 {
-	use HasFactory;
-	use SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
-	protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at'];
 
-	// Disable timestamps
-	public $timestamps = false;
+    // Disable timestamps
+    public $timestamps = false;
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
-	protected $fillable = [
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
         'id',
         'reference',
         'name',
@@ -69,4 +69,9 @@ class Estate extends Model
         'construction',
         'renovation'
     ];
+
+    public function seller()
+    {
+        return $this->belongsTo(Seller::class);
+    }
 }
