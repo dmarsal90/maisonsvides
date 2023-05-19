@@ -1997,8 +1997,8 @@ class EstateController extends Controller
                 $estateDetails->gaz = $data['gaz'];
                 $estateDetails->electrique = $data['electrique'];
                 $estateDetails->details_commentaire = $data['details_commentaire'];
-                $estateDetails->details_state_interior = $data['details_state_interior'];
-                $estateDetails->details_state_exterior = $data['details_state_exterior'];
+                $estateDetails->interior_state = $data['interior_state'];
+                $estateDetails->exterior_state = $data['exterior_state'];
                 $estateDetails->district_state = $data['district_state'];
                 $estateDetails->interior_highlights = $data['interior_highlights'];
                 $estateDetails->exterior_highlights = $data['exterior_highlights'];
