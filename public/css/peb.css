@@ -1,29 +1,29 @@
   .peb-a {
-    background-color: #4CAF50; /* verde */
+    background-color: #25a12f; /* verde */
     color: white;
   }
   .peb-b {
-    background-color: #8BC34A; /* verde claro */
+    background-color: #87b84f; /* verde claro */
     color: black;
   }
   .peb-c {
-    background-color: #FFC107; /* amarillo */
+    background-color: #93ff07; /* amarillo */
     color: black;
   }
   .peb-d {
-    background-color: #FF9800; /* naranja */
+    background-color: #FFFF00; /* amarillo */
     color: black;
   }
   .peb-e {
-    background-color: #f44336; /* rojo */
+    background-color: #f4b136; /* naranja */
     color: white;
   }
   .peb-f {
-    background-color: #d32f2f; /* rojo oscuro */
+    background-color: #d4581f; /* naranja oscuro */
     color: white;
   }
   .peb-g {
-    background-color: #520a0a; /* rojo oscuro */
+    background-color: #cf0f0f; /* rojo oscuro */
     color: white;
   }
 
