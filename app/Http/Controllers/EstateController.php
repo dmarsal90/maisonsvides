@@ -1703,6 +1703,7 @@ class EstateController extends Controller
                 'agent_notice' => $detail->agent_notice,
                 'price_client' => $detail->price_client,
                 'price_market' => $detail->price_market,
+                'type_bien' => $detail->type_estate,
             );
         }
         //dd($detailsArray);
@@ -2819,7 +2820,7 @@ class EstateController extends Controller
             $templatesArray[] = array(
                 'id' => $template->id,
                 'name' => $template->name,
-                'reminder' => unserialize($template->reminder),
+                'reminder' => $template->reminder,
                 'type' => $template->type
             );
         }
