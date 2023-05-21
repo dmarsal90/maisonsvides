@@ -1703,6 +1703,7 @@ class EstateController extends Controller
                 'agent_notice' => $detail->agent_notice,
                 'price_client' => $detail->price_client,
                 'price_market' => $detail->price_market,
+                'type_bien' => $detail->type_estate,
             );
         }
         //dd($detailsArray);
@@ -1997,8 +1998,8 @@ class EstateController extends Controller
                 $estateDetails->gaz = $data['gaz'];
                 $estateDetails->electrique = $data['electrique'];
                 $estateDetails->details_commentaire = $data['details_commentaire'];
-                $estateDetails->details_state_interior = $data['details_state_interior'];
-                $estateDetails->details_state_exterior = $data['details_state_exterior'];
+                $estateDetails->interior_state = $data['interior_state'];
+                $estateDetails->exterior_state = $data['exterior_state'];
                 $estateDetails->district_state = $data['district_state'];
                 $estateDetails->interior_highlights = $data['interior_highlights'];
                 $estateDetails->exterior_highlights = $data['exterior_highlights'];
@@ -2819,7 +2820,7 @@ class EstateController extends Controller
             $templatesArray[] = array(
                 'id' => $template->id,
                 'name' => $template->name,
-                'reminder' => unserialize($template->reminder),
+                'reminder' => $template->reminder,
                 'type' => $template->type
             );
         }

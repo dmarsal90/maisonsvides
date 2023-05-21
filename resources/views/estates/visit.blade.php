@@ -47,7 +47,7 @@
                                     <span class="ffhnm">Contact [ 20- seller_name ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="seller_name" class="form-control" @isset($details['seller_name']) value="{!! $details['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset >
+                                    <input data-change-input type="text" name="seller_name" class="form-control" @isset($details['seller_name']) value="{!! $details['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Tel [ 21- seller_phone ]:</span>
@@ -65,7 +65,7 @@
                                     <span class="ffhnm">Année de construction [ 8- year_construction ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="number" name="year_construction" class="form-control" @isset($details['year_construction']) value="{!! $details['year_construction'] !!}" @else value="{!! $estate['construction'] !!}" @endisset >
+                                    <input data-change-input type="number" name="year_construction" class="form-control" @isset($details['year_construction']) value="{!! $details['year_construction'] !!}" @else value="{!! $estate['construction'] !!}" @endisset>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Année de rénovation [ 9- year_renovation ]:</span>
@@ -77,7 +77,7 @@
                                     <span class="ffhnm">PEB [ 12- peb ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="peb" @isset($details['peb']) value="{!! $details['peb'] !!}" @else value="{!! $estate['peb'] !!}" @endisset class="form-control peb-@isset($details['peb']){{ strtolower($details['peb']) }}@else{{ strtolower($estate['peb']) }}@endisset" >
+                                    <input data-change-input type="text" name="peb" id="peb-input" @isset($details['peb']) value="{!! $details['peb'] !!}" @else value="{!! $estate['peb'] !!}" @endisset class="form-control peb-@isset($details['peb']){{ strtolower($details['peb']) }}@else{{ strtolower($estate['peb']) }}@endisset" oninput="updatePebColor()">
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Surface approximative en mètres carrés [ 44- surface ]:</span>
@@ -124,7 +124,7 @@
                                     <span class="ffhnm">Adresse du bien [ 22- seller_email ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="estate_street" class="form-control" id="estate_street" @isset($details['estate_street']) value="{!! $details['estate_street'] !!}" @else value="{!! $estate['street'] !!}" @endisset>
+                                    <input data-change-input type="text" name="estate_street" class="form-control" id="estate-street-input" @isset($details['estate_street']) value="{!! $details['estate_street'] !!}" @else value="{!! $estate['street'] !!}" @endisset oninput="updateCoordinates()">
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <img data-toggle="modal" data-target="#showCoordinates" src="{!! asset('img/icons/coordinates.svg') !!}" width="22">
@@ -262,7 +262,7 @@
                                             <input data-change-input type="text" name="price_evaluated" class="form-control" placeholder="Entrez le prix évalué" @isset($details['price_evaluated']) value="{!! isset($details['price_evaluated']) ? $details['price_evaluated'] : '' !!}" @endisset>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2t">
-                                            <span class="ffhnm">Prix du marché  [ 14- price_market ]:</span>
+                                            <span class="ffhnm">Prix du marché [ 14- price_market ]:</span>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                             <input data-change-input type="text" name="price_market" class="form-control" placeholder="Entrez le prix du marché" @isset($details['price_market']) value="{!! isset($details['price_market']) ? $details['price_market'] : '' !!}" @endisset>
@@ -395,7 +395,72 @@
 @endsection
 
 @section('scripts')
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDUt6_wutCJwLVFx1TbZD_ai4l9sK30jCs" async></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap" async defer></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<script>
+    function updatePebColor() {
+        var input = document.getElementById("peb-input");
+        var peb = input.value.toLowerCase();
+        var className = "peb-" + peb;
+        input.className = "form-control " + className;
+    }
+</script>
+<script>
+    function updateCoordinates() {
+        var street = document.getElementById("estate-street-input").value;
+        var geocoder = new google.maps.Geocoder();
+        geocoder.geocode({
+            'address': street
+        }, function(results, status) {
+            if (status === 'OK') {
+                var lat = results[0].geometry.location.lat();
+                var lng = results[0].geometry.location.lng();
+                document.getElementById("coordinate_x").value = lat;
+                document.getElementById("coordinate_y").value = lng;
+                // habilitar los campos de entrada
+                document.getElementById("coordinate_x").disabled = false;
+                document.getElementById("coordinate_y").disabled = false;
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status);
+                // deshabilitar los campos de entrada
+                document.getElementById("coordinate_x").disabled = true;
+                document.getElementById("coordinate_y").disabled = true;
+            }
+        });
+    }
+
+    function initMap() {
+        var geocoder = new google.maps.Geocoder();
+
+        // Obtener el campo de entrada "estate_street" por su identificador
+        var estateStreetInput = document.getElementById("estate-street-input");
+
+        // Escuchar el evento "input" en el campo de entrada "estate_street"
+        estateStreetInput.addEventListener("input", function() {
+            // Obtener el valor actual del campo de entrada "estate_street"
+            var address = estateStreetInput.value;
+
+            // Realizar una solicitud de geocodificación para obtener las coordenadas de la dirección
+            geocoder.geocode({
+                address: address
+            }, function(results, status) {
+                if (status === "OK") {
+                    // Obtener las coordenadas de la primera ubicación encontrada
+                    var location = results[0].geometry.location;
+                    var lat = location.lat();
+                    var lng = location.lng();
+
+                    // Actualizar los campos de entrada "coordinate_x" y "coordinate_y" con las coordenadas
+                    var coordinateXInput = document.getElementById("coordinate_x");
+                    var coordinateYInput = document.getElementById("coordinate_y");
+                    coordinateXInput.value = lat.toFixed(14);
+                    coordinateYInput.value = lng.toFixed(14);
+                } else {
+                    console.log("Geocode was not successful for the following reason: " + status);
+                }
+            });
+        });
+    }
+</script>
 @endsection
