@@ -743,7 +743,7 @@
 									<p>Cher Monsieur xxx, </p>
 									<p>Veuillez trouver, ci-dessous, notre meilleure offre pour votre bien situé à [address-estate] reprenant les caractéristiques suivantes:
 									<br>Localisation du bien:
-									<br>[localisation-estate] 
+									<br>[localisation-estate]
 									<br>Description du bien:
 									<br>[description-estate]
 									<br>Détails de l'intérieur du bien:
@@ -794,13 +794,13 @@
 									[texte]
 									<p><strong><u>Modalités de l’offre et timing opérationnel : </u></strong></p>
 									<ul>
-										@php $formatterFR = new NumberFormatter("fr", NumberFormatter::SPELLOUT); @endphp
+
 										<li>Montant global de l’offre : [pricewesold] EUR ([price-letter])</li>
 										<li><strong><u>[condition]</u></strong></li>
 										<li>Les parties s’engagent à signer un compromis en bonne et due forme dans les plus brefs délais</li>
 										<li>Notaire de l’acquéreur : [notary]</li>
 										<?php
-											$date_current = date("j F Y"); 
+											$date_current = date("j F Y");
 										?>
 										<li>Cette présente offre est valable jusqu’au [validate], date à laquelle l’acquéreur se réserve le droit de la considérer comme nulle et non avenue.</li>
 										<li>Nous insistons sur le caractère confidentiel de cette offre. </li>
@@ -833,13 +833,13 @@
 									[texte]
 									<p><strong><u>Modalités de l’offre et timing opérationnel : </u></strong></p>
 									<ul>
-										@php $formatterFR = new NumberFormatter("fr", NumberFormatter::SPELLOUT); @endphp
+										
 										<li>Montant global de l’offre : [pricewesold] EUR ([price-letter])</li>
 										<li><strong><u>[condition]</u></strong></li>
 										<li>Les parties s’engagent à signer un compromis en bonne et due forme dans les plus brefs délais</li>
 										<li>Notaire de l’acquéreur : [notary]</li>
 										<?php
-											$date_current = date("j F Y"); 
+											$date_current = date("j F Y");
 										?>
 										<li>Cette présente offre est valable jusqu’au [validate], date à laquelle l’acquéreur se réserve le droit de la considérer comme nulle et non avenue.</li>
 										<li>Nous insistons sur le caractère confidentiel de cette offre. </li>
