@@ -186,30 +186,31 @@
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5"></div>
 									</div>
 									<div class="row mb-2 ml-2">
-										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
+
+										<!-- <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="text" name="details__lastName" class="form-control" value="@isset($details['lastName']){!! $details['lastName'] !!}@endisset" data-save>
-										</div>
+											<input data-change-input  type="text" name="details__lastName" class="form-control" value="@isset($estateDetails['lastName']){!! $details['lastName'] !!}@endisset" data-save>
+										</div> -->
 									</div>
 									<div class="row mb-2 ml-2">
-										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Prénom :</div>
+										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="text" name="details__firstName" class="form-control" value="@isset($details['firstName']){!! $details['firstName'] !!}@endisset" data-save>
+											<input data-change-input  type="text" name="details__firstName" class="form-control" value="@isset($estateDetails['seller_name']){!! $estateDetails['seller_name'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Mail :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="email" name="details__email" class="form-control" value="@isset($details['email']){!! $details['email'] !!}@endisset" data-save>
+											<input data-change-input  type="email" name="details__email" class="form-control" value="@isset($estateDetails['seller_email']){!! $estateDetails['seller_email'] !!}@endisset" data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Téléphone :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input  data-change-input type="tel" name="details__tel" class="form-control" value="@isset($details['tel']){!! $details['tel'] !!}@endisset" data-save>
+											<input  data-change-input type="tel" name="details__tel" class="form-control" value="@isset($estateDetails['seller_phone']){!! $estateDetails['seller_phone'] !!}@endisset" data-save>
 										</div>
 									</div>
-									
+
 								</div>
 							</div>
 
