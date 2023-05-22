@@ -89,7 +89,7 @@
                                     <span class="ffhnm">Town planning [ 23- town_planning ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="town_planning" @isset($details['town_planning']) value="{!! $details['town_planning'] !!}" @else value="{!! $estate['town_planning'] !!}" @endisset class="form-control">
+                                    <input data-change-input type="text" name="town_planning" @isset($details['town_planning']) value="{!! $details['town_planning']== 1 ? 'oui' : 'non' !!}" @else value="{!! $estate['town_planning']== 1 ? 'oui' : 'non' !!}" @endisset class="form-control">
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Plus de chambres? [ 24- more_habitations ]:</span>
