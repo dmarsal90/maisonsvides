@@ -488,7 +488,7 @@ class EstateController extends Controller
         }
 
         // Get to show events
-        $eve_ = $this->showEvents($id);
+       // $eve_ = $this->showEvents($id);
         // Get events confirmed
         $eventConfirmed = EstateEvent::where('confirmed', '=', 1)->get();
         // Get total tickets no answered
@@ -501,7 +501,7 @@ class EstateController extends Controller
             $auxticketsNoAnswer[] = $ticket->ticket_id;
         }
         // Return view the data of the estate
-        return view('estates.view', ['id' => $id, 'comments' => $comments, 'estateDetails' => $estateDetails, 'details' => $details, 'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails, 'eve_' => $eve_, 'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
+        return view('estates.view', ['id' => $id, 'comments' => $comments, 'estateDetails' => $estateDetails, 'details' => $details, 'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
     }
 
     /**
