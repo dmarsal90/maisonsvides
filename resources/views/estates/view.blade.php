@@ -833,7 +833,7 @@
 									[texte]
 									<p><strong><u>Modalités de l’offre et timing opérationnel : </u></strong></p>
 									<ul>
-										
+
 										<li>Montant global de l’offre : [pricewesold] EUR ([price-letter])</li>
 										<li><strong><u>[condition]</u></strong></li>
 										<li>Les parties s’engagent à signer un compromis en bonne et due forme dans les plus brefs délais</li>
@@ -1146,9 +1146,7 @@
 							</div>
 							<div class="text-right">
 								<button type="button" class="btn btn-lg btn-dark"  data-dismiss="modal">Annuler</button>
-								@if($eve_['total'] < 3 && $estate['visit_date_at'] == null)
-								<button type="submit" class="btn btn-lg btn-success" data-submit-form="form-create-event">Créer</button>
-								@endif
+								
 							</div>
 						</div>
 					</div>
