@@ -1027,7 +1027,7 @@
 							<div class="mb-4">
 								<textarea name="body" id="tinysendInvitation" data-height="700" data-tiny="tinysendInvitation">
 									<p>Cher Monsieru X,</p>
-									<p>Afin de traiter au mieux votre dossier, bla bla bla...</p>
+									<p>Afin de traiter au mieux votre dossier, etc...</p>
 									<p>Bla bla bla</p>
 								</textarea>
 							</div>
@@ -1146,7 +1146,7 @@
 							</div>
 							<div class="text-right">
 								<button type="button" class="btn btn-lg btn-dark"  data-dismiss="modal">Annuler</button>
-								
+
 							</div>
 						</div>
 					</div>
