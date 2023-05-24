@@ -110,13 +110,8 @@
                                     <input data-change-input type="number" name="bathrooms" @isset($details['bathrooms']) value="{!! $details['bathrooms'] !!}" @else value="{!! $estate['bathrooms'] !!}" @endisset class="form-control">
                                 </div>
                             </div>
-
-                            <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Description générale [ 27- estate_description ]:</div>
-                            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-                                <textarea data-change-input name="estate_description" class="form-control" rows="5">@isset($details['estate_description']){{ $details['estate_description'] }}@endisset</textarea>
-
-                            </div>
                         </div>
+
 
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6">
                             <div class="row">
@@ -180,7 +175,14 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12 mb-2 ml-2">
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-12 mb-2 ml-2">
+                            <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Description générale [ 27- estate_description ]:</div>
+                            <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
+                                <textarea data-change-input name="estate_description" class="form-control" rows="5">@isset($details['estate_description']){{ $details['estate_description'] }}@endisset</textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-12 mb-2 ml-2">
                             <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Un commentaire ? [ 32- details_commentaire ] :</div>
                             <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
                                 <textarea data-change-input name="details_commentaire" class="form-control" rows="5">@isset($details['details_commentaire']){{ $details['details_commentaire'] }}@endisset</textarea>
@@ -320,22 +322,24 @@
         <button type="submit" class="btn btn-lg btn-success" data-modified="false" data-submit-hide="true" data-submit-form="form-visit-information">Sauvegarder</button>
     </div>
 
-    <div class="card bg-light col-lg-12 my-4">
-        <div class="card-body">
-            <div class="text-right autosize-s">
-                <div class="mt-4">
-                    <label class="mr-3"><input type="checkbox" id="status-visite" checked="false"> Passer le status du bien en visite fini</label>
-                </div>
-                <div class="mt-2">
-                    <a href="{!! route('estatevisited', [$id, 'option']) !!}" data-terminer class="btn btn-lg btn-danger">Terminer</a>
+
+        <div class="card bg-light col-lg-12 mb-4">
+            <div class="card-body">
+                <div class="text-right autosize-s">
+                    <div class="mt-4">
+                        <label class="mr-3"><input type="checkbox" id="status-visite" checked="false"> Passer le status du bien en visite fini</label>
+                    </div>
+                    <div class="mt-2">
+                        <a href="{!! route('estatevisited', [$id, 'option']) !!}" data-terminer class="btn btn-lg btn-danger">Terminer</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+
     </form>
     <form action="{!! route('newcomment') !!}" method="POST" data-form="form-visit-comment-estate" data-reload="true">
         @csrf()
-        <div class="autosize-s">
+        <div class="autosize-m mb-4">
             <div class="card font-body-content">
                 <div class="card-header">Enregistrer un commentaire interne:</div>
                 <div class="card-body card-body-white">
