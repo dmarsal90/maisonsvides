@@ -50,7 +50,7 @@
 				<input type="hidden" name="estate_id" value="{!! $id !!}">
 				<input type="hidden" name="seller_id" value="{!! $seller['id'] !!}">
 
-				<input type="hidden" name="type_estate" value="{!! $estateDetails['type_bien'] !!}">
+				<input type="hidden" name="type_estate" @isset($details['type_estate']) value="{!! $details['type_estate'] !!}" @else value="{!! $estate['type_estate'] !!}" @endisset>
 				<div class="card font-body-content">
 					<div class="card-header">
 						<div class="text-left">
@@ -195,19 +195,19 @@
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-											<input data-change-input  type="text" name="details__firstName" class="form-control" value="@isset($estateDetails['seller_name']){!! $estateDetails['seller_name'] !!}@endisset" data-save>
+											<input data-change-input  type="text" name="details__firstName" class="form-control" @isset($estateDetails['seller_name']) value="{!! $estateDetails['seller_name'] !!}"@else value="{!! $estate['name'] !!}"@endisset data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Mail :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input data-change-input  type="email" name="details__email" class="form-control" value="@isset($estateDetails['seller_email']){!! $estateDetails['seller_email'] !!}@endisset" data-save>
+											<input data-change-input  type="email" name="details__email" class="form-control" @isset($estateDetails['seller_email']) value="{!! $estateDetails['seller_email'] !!}"@else value="{!! $estate['email'] !!}"@endisset data-save>
 										</div>
 									</div>
 									<div class="row mb-2 ml-2">
 										<div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Téléphone :</div>
 										<div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-											<input  data-change-input type="tel" name="details__tel" class="form-control" value="@isset($estateDetails['seller_phone']){!! $estateDetails['seller_phone'] !!}@endisset" data-save>
+											<input  data-change-input type="tel" name="details__tel" class="form-control"  @isset($estateDetails['seller_phone']) value="{!! $estateDetails['seller_phone'] !!}"@else value="{!! $estate['phone'] !!}"@endisset data-save>
 										</div>
 									</div>
 
@@ -1055,7 +1055,7 @@
 					<div class="card-body">
 						<div class="mb-4">
 							<span>Problème signalé dans le formulaire :</span>
-							<textarea name="estate_problem_signal" rows="5" class="form-control" disabled>{!! $estateDetails['problems'] !!}</textarea>
+							<textarea name="estate_problem_signal" rows="5" class="form-control" disabled>@isset($estates['problems']){!! $estates['problems'] !!}@endisset</textarea>
 						</div>
 						<div class="mb-4">
 							<span>Suivi résolution :</span>
