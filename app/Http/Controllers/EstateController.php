@@ -372,7 +372,7 @@ class EstateController extends Controller
         //Get data of a estate
         $estate = $this->getEstate($id);
         // If session is of the a manager
-        if (Auth::user()->type == 2) {
+        if (Auth::user()->type == 2 || Auth::user()->type == 1) {
             // Get estates to show to manager
             $estates = $this->getEstatesToManager(Auth::user()->id);
         }
@@ -382,7 +382,7 @@ class EstateController extends Controller
             $estates = $this->getEstatesToAgent(Auth::user()->id);
         }
         // If session is of the a manager
-        if (Auth::user()->type == 2) {
+        if (Auth::user()->type == 2 || Auth::user()->type == 1) {
             // Get estates to show to manager
             $estates = $this->getEstatesToManager(Auth::user()->id);
         }
@@ -396,7 +396,7 @@ class EstateController extends Controller
         //Get estate details
         $estateDetails = $this->getEstateDetails($id);
         // Get details of the json
-        $details = json_decode($estateDetails['encode'], true);
+       // $details = json_decode($estateDetails['encode'], true);
         // dd($estateDetails['details']);
         // Get logs
         $logs = $this->getLogs($id);
@@ -500,8 +500,11 @@ class EstateController extends Controller
         foreach ($ticketsNoAnswer as $ticket) {
             $auxticketsNoAnswer[] = $ticket->ticket_id;
         }
+//los que he quitado de la respuesta
+//'details' => $details
+
         // Return view the data of the estate
-        return view('estates.view', ['id' => $id, 'comments' => $comments, 'estateDetails' => $estateDetails, 'details' => $details, 'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
+        return view('estates.view', ['id' => $id, 'estates' => $estates, 'comments' => $comments, 'estateDetails' => $estateDetails,  'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
     }
 
     /**
