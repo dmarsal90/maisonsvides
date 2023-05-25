@@ -396,7 +396,7 @@ class EstateController extends Controller
         //Get estate details
         $estateDetails = $this->getEstateDetails($id);
         // Get details of the json
-       // $details = json_decode($estateDetails['encode'], true);
+        // $details = json_decode($estateDetails['encode'], true);
         // dd($estateDetails['details']);
         // Get logs
         $logs = $this->getLogs($id);
@@ -488,7 +488,7 @@ class EstateController extends Controller
         }
 
         // Get to show events
-       // $eve_ = $this->showEvents($id);
+        // $eve_ = $this->showEvents($id);
         // Get events confirmed
         $eventConfirmed = EstateEvent::where('confirmed', '=', 1)->get();
         // Get total tickets no answered
@@ -500,8 +500,9 @@ class EstateController extends Controller
         foreach ($ticketsNoAnswer as $ticket) {
             $auxticketsNoAnswer[] = $ticket->ticket_id;
         }
-//los que he quitado de la respuesta
-//'details' => $details
+
+        //los que he quitado de la respuesta
+        //'details' => $details
 
         // Return view the data of the estate
         return view('estates.view', ['id' => $id, 'estates' => $estates, 'comments' => $comments, 'estateDetails' => $estateDetails,  'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
@@ -1988,7 +1989,7 @@ class EstateController extends Controller
                 $estateDetails->year_construction = $data['year_construction'];
                 $estateDetails->year_renovation = $data['year_renovation'];
                 $estateDetails->peb = $data['peb'];
-                $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->town_planning = $data['town_planning'] == 'oui' ? 1 : 0;
                 $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
                 $estateDetails->rooms = $data['rooms'];
@@ -2032,7 +2033,7 @@ class EstateController extends Controller
                 $estateDetails->year_construction = $data['year_construction'];
                 $estateDetails->year_renovation = $data['year_renovation'];
                 $estateDetails->peb = $data['peb'];
-                $estateDetails->town_planning = $data['town_planning'];
+                $estateDetails->town_planning = $data['town_planning'] == 'oui' ? 1 : 0;
                 $estateDetails->price_evaluated = $data['price_evaluated'];
                 $estateDetails->more_habitations = $data['more_habitations'] == 'oui' ? 1 : 0;
                 $estateDetails->rooms = $data['rooms'];
