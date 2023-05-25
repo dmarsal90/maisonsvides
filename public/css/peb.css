@@ -1,29 +1,66 @@
   .peb-a {
-    background-color: #25a12f; /* verde */
-    color: white;
-  }
-  .peb-b {
-    background-color: #87b84f; /* verde claro */
-    color: black;
-  }
-  .peb-c {
-    background-color: #93ff07; /* amarillo */
-    color: black;
-  }
-  .peb-d {
-    background-color: #FFFF00; /* amarillo */
-    color: black;
-  }
-  .peb-e {
-    background-color: #f4b136; /* naranja */
-    color: white;
-  }
-  .peb-f {
-    background-color: #d4581f; /* naranja oscuro */
-    color: white;
-  }
-  .peb-g {
-    background-color: #cf0f0f; /* rojo oscuro */
-    color: white;
+      background-color: #25a12f;
+      /* verde */
+      color: white;
   }
 
+  .peb-b {
+      background-color: #87b84f;
+      /* verde claro */
+      color: black;
+  }
+
+  .peb-c {
+      background-color: #93ff07;
+      /* amarillo */
+      color: black;
+  }
+
+  .peb-d {
+      background-color: #FFFF00;
+      /* amarillo */
+      color: black;
+  }
+
+  .peb-e {
+      background-color: #f4b136;
+      /* naranja */
+      color: white;
+  }
+
+  .peb-f {
+      background-color: #d4581f;
+      /* naranja oscuro */
+      color: white;
+  }
+
+  .peb-g {
+      background-color: #cf0f0f;
+      /* rojo oscuro */
+      color: white;
+  }
+
+  .error-msg {
+    display: block;
+    margin-top: 5px;
+    color: red;
+    font-size: 1em;
+  }
+
+  input.error {
+      border: 2px solid red;
+  }
+
+  textarea.error {
+      border: 2px solid red;
+  }
+
+  label.error {
+      color: red;
+      font-size: 1em;
+  }
+
+  span.error-msg {
+      color: red;
+      font-size: 1em
+  }
