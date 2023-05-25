@@ -2,8 +2,9 @@
 
 @section('content')
 <header>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous"> -->
     <link rel="stylesheet" href="{{ asset('css/peb.css') }}">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 </header>
 <div class="card font-body-content" id="visitStep1">
     <div class="card-header" id="visits-google-map">
@@ -33,7 +34,7 @@
         </script>
         @endif
         <br>
-        <form action="{!! route('editdetails') !!}" method="POST" data-form="form-visit-information" data-reload="true">
+        <form action="{!! route('editdetails') !!}" method="POST" data-form="form-visit-information" data-reload="true" id="editdetails">
             @csrf()
             <input type="hidden" name="estate_id" value="{!! $id !!}">
             <input type="hidden" name="seller_id" value="{!! $seller['id'] !!}">
@@ -47,67 +48,78 @@
                                     <span class="ffhnm">Contact [ 20- seller_name ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="seller_name" class="form-control" @isset($details['seller_name']) value="{!! $details['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset>
+                                    <input type="text" name="seller_name" class="form-control required letterswithspaces" @isset($details['seller_name']) value="{!! $details['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Tel [ 21- seller_phone ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="seller_phone" class="form-control" @isset($details['seller_phone']) value="{!! $details['seller_phone'] !!}" @else value="{!! $estate['phone'] !!}" @endisset>
+                                    <input type="text" name="seller_phone" class="form-control required belgiumphone" data-inputmask="'mask': '+32 999 99 99 99 99'" @isset($details['seller_phone']) value="{!! $details['seller_phone'] !!}" @else value="{!! $estate['phone'] !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Mail [ 22- seller_email ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="seller_email" class="form-control" @isset($details['seller_email']) value="{!! $details['seller_email'] !!}" @else value="{!! $estate['email'] !!}" @endisset>
+                                    <input data-change-input type="text" name="seller_email" class="form-control" @isset($details['seller_email']) value="{!! $details['seller_email'] !!}" @else value="{!! $estate['email'] !!}" @endisset required>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Année de construction [ 8- year_construction ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="number" name="year_construction" class="form-control" @isset($details['year_construction']) value="{!! $details['year_construction'] !!}" @else value="{!! $estate['construction'] !!}" @endisset>
+                                    <input data-change-input type="number" name="year_construction" class="form-control" @isset($details['year_construction']) value="{!! $details['year_construction'] !!}" @else value="{!! $estate['construction'] !!}" @endisset min="1300" max="" required>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Année de rénovation [ 9- year_renovation ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="number" name="year_renovation" @isset($details['year_renovation']) value="{!! $details['year_renovation'] !!}" @else value="{!! $estate['renovation'] !!}" @endisset class="form-control">
+                                    <input data-change-input type="number" name="year_renovation" @isset($details['year_renovation']) value="{!! $details['year_renovation'] !!}" @else value="{!! $estate['renovation'] !!}" @endisset class="form-control" required min="{{ $estate['construction'] }}" max="{{ date('Y') }}">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">PEB [ 12- peb ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                    <input data-change-input type="text" name="peb" id="peb-input" @isset($details['peb']) value="{!! $details['peb'] !!}" @else value="{!! $estate['peb'] !!}" @endisset class="form-control peb-@isset($details['peb']){{ strtolower($details['peb']) }}@else{{ strtolower($estate['peb']) }}@endisset" oninput="updatePebColor()">
+                                    <input data-change-input type="text" name="peb" id="peb-input" @isset($details['peb']) value="{!! $details['peb'] !!}" @else value="{!! $estate['peb'] !!}" @endisset class="form-control peb-@isset($details['peb']){{ strtolower($details['peb']) }}@else{{ strtolower($estate['peb']) }}@endisset" oninput="updatePebColor()" pattern="^[A-G]$">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Surface approximative en mètres carrés [ 44- surface ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <input data-change-input type="number" name="surface" @isset($details['surface']) value="{!! $details['surface'] !!}" @else value="{!! $estate['surface'] !!}" @endisset class="form-control">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Town planning [ 23- town_planning ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <input data-change-input type="text" name="town_planning" @isset($details['town_planning']) value="{!! $details['town_planning']== 1 ? 'oui' : 'non' !!}" @else value="{!! $estate['town_planning']== 1 ? 'oui' : 'non' !!}" @endisset class="form-control">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Plus de chambres? [ 24- more_habitations ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <input data-change-input type="text" name="more_habitations" @isset($details['more_habitations']) value="{!! $details['more_habitations']== 1 ? 'oui' : 'non' !!}" @else value="" @endisset class="form-control">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Nbre de chambres [ 25- rooms ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <input data-change-input type="number" name="rooms" @isset($details['rooms']) value="{!! $details['rooms'] !!}" @else value="{!! $estate['rooms'] !!}" @endisset class="form-control">
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <span class="ffhnm">Nbre de sdb [ 26- bathrooms ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                     <input data-change-input type="number" name="bathrooms" @isset($details['bathrooms']) value="{!! $details['bathrooms'] !!}" @else value="{!! $estate['bathrooms'] !!}" @endisset class="form-control">
+                                    <span class="error-msg"></span>
                                 </div>
                             </div>
                         </div>
@@ -134,42 +146,55 @@
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="text" name="price_client" class="form-control" placeholder="€" @isset($details['price_client']) value="{!! $details['price_client'] !!}" @else value="{!! $estate['price_published_himself'] !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Jardin [ 29- jardin ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="text" name="jardin" class="form-control" placeholder="" @isset($details['jardin']) value="{!! $details['jardin']== 1 ? 'oui' : 'non' !!}" @else value="{!! $estate['garden']== 1 ? 'oui' : 'non' !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Terrasse [ 46- terrese ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="text" name="terrase" class="form-control" placeholder="€" @isset($details['terrese']) value="{!! $details['terrese']== 1 ? 'oui' : 'non' !!}" @else value="{!! $estate['terrase']== 1 ? 'oui' : 'non' !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Garage [ 47- garage ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="text" name="garage" class="form-control" placeholder="€" @isset($details['garage']) value="{!! $details['garage']== 1 ? 'oui' : 'non' !!}" @else value="{!! $estate['garage']== 1 ? 'oui' : 'non' !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Nbre de compteurs de gaz [ 30- gaz ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="number" name="gaz" class="form-control" placeholder="" @isset($details['gaz']) value="{!! $details['gaz'] !!}" @else value="{!! $estate['number_gas'] !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Nbre de compteurs électriques [ 31- electrique ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <input data-change-input type="number" name="electrique" class="form-control" placeholder="" @isset($details['number_electric']) value="{!! $details['number_electric'] !!}" @else value="{!! $estate['number_electric'] !!}" @endisset>
+                                    <span class="error-msg"></span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                     <span class="ffhnm">Type de propriété [ 48- type_estate ]:</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
-                                    <input data-change-input type="text" name="type_estate" class="form-control" placeholder="" @isset($details['type_estate']) value="{!! $details['type_estate'] !!}" @else value="{!! $estate['type_estate'] !!}" @endisset>
+                                    <select data-change-input name="type_estate" class="form-control">
+                                        <option value="">Sélectionner un type d'immobilier</option>
+                                        <option value="Maison" @if(isset($details['type_estate']) && $details['type_estate']=='Maison' ) selected @elseif($estate['type_estate']=='Maison' ) selected @endif>Maison</option>
+                                        <option value="Appartement" @if(isset($details['type_estate']) && $details['type_estate']=='Appartement' ) selected @elseif($estate['type_estate']=='Appartement' ) selected @endif>Appartement</option>
+                                        <option value="Immeuble de rapport" @if(isset($details['type_estate']) && $details['type_estate']=='Immeuble de rapport' ) selected @elseif($estate['type_estate']=='Immeuble de rapport' ) selected @endif>Immeuble de rapport</option>
+                                        <option value="Autre" @if(isset($details['type_estate']) && in_array($details['type_estate'], $options)) selected @elseif($estate['type_estate']=='Autre' ) selected @endif>Autre</option>
+
+                                    </select>
                                 </div>
 
                             </div>
@@ -262,12 +287,14 @@
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                             <input data-change-input type="text" name="price_evaluated" class="form-control" placeholder="Entrez le prix évalué" @isset($details['price_evaluated']) value="{!! isset($details['price_evaluated']) ? $details['price_evaluated'] : '' !!}" @endisset>
+                                            <span class="error-msg"></span>
                                         </div>
                                         <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2t">
                                             <span class="ffhnm">Prix du marché [ 14- price_market ]:</span>
                                         </div>
                                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2 text-xs-left text-sm-left text-md-right text-lg-left text-xl-right">
                                             <input data-change-input type="text" name="price_market" class="form-control" placeholder="Entrez le prix du marché" @isset($details['price_market']) value="{!! isset($details['price_market']) ? $details['price_market'] : '' !!}" @endisset>
+                                            <span class="error-msg"></span>
                                         </div>
 
                                         <div class="mb-2 ml-2">
@@ -315,45 +342,45 @@
                     </div>
                 </div>
             </div>
-    </div>
-
-    <div class="text-right mt-4 mb-4 mr-3">
-        <a href="/visits" class="btn btn-lg btn-danger">Annuler</a>
-        <button type="submit" class="btn btn-lg btn-success" data-modified="false" data-submit-hide="true" data-submit-form="form-visit-information">Sauvegarder</button>
-    </div>
 
 
-        <div class="card bg-light col-lg-12 mb-4">
-            <div class="card-body">
-                <div class="text-right autosize-s">
-                    <div class="mt-4">
-                        <label class="mr-3"><input type="checkbox" id="status-visite" checked="false"> Passer le status du bien en visite fini</label>
-                    </div>
-                    <div class="mt-2">
-                        <a href="{!! route('estatevisited', [$id, 'option']) !!}" data-terminer class="btn btn-lg btn-danger">Terminer</a>
+            <div class="text-right mt-4 mb-4 mr-3">
+                <a href="/visits" class="btn btn-lg btn-danger">Annuler</a>
+                <button type="submit" class="btn btn-lg btn-success" data-modified="false" data-submit-hide="true" data-submit-form="form-visit-information">Sauvegarder</button>
+            </div>
+
+
+            <div class="card bg-light col-lg-12 mb-4">
+                <div class="card-body">
+                    <div class="text-right autosize-s">
+                        <div class="mt-4">
+                            <label class="mr-3"><input type="checkbox" id="status-visite" checked="false"> Passer le status du bien en visite fini</label>
+                        </div>
+                        <div class="mt-2">
+                            <a href="{!! route('estatevisited', [$id, 'option']) !!}" data-terminer class="btn btn-lg btn-danger">Terminer</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </form>
-    <form action="{!! route('newcomment') !!}" method="POST" data-form="form-visit-comment-estate" data-reload="true">
-        @csrf()
-        <div class="autosize-m mb-4">
-            <div class="card font-body-content">
-                <div class="card-header">Enregistrer un commentaire interne:</div>
-                <div class="card-body card-body-white">
-                    <textarea data-change-input name="estate_comment_internal" rows="5" class="form-control"></textarea>
-                    <input type="hidden" name="estate_id" value="{!! $id !!}">
-                    <div class="text-right mt-4">
-                        <button type="reset" class="btn btn-lg btn-dark mr-1" data-cancel>Annuler</button>
-                        <button type="submit" class="btn btn-lg btn-success" data-modified="false" data-submit-hide="false" data-submit-form="form-visit-comment-estate">Sauvegarder le commentaire</button>
+        </form>
+        <form action="{!! route('newcomment') !!}" method="POST" data-form="form-visit-comment-estate" data-reload="true">
+            @csrf()
+            <div class="autosize-l mb-4">
+                <div class="card font-body-content">
+                    <div class="card-header">Enregistrer un commentaire interne:</div>
+                    <div class="card-body card-body-white">
+                        <textarea data-change-input name="estate_comment_internal" rows="5" class="form-control"></textarea>
+                        <input type="hidden" name="estate_id" value="{!! $id !!}">
+                        <div class="text-right mt-4">
+                            <button type="reset" class="btn btn-lg btn-dark mr-1" data-cancel>Annuler</button>
+                            <button type="submit" class="btn btn-lg btn-success" data-modified="false" data-submit-hide="false" data-submit-form="form-visit-comment-estate">Sauvegarder le commentaire</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
 </div>
 
 
@@ -401,14 +428,211 @@
 @section('scripts')
 <script src="https://maps.googleapis.com/maps/api/js?key={{ env('GOOGLE_MAPS_API_KEY') }}&callback=initMap" async defer></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+<script src="//code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+
+
+
 <script>
     function updatePebColor() {
         var input = document.getElementById("peb-input");
         var peb = input.value.toLowerCase();
         var className = "peb-" + peb;
         input.className = "form-control " + className;
+        input.style.borderColor = peb ? peb : '';
     }
+    document.getElementById("peb-input").addEventListener("focus", updatePebColor);
+    document.getElementById("peb-input").addEventListener("blur", updatePebColor);
+</script>
+<script>
+    $(document).ready(function() {
+        $.validator.addMethod("letterswithspaces", function(value, element) {
+            return this.optional(element) || /^[a-z\s]+$/i.test(value);
+        }, "S'il vous plaît, entrez uniquement des lettres et des espaces.");
+
+        $.validator.addMethod("belgiumphone", function(value, element) {
+            // Expresión regular para validar el formato del número de teléfono de Bélgica
+            return this.optional(element) || /^[+]{0,1}[0-9]{1,3}[.]{0,1}[0-9]{1,3}[.]{0,1}[0-9]{1,2}[.]{0,1}[0-9]{2,3}$/i.test(value);
+        }, "S'il vous plaît, entrez un numéro de téléphone valide enformat belge.");
+
+        $.validator.addMethod("pebletter", function(value, element) {
+            return this.optional(element) || /^[A-G]$/.test(value);
+        }, "Veuillez saisir une lettre comprise entre A et G.");
+
+        $.validator.addMethod("townplanningcheck", function(value, element) {
+            return value === "oui" || value === "non";
+        }, "Veuillez saisir 'oui' ou 'non'.");
+
+        $.validator.addMethod("greaterThanZero", function(value, element) {
+            return this.optional(element) || (parseFloat(value) > 0);
+        }, "Veuillez saisir un nombre supérieur à 0.");
+
+        $.validator.addMethod("positiveNumber", function(value, element) {
+            return this.optional(element) || (parseFloat(value) > 0);
+        }, "Veuillez saisir un nombre supérieur à 0.");
+
+
+        $("#editdetails").validate({
+            errorClass: "error",
+            errorPlacement: function(error, element) {
+                error.appendTo(element.next("span"));
+            },
+            rules: {
+                seller_name: {
+                    letterswithspaces: true
+                },
+                seller_phone: {
+                    belgiumphone: true
+                },
+                seller_email: {
+                    required: true,
+                    email: true
+                },
+                year_construction: {
+                    digits: true,
+                    min: 1300,
+                    max: new Date().getFullYear()
+                },
+                year_renovation: {
+                    digits: true,
+                    min: function() {
+                        return $('[name="year_construction"]').val();
+                    },
+                    max: new Date().getFullYear()
+                },
+                peb: {
+                    pebletter: true
+                },
+                surface: {
+                    number: true
+                },
+                town_planning: {
+                    townplanningcheck: true
+                },
+                more_habitations: {
+                    townplanningcheck: true
+                },
+                jardin: {
+                    townplanningcheck: true
+                },
+                terrese: {
+                    townplanningcheck: true
+                },
+                garage: {
+                    townplanningcheck: true
+                },
+                rooms: {
+                    greaterThanZero: true
+                },
+                bathrooms: {
+                    greaterThanZero: true
+                },
+                gaz: {
+                    greaterThanZero: true
+                },
+                electrique: {
+                    greaterThanZero: true
+                },
+                price_client: {
+                    required: true,
+                    positiveNumber: true
+                },
+                price_evaluated: {
+                    required: true,
+                    positiveNumber: true
+                },
+                price_market: {
+                    required: true,
+                    positiveNumber: true
+                },
+
+            },
+            messages: {
+                seller_name: {
+                    required: "S'il vous plaît, entrez un nom.",
+                    letterswithspaces: "S'il vous plaît, entrez uniquement des lettres et des espaces."
+                },
+                seller_phone: {
+                    required: "S'il vous plaît, entrez un numéro de téléphone.",
+                    belgiumphone: "S'il vous plaît, entrez un numéro de téléphone valide en format belge."
+                },
+                seller_email: {
+                    required: "Veuillez saisir une adresse e-mail",
+                    email: "Veuillez saisir une adresse e-mail valide"
+                },
+                year_construction: {
+                    required: "Veuillez saisir l'année de construction",
+                    digits: "Veuillez saisir une année valide (format : YYYY)",
+                    min: "Veuillez saisir une année supérieure ou égale à 1300",
+                    max: "Veuillez saisir une année inférieure ou égale à l'année en cours"
+                },
+                year_renovation: {
+                    required: "Veuillez saisir l'année de rénovation",
+                    digits: "Veuillez saisir une année valide (format : YYYY)",
+                    min: "L'année de rénovation doit être supérieure ou égale à l'année de construction",
+                    max: "L'année de rénovation doit être inférieure ou égale à l'année en cours"
+                },
+                peb: {
+                    required: "Veuillez saisir une lettre comprise entre A et G.",
+                    pebletter: "Veuillez saisir une lettre comprise entre A et G."
+                },
+                surface: {
+                    number: "Veuillez saisir un nombre valide."
+                },
+                town_planning: {
+                    townplanningcheck: "Veuillez saisir 'oui' ou 'non'."
+                },
+                more_habitations: {
+                    townplanningcheck: "Veuillez saisir 'oui' ou 'non'."
+                },
+                jardin: {
+                    townplanningcheck: "Veuillez saisir 'oui' ou 'non'."
+                },
+                terrese: {
+                    townplanningcheck: "Veuillez saisir 'oui' ou 'non'."
+                },
+                garage: {
+                    townplanningcheck: "Veuillez saisir 'oui' ou 'non'."
+                },
+                rooms: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    greaterThanZero: "Veuillez saisir un nombre supérieur à 0."
+                },
+                bathrooms: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    greaterThanZero: "Veuillez saisir un nombre supérieur à 0."
+                },
+                gaz: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    greaterThanZero: "Veuillez saisir un nombre supérieur à 0."
+                },
+                electrique: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    greaterThanZero: "Veuillez saisir un nombre supérieur à 0."
+                },
+                price_client: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    positiveNumber: "Veuillez saisir un nombre supérieur à 0."
+                },
+                price_evaluated: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    positiveNumber: "Veuillez saisir un nombre supérieur à 0."
+                },
+                price_market: {
+                    required: "Veuillez saisir un nombre supérieur à 0.",
+                    positiveNumber: "Veuillez saisir un nombre supérieur à 0."
+                },
+
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+            }
+        });
+    });
 </script>
 <script>
     function updateCoordinates() {
