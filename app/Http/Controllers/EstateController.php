@@ -1708,6 +1708,7 @@ class EstateController extends Controller
                 'price_client' => $detail->price_client,
                 'price_market' => $detail->price_market,
                 'type_bien' => $detail->type_estate,
+                'owner' => $detail->owner,
             );
         }
         //dd($detailsArray);
@@ -1722,7 +1723,7 @@ class EstateController extends Controller
         // Get all data of request
         $data = $request->all();
         $details = array();
-        // dd($data);
+        //dd($data);
         $idEstate = $data['estate_id'];
         $idSeller = $data['seller_id'];
         // Init updated
@@ -1733,7 +1734,38 @@ class EstateController extends Controller
             'message' => 'Les informations n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
         );
 
+        if (isset($data['estate_photos'])) {
+            // Obtener el archivo de imagen enviado desde el formulario
+            $image = $data['estate_photos'];
 
+            $estate = Estate::find($idEstate);
+            $oldFileName = $estate->main_photo;
+
+            // Verificar que el nombre de archivo de la imagen anterior no esté vacío
+            if (!empty($oldFileName)) {
+                // Eliminar la imagen anterior de la carpeta public/mainImages/
+                $oldFilePath = public_path('mainImages/' . $oldFileName);
+                if (file_exists($oldFilePath)) {
+                    unlink($oldFilePath);
+                }
+            }
+
+            // Verificar si el archivo de imagen es válido
+            if (is_uploaded_file($image) && getimagesize($image)) {
+                // Generar un nombre de archivo único para la imagen
+                $fileName = uniqid() . '.' . $image->getClientOriginalExtension();
+
+                // Guardar la imagen en la carpeta public/mainImages/
+                $image->move(public_path('mainImages'), $fileName);
+
+                // Actualizar el campo main_photo en la fila correspondiente de la tabla estates con el nombre del archivo de imagen
+                $estate = Estate::find($idEstate);
+                $estate->main_photo = $fileName;
+                $estate->save();
+            }
+        }
+
+        //dd($data);die;
         if ($data['sale__type_of_sale'] == 'Par agence') {
             foreach ($data as $key => $dat) { // Foreach key of data
                 $model = ""; // Variable to save model name
@@ -1748,14 +1780,15 @@ class EstateController extends Controller
             }
         }
         if ($data['sale__type_of_sale'] == 'Par lui même') {
-            // dd($data);
+            //
             foreach ($data as $key => $dat) { // Foreach key of data
                 $model = ""; // Variable to save model name
-                if (strpos($key, "sale__") !== false) {
+                if (strpos($key, "sale__") == false) {
                     $model = "App\\Models\\Estate";
                     $key_log = $key;
                     $key = str_replace('sale__', '', $key);
                     $updated = $this->updateData(app($model), $key, $dat, $idEstate, $idEstate, $key_log); // Update data
+                    //dd($key);
                 }
                 Estate::where('id', '=', $idEstate)
                     ->update(['agency_name' => '', 'price_published_agence' => 0, 'date_of_sale_agence' => '']);
@@ -1873,7 +1906,7 @@ class EstateController extends Controller
         }
 
         // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        return back()->with('status', $response['message']);
     }
 
     /**
@@ -2431,6 +2464,7 @@ class EstateController extends Controller
         $response = array('status' => false);
         // Get data of request
         $photo = $request->all();
+
         // If the photo is set
         if (isset($photo['photo'])) {
             // Get info of photo
