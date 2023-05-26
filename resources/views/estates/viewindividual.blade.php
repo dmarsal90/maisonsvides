@@ -43,15 +43,27 @@
 	        <a class="nav-link{!! ($tabActive === " estate-log") ? ' active' : '' !!}" href="#estate-log" id="estate-log-tab" data-toggle="tab" role="tab" aria-controls="estate-log" aria-selected="false">Log</a>
 	    </li>
 	</ul>
+
+	@if (session('status'))
+	<div class="alert alert-success">
+	    {{ session('status') }}
+	    <button type="button" class="close" data-dismiss="alert">&times;</button>
+	</div>
+	<script>
+	    setTimeout(function() {
+	        $('.alert').slideUp();
+	    }, 3000);
+	</script>
+	@endif
 	<div class="tab-content" id="remindersTabContent">
 	    <div class="tab-pane fade mb-5{!! ($tabActive === 'estate-information' || $tabActive === "") ? ' active show' : '' !!}" role="tabpanel" id="estate-information" aria-labelledby="estate-information-tab">
-	        <form action="{!! route('editinformations') !!}" method="POST" data-form="form-estate-info">
+	        <form action="{!! route('editinformations') !!}" method="POST" data-form="form-estate-info" enctype="multipart/form-data">
 	            @csrf()
 	            <span id="token" style="display: none;">{!! csrf_token() !!}</span>
 	            <input type="hidden" name="estate_id" value="{!! $id !!}">
 	            <input type="hidden" name="seller_id" value="{!! $seller['id'] !!}">
 
-	            <input type="hidden" name="type_estate" @isset($details['type_estate']) value="{!! $details['type_estate'] !!}" @else value="{!! $estate['type_estate'] !!}" @endisset>
+	            <input type="hidden" name="type_estate" @isset($estateDetails['type_estate']) value="{!! $estateDetails['type_estate'] !!}" @else value="{!! $estate['type_estate'] !!}" @endisset>
 	            <div class="card font-body-content">
 	                <div class="card-header">
 	                    <div class="text-left">
@@ -76,7 +88,7 @@
 	                                        <div class="wrapper__content">
 	                                            <div class="wrapper__files text-center ffhnl align-middle">
 	                                                Changer l'image principale
-	                                                <input data-image="main" data-upload="{!! route('uploadphoto', 'mainImages') !!}" data-estate-id="{!! $id !!}" type="file" name="estate_photos" accept=".jpg, .jpeg, .png" onchange="previewFile(event)">
+	                                                <input data-image="main" data-upload="{!! route('uploadphoto',['disk' => 'mainImages']) !!}" data-estate-id="{!! $id !!}" type="file" name="estate_photos" accept=".jpg, .jpeg, .png" onchange="previewFile(event)">
 	                                            </div>
 	                                        </div>
 	                                        <div class="mt-2" id="imagePreview"></div>
@@ -189,13 +201,9 @@
 	                                </div>
 	                                <div class="row mb-2 ml-2">
 
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom:</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-	                                        <input data-change-input type="text" name="details__lastName" class="form-control" value="@isset($estateDetails['lastName']){!! $details['lastName'] !!}@endisset" data-save>
-	                                    </div>
 	                                </div>
 	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Prénom :</div>
+	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
 	                                        <input data-change-input type="text" name="details__firstName" class="form-control" @isset($estateDetails['seller_name']) value="{!! $estateDetails['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset data-save>
 	                                    </div>
@@ -215,8 +223,8 @@
 	                                <div class="row mb-2 ml-2">
 	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Êtes-vous le propriétaire du bien ? :</div>
 	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Oui" {!! ($estateDetails['owner']=='Oui' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Non" {!! ($estateDetails['owner']=='Non' ) ? 'checked' : '' !!} data-save> Non</label>
+	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Oui" {!! ($estateDetails['owner']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
+	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Non" {!! ($estateDetails['owner']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
 	                                    </div>
 	                                </div>
 	                                <div class="row mb-2 ml-2">
@@ -266,162 +274,6 @@
 	                                    </div>
 	                                </div>
 
-	                            </div>
-	                        </div>
-	                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-1">
-	                            <span class="ffhnm">DONNEES DE BASE</span>
-	                            <div class="wrapper__content mb-5">
-	                                <!-- <div class="row mb-2">
-										<div class="col-12 text-right">
-											<label class="checktext">Ajouter au pdf</label><input type="checkbox" class="check-pdf" name="estate_include_technic_layout" id="estate_include_client" disabled>
-										</div>
-									</div> -->
-	                                <div class="row mb-2 mt-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5"></div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Type de bien :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-	                                        <select data-change-select name="details__type_bien" id="type_de_bien" class="form-control" data-save>
-	                                            <option {!! ($estateDetails['type_bien']=='Maison' ) ? 'selected' : '' !!} value="Maison">Maison</option>
-	                                            <option {!! ($estateDetails['type_bien']=='Appartement' ) ? 'selected' : '' !!} value="Appartement">Appartement</option>
-	                                            <option {!! ($estateDetails['type_bien']=='Immeuble de rapport' ) ? 'selected' : '' !!} value="Immeuble de rapport">Immeuble de rapport</option>
-	                                            <option {!! ($estateDetails['type_bien']=='Autre' ) ? 'selected' : '' !!} value="Autre">Autre</option>
-	                                        </select>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Année de construction :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-	                                        <input data-change-input type="number" name="details__year_construction" class="form-control" value="{!! $estateDetails['year_construction'] !!}" data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Surface approximative :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <input data-change-input type="text" name="details__surface" class="form-control" @isset($estateDetails['surface']) value="{!! $estateDetails['surface'] !!}" @endisset data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Jardin ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @isset($estateDetails['garden'])
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garden" value="Oui" {!! ($estateDetails['garden']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garden" value="Non" {!! ($estateDetails['garden']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        @endisset
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Terrasse ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @isset($estateDetails['terrase'])
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__terrase" value="Oui" {!! ($estateDetails['terrase']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__terrase" value="Non" {!! ($estateDetails['terrase']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        @endisset
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Garage ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @isset($estateDetails['garage'])
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garage" value="Oui" {!! ($estateDetails['garage']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__garage" value="Non" {!! ($estateDetails['garage']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        @endisset
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Infraction urbanistique ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @isset($estateDetails['town_planning'])
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Oui" {!! ($estateDetails['town_planning']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Non" {!! ($estateDetails['town_planning']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__town_planning" value="Je ne sais pas" {!! ($estateDetails['town_planning']=='Je ne sais pas' ) ? 'checked' : '' !!} data-save> Je ne sais pas</label>
-	                                        @endisset
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Le bien comporte une/plusieurs habitations ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @isset($estateDetails['more_habitations'])
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__more_habitations" value="Oui" {!! ($estateDetails['more_habitations']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
-	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__more_habitations" value="Non" {!! ($estateDetails['more_habitations']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        @endisset
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de sdb :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <input data-change-input type="number" name="details__number_bathroom" class="form-control" value="{!! $estateDetails['bathrooms'] !!}" data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de chambres :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <input data-change-input type="number" name="details__number_rooms" class="form-control" value="{!! $estateDetails['rooms'] !!}" data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de compteurs de gaz :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <input data-change-input type="number" name="details__number_gas" class="form-control" value="{!! $estateDetails['gaz'] !!}" data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nbre de compteurs électriques :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <input data-change-input type="number" name="details__number_electric" class="form-control" value="{!! $estateDetails['electrique'] !!}" data-save>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-3 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Evaluez l’état intérieur :</div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
-	                                        <span class="ffhnm mr-4">Entièrement à rénover</span>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='1' ) ? 'checked' : '' !!} value="1 data-save">1</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='2' ) ? 'checked' : '' !!} value="2" data-save>2</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='3' ) ? 'checked' : '' !!} value="3" data-save>3</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='4' ) ? 'checked' : '' !!} value="4" data-save>4</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='5' ) ? 'checked' : '' !!} value="5" data-save>5</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='6' ) ? 'checked' : '' !!} value="6" data-save>6</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='7' ) ? 'checked' : '' !!} value="7" data-save>7</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='8' ) ? 'checked' : '' !!} value="8" data-save>8</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='9' ) ? 'checked' : '' !!} value="9" data-save>9</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_interior" {!! ($estateDetails['interior_state']=='10' ) ? 'checked' : '' !!} value="10" data-save>10</label>
-	                                        <span class="ffhnm ml-4">Neuf</span>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-3 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Evaluez l’état intérieur :</div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-12 col-lg-12 col-xl-12">
-	                                        <span class="ffhnm mr-4">Entièrement à rénover</span>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='1' ) ? 'checked' : '' !!} value="1 data-save">1</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='2' ) ? 'checked' : '' !!} value="2" data-save>2</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='3' ) ? 'checked' : '' !!} value="3" data-save>3</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='4' ) ? 'checked' : '' !!} value="4" data-save>4</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='5' ) ? 'checked' : '' !!} value="5" data-save>5</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='6' ) ? 'checked' : '' !!} value="6" data-save>6</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='7' ) ? 'checked' : '' !!} value="7" data-save>7</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='8' ) ? 'checked' : '' !!} value="8" data-save>8</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='9' ) ? 'checked' : '' !!} value="9" data-save>9</label>
-	                                        <label><input data-change-radio type="radio" class="radio-middle mr-1" name="details__state_exterior" {!! ($estateDetails['exterior_state']=='10' ) ? 'checked' : '' !!} value="10" data-save>10</label>
-	                                        <span class="ffhnm ml-4">Neuf</span>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Un commentaire ? :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <textarea data-change-input name="details__commentaire" class="form-control" data-save rows="4">{!! $estateDetails['details_commentaire'] !!}</textarea>
-	                                    </div>
-	                                </div>
-	                                <div class="row mb-2 ml-2">
-	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Description générale :</div>
-	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        <textarea data-change-input name="estate_description" class="form-control" data-save rows="4">{!! $estateDetails['description'] !!}</textarea>
-	                                    </div>
-	                                </div>
 	                            </div>
 	                        </div>
 
