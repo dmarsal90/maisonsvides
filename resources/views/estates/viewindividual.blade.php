@@ -223,10 +223,8 @@
 	                                <div class="row mb-2 ml-2">
 	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Êtes-vous le propriétaire du bien ? :</div>
 	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6">
-	                                        @if (isset($estateDetails['owner']))
 	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Oui" {!! ($estateDetails['owner']=='1' ) ? 'checked' : '' !!} data-save> Oui</label>
 	                                        <label class="mr-3"><input data-change-radio type="radio" class="radio-middle" name="details__owner" value="Non" {!! ($estateDetails['owner']=='0' ) ? 'checked' : '' !!} data-save> Non</label>
-	                                        @endif
 	                                    </div>
 	                                </div>
 	                                <div class="row mb-2 ml-2">
