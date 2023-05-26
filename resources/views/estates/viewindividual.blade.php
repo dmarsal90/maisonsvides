@@ -205,7 +205,7 @@
 	                                <div class="row mb-2 ml-2">
 	                                    <div class="col-xs-12 col-md-5 col-lg-5 col-xl-5">Nom :</div>
 	                                    <div class="col-xs-12 col-md-6 col-lg-6 col-xl-6 mb-2">
-	                                        <input data-change-input type="text" name="details__firstName" class="form-control" @isset($estateDetails['seller_name']) value="{!! $estateDetails['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset data-save>
+	                                        <input data-change-input type="text" name="details__name" class="form-control" @isset($estateDetails['seller_name']) value="{!! $estateDetails['seller_name'] !!}" @else value="{!! $estate['name'] !!}" @endisset data-save>
 	                                    </div>
 	                                </div>
 	                                <div class="row mb-2 ml-2">
