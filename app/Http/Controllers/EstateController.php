@@ -1847,13 +1847,8 @@ class EstateController extends Controller
                 $key = str_replace('details__', '', $key);
                 $details[$key] = $dat;
                 $nameSeller = '';
-                if ($key == 'lastName') {
+                if ($key == 'name') {
                     Seller::where('id', '=', $idSeller)->update(['name' => $dat]);
-                }
-                if ($key == 'firstName') {
-                    $seller = Seller::where('id', '=', $idSeller)->get();
-                    $nameSeller = $seller[0]->name . ' ' . $dat;
-                    Seller::where('id', '=', $idSeller)->update(['name' => $nameSeller]);
                 }
                 if ($key == 'email') {
                     Seller::where('id', '=', $idSeller)->update(['email' => $dat]);
