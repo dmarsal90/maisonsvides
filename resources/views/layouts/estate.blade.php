@@ -88,7 +88,7 @@
 		<main class="wrapper__container wrapper__container--details {!! ($cookies == 1) ? 'wrapper__container--small' : '' !!}" data-wrapper="wrapper">
 			<nav class="wrapper__breadcrumbs">
 				<div>
-					<span>{!! $estate['street'] !!}</span> - <span>{!!  date('ymdh.i', strtotime($estate['reference'])) !!}</span>
+                <span>{!! $seller['name'] !!}</span> - <span>{!! $estate['street'] !!}</span> - <span>{!!  date('ymdh.i', strtotime($estate['reference'])) !!}</span>
 					<br>Statut : <span>{!! $estate['category']['name'] !!}</span>
 				</div>
 				<div>
