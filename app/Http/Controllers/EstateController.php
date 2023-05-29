@@ -2511,6 +2511,65 @@ class EstateController extends Controller
         return response($response)->header('Content-Type', 'application/json');
     }
 
+
+    public function uploadFiles(Request $request)
+    {
+       /*  $validator = Validator::make($request->all(), [
+            'estate_photos.*' => 'mimes:jpeg,jpg,png',
+            'estate_documents.*' => 'mimes:pdf,json,txt,doc,docx',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        } */
+
+        $response = array('status' => false);
+        $estate = Estate::find($request->input('estate_id'));
+
+        if ($estate) {
+            $images = array();
+            $documents = array();
+
+            if ($request->hasFile('estate_photos')) {
+                foreach ($request->file('estate_photos') as $photo) {
+                    if ($photo->isValid() && $photo->getClientMimeType() == 'image/jpeg' || $photo->getClientMimeType() == 'image/png') {
+                        $filename = Str::random(40) . '.' . $photo->getClientOriginalExtension();
+                        $photo->storeAs('public/images', $filename);
+                        $images[] = $filename;
+                    }
+                }
+            }
+
+            if ($request->hasFile('estate_documents')) {
+                foreach ($request->file('estate_documents') as $doc) {
+                    if ($doc->isValid() && in_array($doc->getClientMimeType(), ['application/pdf', 'application/json', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) {
+                        $filename = Str::random(40) . '.' . $doc->getClientOriginalExtension();
+                        $doc->storeAs('public/documents', $filename);
+                        $documents[] = $filename;
+                    }
+                }
+            }
+
+            if (!empty($images)) {
+                $estate->images = json_encode($images);
+            }
+
+            if (!empty($documents)) {
+                $estate->docs = json_encode($documents);
+            }
+
+            try {
+                $estate->save();
+                $response['status'] = true;
+            } catch (\Exception $e) {
+                return back()->with('message', 'Error al guardar los archivos: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('message', 'Archivos cargados exitosamente.');
+    }
+
+
     /**
      * Get medias of the estate
      */
