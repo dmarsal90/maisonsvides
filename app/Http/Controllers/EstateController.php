@@ -381,16 +381,6 @@ class EstateController extends Controller
             // Get estates to show to manager
             $estates = $this->getEstatesToAgent(Auth::user()->id);
         }
-        // If session is of the a manager
-        if (Auth::user()->type == 2 || Auth::user()->type == 1) {
-            // Get estates to show to manager
-            $estates = $this->getEstatesToManager(Auth::user()->id);
-        }
-        // If session is of the a manager
-        if (Auth::user()->type == 3) {
-            // Get estates to show to manager
-            $estates = $this->getEstatesToAgent(Auth::user()->id);
-        }
         //Get data of a seller
         $seller = $this->getSeller($estate['seller']);
         //Get estate details
@@ -507,7 +497,6 @@ class EstateController extends Controller
         // Return view the data of the estate
         return view('estates.view', ['id' => $id, 'estates' => $estates, 'comments' => $comments, 'estateDetails' => $estateDetails,  'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
     }
-
     /**
      * Delete
      */
@@ -1407,7 +1396,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         // Get all estates that don't have an agent assigned
@@ -1439,7 +1429,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         return $superAux;
@@ -1479,7 +1470,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         // dd($estatesArray);die;
@@ -2271,42 +2263,66 @@ class EstateController extends Controller
      */
     public function newAdvertisement(Request $request)
     {
-        //Get data of the request
+        // Get data of the request
         $data = $request->all();
-        //Init the response
+
+        // Init the response
         $response = array(
             'status' => false,
             'message' => 'Le nouveau site immobilier n\'a pas pu être créée. Réessayez plus tard.'
         );
 
-        try {
+        // Check if the advertisement already exists
+        $existingAd = EstateRealEstate::where('estate_id', $data['estate_id'])
+            ->where('realestate_id', $data['estate_form_ads_site'])
+            ->where('refrence', $data['estate_ads_ref'])
+            ->where('url', $data['estate_ads_url'])
+            ->where('put_online', $data['estate_ads_online'])
+            ->where('price', $data['estate_ads_price'])
+            ->first();
 
-            $es = EstateRealEstate::create([
-                'estate_id' => $data['estate_id'],
-                'realestate_id' => $data['estate_form_ads_site'],
-                'refrence' => $data['estate_ads_ref'],
-                'url' => $data['estate_ads_url'],
-                'put_online' => $data['estate_ads_online'],
-                'price' => $data['estate_ads_price']
-            ]);
-            $response = array(
-                'status' => true,
-                'message' => 'Le nouveau site immobilier a été créée'
-            );
-        } catch (\Exception $e) {
-            $message = "";
-            if ($e->getCode() == 23000) {
-                $message = 'Le nouveau site immobilier existe déjà';
-            }
+        if ($existingAd) {
+            // An advertisement with the same characteristics already exists
             $response = array(
                 'status' => false,
-                'message' => $message,
+                'message' => 'Le nouveau site immobilier existe déjà.',
                 'data' => $data
             );
+        } else {
+            // The advertisement does not exist, create a new one
+            try {
+                $es = EstateRealEstate::create([
+                    'estate_id' => $data['estate_id'],
+                    'realestate_id' => $data['estate_form_ads_site'],
+                    'refrence' => $data['estate_ads_ref'],
+                    'url' => $data['estate_ads_url'],
+                    'put_online' => $data['estate_ads_online'],
+                    'price' => $data['estate_ads_price']
+                ]);
+
+                $response = array(
+                    'status' => true,
+                    'message' => 'Le nouveau site immobilier a été créé.'
+                );
+            } catch (\Exception $e) {
+                $message = "";
+                if ($e->getCode() == 23000) {
+                    $message = 'Le nouveau site immobilier existe déjà.';
+                }
+                $response = array(
+                    'status' => false,
+                    'message' => $message,
+                    'data' => $data
+                );
+            }
         }
 
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
+        // Set message in session
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message']);
+        }
     }
 
     /**
@@ -2325,6 +2341,7 @@ class EstateController extends Controller
         )->join("realestates", "realestates.id", "=", "estate_realestate.realestate_id")
             ->where('estate_id', '=', $estate_id)
             ->get();
+
         $advsArray = array();
         foreach ($estateadv as $adv) {
             $putonline = strtotime($adv->put_online);
@@ -2339,6 +2356,7 @@ class EstateController extends Controller
                 'price' => $adv->price
             );
         }
+        // dd($advsArray);die;
         return $advsArray;
     }
 
@@ -2514,7 +2532,7 @@ class EstateController extends Controller
 
     public function uploadFiles(Request $request)
     {
-       /*  $validator = Validator::make($request->all(), [
+        /*  $validator = Validator::make($request->all(), [
             'estate_photos.*' => 'mimes:jpeg,jpg,png',
             'estate_documents.*' => 'mimes:pdf,json,txt,doc,docx',
         ]);
@@ -2799,14 +2817,17 @@ class EstateController extends Controller
     {
         // Get all data of request
         $data = $request->all();
-        // dd($data);
+
         $estateid = $data['estate_id'];
         $remark = $this->getEstateRemark($estateid);
-        // Init the reponse
+        //dd($remark);
+
+        // Init the response
         $response = array(
-            'status' => false, // Reponse status
+            'status' => false, // Response status
             'message' => 'Le remarque n\'a pas été supprimé' // Response message
         );
+
         // If no exist a offer in this estate a new one is created
         if (empty($remark)) {
             // Create new offer of the estate
@@ -2821,51 +2842,65 @@ class EstateController extends Controller
                 'exterior_weak_point' => ($data['exterior_weak_point'] == NULL) ? '' : $data['exterior_weak_point'],
                 'desires_to_sell' => ($data['desires_to_sell'] == NULL) ? 0 : $data['desires_to_sell'],
                 'his_estimate' => ($data['his_estimate'] == NULL) ? 0 : $data['his_estimate'],
-                'accept_price' => '',
+                'accept_price' => ($data['accept_price'] == NULL) ? 0 : $data['accept_price'],
                 'agent_notice' => ($data['agent_notice'] == NULL) ? '' : $data['agent_notice'],
             ]);
-            $response = array( // If response is true
+
+            $response = array(
                 'status' => true,
                 'message' => 'Le remarque a été créée',
                 'data' => $data,
             );
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
-        } else { // If exist a offer in this estate only a new one is updated
+
+            // Set message in session
+            if ($response['status']) {
+                return back()->with('success', $response['message']);
+            } else {
+                return back()->with('error', $response['message']);
+            }
+        } else {
             // Init updated
             $updated = false;
-            // Init the reponse
+            // Init the response
             $response = array(
-                'status' => false, // Reponse status
+                'status' => false, // Response status
                 'message' => 'Le remarque n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
             );
+
             // Get keys of data
-            foreach ($data as $key => $dat) { // Foreach key of data
+            foreach ($data as $key => $dat) {
                 if ($dat == NULL) {
                     $dat = '';
                     if ($key === "desires_to_sell" || $key === "his_estimate") {
                         $dat = 0;
                     }
                 }
+
                 if ($key !== '_token' && $key !== 'estate_id') {
-                    $updated = $this->updateData(app("App\\Models\\EstateRemark"), $key, $dat, $remark['id'], $estateid, $key); // Updatate data
+                    $updated = $this->updateData(app("App\\Models\\EstateRemark"), $key, $dat, $remark['id'], $estateid, $key);
+
+                    if ($updated) {
+                        $response = array(
+                            'status' => true,
+                            'message' => 'Le remarque a été mise à jour'
+                        );
+                    }
+
+                    if (!$updated) {
+                        $response = array(
+                            'status' => false,
+                            'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
+                        );
+                    }
                 }
             }
-            if ($updated) { // If updated is true
-                $response = array(
-                    'status' => true,
-                    'message' => 'Le remarque a été mise à jour'
-                );
-            }
-            if (!$updated) { // If updated is false
-                $reponse = array(
-                    'status' => false,
-                    'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-                );
-            }
 
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
+            // Set message in session
+            if ($response['status']) {
+                return back()->with('success', $response['message']);
+            } else {
+                return back()->with('error', $response['message']);
+            }
         }
     }
 
