@@ -862,12 +862,12 @@ class EstateController extends Controller
             // dd(isset($event->id));
             /*$event = $service->events->insert($this->calendarId, $event);*/
             if (isset($event->id)) {
-                /* $estateEvent = EstateEvent::create([
+                $estateEvent = EstateEvent::create([
                     'estate_id' => $request->input('estate_id'),
                     'event_id' => $event->id,
                     'user_id' => Auth::user()->id,
                     'seller_id' => $request->input('seller_id') // o $data['seller_id']
-                ]); */
+                ]);
                 $event_created = Event::create([
                     'estate_id' => $request->input('estate_id'),
                     //'event_id' => $event->id,
@@ -1230,35 +1230,23 @@ class EstateController extends Controller
     {
         //Get data of the request
         $data = $request->all();
-        //Init the response
-        $response = array(
-            'status' => false,
-            'message' => 'La résolution n\'a pas pu être créé. Réessayez plus tard.'
-        );
+
         try {
             $category = EstateResolution::create([
                 'estate_id' => $data['estate_id'],
                 'user_id' => Auth::user()->id,
                 'comment' => $data['estate_new_problem']
             ]);
-            $response = array(
-                'status' => true,
-                'message' => 'La résolution a été créée',
-                'data' => $data,
-            );
+
+            $message = 'La résolution a été créée';
+            return back()->with('success', $message);
         } catch (\Exception $e) {
-            $message = "";
+            $message = "La résolution n'a pas pu être créée. Réessayez plus tard.";
             if ($e->getCode() == 23000) {
                 $message = 'La résolution existe déjà';
             }
-            $response = array(
-                'status' => false,
-                'message' => $message,
-                'data' => $data
-            );
+            return back()->with('error', $message);
         }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
     }
 
     /**
