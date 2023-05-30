@@ -5,6 +5,30 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
 <header>
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </header>
+@if(session('success'))
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{ session('success') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+
+@if(session('error'))
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{ session('error') }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+@endif
+<script>
+    // Close the alert automatically after 3 seconds
+    setTimeout(function() {
+        $(".alert").alert('close');
+    }, 3000);
+</script>
+
 
 <ul style="color:#ffffff !important;" class="nav nav-tabs wrapper__anchors view-individual" role="tablist" id="menu-scrolling">
     <li class="nav-item">
@@ -428,7 +452,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
         </form>
     </div>
     <div class="tab-pane fade mb-5{!! ($tabActive === 'estate-ads') ? ' active show' : '' !!}" role="tabpanel" id="estate-ads" aria-labelledby="estate-ads-tab">
-        <form action="{!! route('newadvertisement') !!}" method="POST" data-form="estate-form-ads" data-reload="true">
+        <form action="{!! route('newadvertisement') !!}" method="POST">
             @csrf()
             <input type="hidden" name="estate_id" value="{!! $id !!}">
             <div class="card font-body-content">
@@ -482,7 +506,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 d-none d-sm-none d-md-none d-lg-none d-xl-block text-right mb-2">
                         <button type="button" class="btn btn-lg btn-dark" data-cancel>Annuler</button>
-                        <button class="btn btn-lg btn-success" type="submit" data-modified="false" data-submit-hide="false" data-submit-form="estate-form-ads">Ajouter</button>
+                        <button class="btn btn-lg btn-success" type="submit">Ajouter</button>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-2 text-xl-right">
                         <span class="ffhnm">Mise en ligne :</span>
@@ -496,14 +520,14 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                         <span class="ffhnm">Prix affiché :</span>
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-2">
-                        <input data-change-input type="number" data-input-price-ad class="form-control" placeholder="€" value="">
-                        <label class="price">€</label>
-                        <input type="hidden" id="estate_ads_price" name="estate_ads_price" placeholder="">
+
+
+                        <input type="number" class="form-control" id="estate_ads_price" name="estate_ads_price" placeholder="€">
                     </div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-2 d-md-none d-lg-none d-xl-block"></div>
                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-3 mb-2 d-md-none d-lg-none d-xl-block"></div>
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-3 d-xs-block d-sm-block d-md-block d-lg-block d-xl-none text-right mb-2">
-                        <button class="btn btn-lg btn-success" type="submit" data-submit-hide="false" data-submit-form="estate-form-ads">Ajouter</button>
+                        <button class="btn btn-lg btn-success" type="submit">Ajouter</button>
                     </div>
                 </div>
             </div>
@@ -705,7 +729,11 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2">&nbsp;- Estimation du client?:</div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                <input data-change-input type="number" name="his_estimate" class="form-control" value="">
+                                <input data-change-input type="number" name="his_estimate" class="form-control" value="@isset($remarks['his_estimate']){!! $remarks['his_estimate'] !!}@endisset">
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2">&nbsp;- Accepté pour le client:</div>
+                            <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2">
+                                <input data-change-input type="text" name="accept_price" class="form-control" value="@isset($remarks['accept_price']){!! $remarks['accept_price'] !!}@endisset">
                             </div>
                             <div class="col-xs-12 col-sm-6 col-md-6 col-lg-12 col-xl-6 mb-2">&nbsp;- Avis de l’agent:</div>
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-2">
@@ -1144,7 +1172,11 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
             <div class="card-body">
                 <div class="mb-4">
                     <span>Problème signalé dans le formulaire :</span>
-                    <textarea name="estate_problem_signal" rows="5" class="form-control" disabled>@isset($estates['problems']){!! $estates['problems'] !!}@endisset</textarea>
+                    @foreach($estates as $est)
+                    @if($est['id'] == $estate['id'])
+                    <textarea name="estate_problem_signal" rows="5" class="form-control" disabled>@isset($est['problems']){!! $est['problems'] !!}@endisset</textarea>
+                    @endif
+                    @endforeach
                 </div>
                 <div class="mb-4">
                     <span>Suivi résolution :</span>
@@ -1532,54 +1564,53 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
 
 <script>
     function previewFile() {
-    var preview = document.querySelector('#imagePreview');
-    var file = document.querySelector('input[type=file]').files[0];
-    var reader = new FileReader();
+        var preview = document.querySelector('#imagePreview');
+        var file = document.querySelector('input[type=file]').files[0];
+        var reader = new FileReader();
 
-    reader.addEventListener("load", function() {
-        var image = new Image();
-        image.src = reader.result;
-        preview.innerHTML = '';
-        preview.appendChild(image);
-    }, false);
+        reader.addEventListener("load", function() {
+            var image = new Image();
+            image.src = reader.result;
+            preview.innerHTML = '';
+            preview.appendChild(image);
+        }, false);
 
-    if (file) {
-        reader.readAsDataURL(file);
-    }
-}
-
-function previewFiles(event) {
-    var previewImages = document.getElementById("previewImages");
-    var previewDocuments = document.getElementById("previewDocuments");
-
-    var imageFiles = [];
-    var docFiles = [];
-
-    var files = event.target.files;
-    for (var i = 0; i < files.length; i++) {
-        var file = files[i];
-        var fileType = file.type.split("/")[0];
-
-        if (fileType === "image") {
-            imageFiles.push(file);
-        } else {
-            docFiles.push(file);
+        if (file) {
+            reader.readAsDataURL(file);
         }
     }
 
-    for (var i = 0; i < imageFiles.length; i++) {
-        var img = document.createElement("img");
-        img.src = URL.createObjectURL(imageFiles[i]);
-        img.classList.add("preview-image");
-        previewImages.appendChild(img);
-    }
+    function previewFiles(event) {
+        var previewImages = document.getElementById("previewImages");
+        var previewDocuments = document.getElementById("previewDocuments");
 
-    for (var i = 0; i < docFiles.length; i++) {
-        var p = document.createElement("p");
-        p.innerText = docFiles[i].name;
-        previewDocuments.appendChild(p);
-    }
-}
+        var imageFiles = [];
+        var docFiles = [];
 
+        var files = event.target.files;
+        for (var i = 0; i < files.length; i++) {
+            var file = files[i];
+            var fileType = file.type.split("/")[0];
+
+            if (fileType === "image") {
+                imageFiles.push(file);
+            } else {
+                docFiles.push(file);
+            }
+        }
+
+        for (var i = 0; i < imageFiles.length; i++) {
+            var img = document.createElement("img");
+            img.src = URL.createObjectURL(imageFiles[i]);
+            img.classList.add("preview-image");
+            previewImages.appendChild(img);
+        }
+
+        for (var i = 0; i < docFiles.length; i++) {
+            var p = document.createElement("p");
+            p.innerText = docFiles[i].name;
+            previewDocuments.appendChild(p);
+        }
+    }
 </script>
 @endsection
