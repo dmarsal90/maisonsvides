@@ -3340,19 +3340,19 @@ class EstateController extends Controller
                             'no_answer' => 0
                         ]);
                     }
-                    // // Send instant if first reminder is type sms
-                    // if ($data['type_template_r'] == 'sms') {
-                    // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                    // 	$client = new \Nexmo\Client($basic);
-                    // 	// Sending SMS
-                    // 	$message = $client->message()->send([
-                    // 		'to' => '527731951309',//$data['seller_phone'],
-                    // 		'from' => 'Wesold',
-                    // 		'text' => $data['body_mail_reminder']
-                    // 	]);
-                    // 	// Updatate data to next reminder
-                    // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', (0 + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                    // }
+                    // Send instant if first reminder is type sms
+                    if ($data['type_template_r'] == 'sms') {
+                    	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                    	$client = new \Nexmo\Client($basic);
+                    	// Sending SMS
+                    	$message = $client->message()->send([
+                    		'to' => $data['seller_phone'],
+                    		'from' => 'Wesold',
+                    		'text' => $data['body_mail_reminder']
+                    	]);
+                    	// Updatate data to next reminder
+                    	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', (0 + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                    }
                 } // End - If the reminder is instant
                 // If the reminder isn't instant
                 if (isset($data['change_date']) && $data['change_date'] == 'on' && !isset($data['charge_process'])) {
@@ -3451,38 +3451,38 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // 	// Updatate data to next reminder
-                                // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // 	// Updatate data to next reminder
-                                // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                	// This is to send a email as a ticket
+                                	$ticket_id = $this->objectTicket->create(
+                                		[
+                                			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
+                                			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
+                                		],
+                                		$data['subject_template'][$key],// Subject to the email
+                                		$data['body_mail_reminder'][$key],// Content to the email
+                                		[]
+                                	);
+                                	// Save the union of the ticket wiht the estate
+                                	EstateTicket::create([
+                                		'estate_id' => $data['estate_id'],
+                                		'ticket_id' => $ticket_id,
+                                		'no_answer' => 0
+                                	]);
+                                	// Updatate data to next reminder
+                                	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                                }
+                                if ($reminder == 'sms') {
+                                	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                	$client = new \Nexmo\Client($basic);
+                                	// Sending SMS
+                                	$message = $client->message()->send([
+                                		'to' => '527731951309',
+                                		'from' => 'Wesold',
+                                		'text' => $data['body_mail_reminder'][$key]
+                                	]);
+                                	// Updatate data to next reminder
+                                	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                                }
                             }
                             if ($key !== 0) {
                                 $subject = '';
@@ -3559,34 +3559,34 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                	// This is to send a email as a ticket
+                                	$ticket_id = $this->objectTicket->create(
+                                		[
+                                			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
+                                			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
+                                		],
+                                		$data['subject_template'][$key],// Subject to the email
+                                		$data['body_mail_reminder'][$key],// Content to the email
+                                		[]
+                                	);
+                                	// Save the union of the ticket wiht the estate
+                                	EstateTicket::create([
+                                		'estate_id' => $data['estate_id'],
+                                		'ticket_id' => $ticket_id,
+                                		'no_answer' => 0
+                                	]);
+                                }
+                                if ($reminder == 'sms') {
+                                	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                	$client = new \Nexmo\Client($basic);
+                                	// Sending SMS
+                                	$message = $client->message()->send([
+                                		'to' => '527731951309',
+                                		'from' => 'Wesold',
+                                		'text' => $data['body_mail_reminder'][$key]
+                                	]);
+                                }
                             }
                             if ($key !== 0) {
                                 $subject = '';
@@ -3603,34 +3603,34 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                	// This is to send a email as a ticket
+                                	$ticket_id = $this->objectTicket->create(
+                                		[
+                                			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
+                                			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
+                                		],
+                                		$data['subject_template'][$key],// Subject to the email
+                                		$data['body_mail_reminder'][$key],// Content to the email
+                                		[]
+                                	);
+                                	// Save the union of the ticket wiht the estate
+                                	EstateTicket::create([
+                                		'estate_id' => $data['estate_id'],
+                                		'ticket_id' => $ticket_id,
+                                		'no_answer' => 0
+                                	]);
+                                }
+                                if ($reminder == 'sms') {
+                                	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                	$client = new \Nexmo\Client($basic);
+                                	// Sending SMS
+                                	$message = $client->message()->send([
+                                		'to' => '527731951309',
+                                		'from' => 'Wesold',
+                                		'text' => $data['body_mail_reminder'][$key]
+                                	]);
+                                }
                             }
                         }
                         // Save reminders dynamics in the parent array
@@ -3670,7 +3670,11 @@ class EstateController extends Controller
             );
         }
         //Return response
-        return response($response)->header('Content-Type', 'application/json');
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message'])->withInput();
+        }
     }
 
     private function isWeekend($date)
@@ -3816,7 +3820,11 @@ class EstateController extends Controller
             );
         }
         // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message'])->withInput();
+        }
     }
 
     /**
@@ -4309,35 +4317,35 @@ class EstateController extends Controller
      * Change statut en RDV pris
      */
     public function changeTime(Request $request)
-    {
-        // Save all data of request
-        $data = $request->all();
-        // Init updated
-        $updated = false;
-        // Init the reponse
+{
+    // Save all data of request
+    $data = $request->all();
+    // Init updated
+    $updated = false;
+    // Init the reponse
+    $response = array(
+        'status' => false, // Reponse status
+        'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
+    );
+
+    $updated = $this->updateData(app("App\\Models\\Estate"), 'date_send_reminder', $data['time_to_send_reminder'], $data['estate_id'], $data['estate_id'], 'date_send_reminder'); // Update data
+
+    if ($updated) { // If updated is true
         $response = array(
-            'status' => false, // Reponse status
-            'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
+            'status' => true,
+            'message' => 'L\'heure a été mise à jour'
         );
-
-        $updated = $this->updateData(app("App\\Models\\Estate"), 'date_send_reminder', $data['time_to_send_reminder'], $data['estate_id'], $data['estate_id'], 'date_send_reminder'); // Update data
-
-        if ($updated) { // If updated is true
-            $response = array(
-                'status' => true,
-                'message' => 'L\'heure a été mise à jour'
-            );
-        }
-
-        if (!$updated) { // If updated is false
-            $reponse = array(
-                'status' => false,
-                'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-            );
-        }
-        // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        return back()->with('success', $response['message']); // Redirect to previous page with success message
     }
+
+    if (!$updated) { // If updated is false
+        $reponse = array(
+            'status' => false,
+           'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
+        );
+        return back()->with('error', $response['message']); // Redirect to previous page with error message
+    }
+}
 
     /**
      * Change statut en RDV pris
