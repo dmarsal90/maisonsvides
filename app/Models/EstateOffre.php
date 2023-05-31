@@ -24,7 +24,7 @@ class EstateOffre extends Model
 		'price_market',
 		'other_offer',
 		'notaire',
-		'condition_offer',
+		'condition',
 		'validity',
 		'textadded',
 		'pdf',
