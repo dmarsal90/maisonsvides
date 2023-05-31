@@ -1174,12 +1174,14 @@ class EstateController extends Controller
             'status' => false,
             'message' => 'Le commentaire n\'a pas pu être créé. Réessayez plus tard.'
         );
+
         try {
             $category = EstateComment::create([
                 'estate_id' => $data['estate_id'],
                 'user_id' => Auth::user()->id,
                 'comment' => $data['estate_comment_internal']
             ]);
+
             //Create new log about update
             EstateLog::create([
                 'estate_id' => $data['estate_id'],
@@ -1188,24 +1190,22 @@ class EstateController extends Controller
                 'new_value' => $data['estate_comment_internal'],
                 'field' => 'commentrdv'
             ]);
+
             $response = array(
                 'status' => true,
-                'message' => 'Le commentaire a été créée',
+                'message' => 'Le commentaire a été créé',
                 'data' => $data,
             );
+
+            return back()->with('success', $response['message']);
         } catch (\Exception $e) {
             $message = $e->getMessage();
             if ($e->getCode() == 23000) {
                 $message = 'Le commentaire existe déjà';
             }
-            $response = array(
-                'status' => false,
-                'message' => $message,
-                'data' => $data
-            );
+            $response['message'] = $message;
+            return back()->with('error', $response['message']);
         }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
     }
 
     /**
@@ -4295,35 +4295,20 @@ class EstateController extends Controller
      * Change statut en RDV pris
      */
     public function changeStatus(Request $request)
-    {
-        // Save all data of request
-        $data = $request->all();
-        // Init updated
-        $updated = false;
-        // Init the reponse
-        $response = array(
-            'status' => false, // Reponse status
-            'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
-        );
+{
+    // Save all data of request
+    $data = $request->all();
+    // Init updated
+    $updated = false;
 
-        $updated = $this->updateData(app("App\\Models\\Estate"), 'category', 14, $data['estate_id'], $data['estate_id'], 'category'); // Update data
+    $updated = $this->updateData(app("App\\Models\\Estate"), 'category', 14, $data['estate_id'], $data['estate_id'], 'category'); // Update data
 
-        if ($updated) { // If updated is true
-            $response = array(
-                'status' => true,
-                'message' => 'L\'heure a été mise à jour'
-            );
-        }
-
-        if (!$updated) { // If updated is false
-            $reponse = array(
-                'status' => false,
-                'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-            );
-        }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
+    if ($updated) { // If updated is true
+        return back()->with('success', 'L\'heure a été mise à jour');
+    } else { // If updated is false
+        return back()->with('error', 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...');
     }
+}
 
     /**
      * Change statut en RDV pris
