@@ -2685,7 +2685,7 @@ class EstateController extends Controller
                 'price_market' => $offre->price_market,
                 'other_offer' => $offre->other_offer,
                 'notaire' => $offre->notaire,
-                'condition_offer' => $offre->condition_offer,
+                'condition' => $offre->condition,
                 'validity' => $offre->validity,
                 'textadded' => $offre->textadded,
                 'pdf' => $offre->pdf
@@ -2697,77 +2697,63 @@ class EstateController extends Controller
     /**
      * Update offre of the estate
      */
+
     public function updateOffer(Request $request)
     {
+        $updated = false;
+
         // Get all data of request
         $data = $request->all();
+//dd($data);die;
         $estateid = $data['estate_id'];
         $offre = $this->getOffre($estateid);
+
         // If no exist a offer in this estate a new one is created
         if (empty($offre)) {
             try {
-                // Create new offer of the estate
+                // Create new offer
                 EstateOffre::create([
                     'estate_id' => $data['estate_id'],
                     'price_seller' => $data['price_seller'],
                     'price_wesold' => $data['price_wesold'],
                     'price_market' => $data['price_market'],
-                    'other_offer' => $data['other_offer']
+                    'validity' => $data['validity'],
+                    'other_offer' => $data['other_offer'],
+                    'notaire' => $data['notary'],
+                    'condition' => $data['condition'],
                 ]);
-                $response = array( // If response is true
-                    'status' => true,
-                    'message' => 'Le offre site immobilier a été créée',
-                    'data' => $data,
-                );
-            } catch (\Exception $e) {
-                $message = ""; // If
-                if ($e->getCode() == 23000) {
-                    $message = 'Le offre site immobilier existe déjà';
-                }
-                $response = array(
-                    'status' => false,
-                    'message' => $message,
-                    'data' => $data
-                );
-            }
 
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
-        } else { // If exist a offer in this estate only a new one is updated
-            // Init updated
-            $updated = false;
-            // Init the reponse
-            $response = array(
-                'status' => false, // Reponse status
-                'message' => 'Le offre n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
-            );
+                return back()->with('success', 'Le offre site immobilier a été créée');
+            } catch (\Exception $e) {
+                if ($e->getCode() == 23000) {
+                    return back()->with('error', 'Le offre site immobilier existe déjà');
+                }
+                return back()->with('error', 'Une erreur s\'est produite lors de la création del\'offre.');
+            }
+        } else {
+            // If exist a offer in this estate only a new one is updated
             // Get keys of data
-            foreach ($data as $key => $dat) { // Foreach key of data
+            foreach ($data as $key => $dat) {
                 if ($key != 'other_offer') {
                     if ($dat == NULL) {
                         $dat = 0;
                     }
                 }
                 if ($key !== '_token') {
-                    $updated = $this->updateData(app("App\\Models\\EstateOffre"), $key, $dat, $offre['id'], $estateid, $key); // Updatate data
+                    $updated = $this->updateData(app("App\\Models\\EstateOffre"), $key, $dat, $offre['id'], $estateid, $key);
                 }
             }
-            if ($updated) { // If updated is true
-                $response = array(
-                    'status' => true,
-                    'message' => 'Le offre a été mise à jour'
-                );
-            }
 
-            if (!$updated) { // If updated is false
-                $reponse = array(
-                    'status' => false,
-                    'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-                );
+            if ($updated) {
+                return back()->with('success', 'Le offre a été mise à jour');
+            } else {
+                try {
+                    // Throw exception if offer update failed
+                    throw new \Exception('Une erreur s\'est produite lors de la mise à jour de l\'offre.');
+                } catch (\Exception $e) {
+                    return back()->with('error', $e->getMessage());
+                }
             }
-
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
         }
     }
 
