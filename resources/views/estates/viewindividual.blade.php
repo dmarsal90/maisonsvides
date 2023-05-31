@@ -1215,9 +1215,11 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2"><strong>Prix estimé par le requéreur :</strong></div>
                                     <?php
-                                    $priceSeller = 0;
+
                                     if (isset($offer['price_seller'])) {
                                         $priceSeller = $offer['price_seller'];
+                                    } else if (isset($estate['estimate'])) {
+                                        $priceSeller = $estate['estimate'];
                                     }
                                     ?>
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
@@ -1228,9 +1230,11 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2"><strong>Notre estimation :</strong></div>
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
                                         <?php
-                                        $priceMarket = 0;
+
                                         if (isset($offer['price_market'])) {
                                             $priceMarket = $offer['price_market'];
+                                        } else if (isset($estate['market'])) {
+                                            $priceMarket = $estate['market'];
                                         }
                                         ?>
                                         <input type="number" data-input-price-market="{!! $priceMarket !!}" class="form-control" placeholder="€" value="{!! $priceMarket !!}" disabled>
@@ -1243,15 +1247,16 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2"><strong>Prix offert par We Sold :</strong></div>
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                        <?php
-                                        $priceWesold = 0;
-                                        if (isset($offer['price_wesold'])) {
-                                            $priceWesold = $offer['price_wesold'];
-                                        }
-                                        ?>
-                                        <input type="number" data-input-price-we-sold="{!! $priceWesold !!}" class="form-control" placeholder="€" value="{!! $priceWesold !!}">
+
+                                        <input type="number" data-input-price-we-sold="@isset($offer['price_wesold']){{ $offer['price_wesold'] }}@endisset" @isset($offer['price_wesold']) value="{{ $offer['price_wesold'] }}" @endisset class="form-control" placeholder="" oninput="setPriceWesold(event)">
                                         <label class="price">€</label>
-                                        <input type="hidden" name="price_wesold" id="price_wesold" class="form-control" placeholder="€" value="{!! $priceWesold !!}">
+                                        <input type="hidden" name="price_wesold" id="price_wesold" value="0">
+                                        <script>
+                                            function setPriceWesold(event) {
+                                                var priceWesoldInput = document.getElementById("price_wesold");
+                                                priceWesoldInput.value = event.target.value;
+                                            }
+                                        </script>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -1260,7 +1265,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                         <select class="form-control" name="notary" id="data_notary">
                                             <option value=""></option>
                                             @foreach($notaries as $notary)
-                                            <option @isset($offer['notaire']) {!! ($offer['notaire']==$notary['name'].' '.$notary[' lastname'].' ('.$notary['key'].')') ? 'selected' : '' !!} @endisset value="{!! $notary['name'] !!} {!! $notary['lastname'] !!} ({!! $notary['key'] !!})">{!! $notary['name'] !!} {!! $notary['lastname'] !!}</option>
+                                            <option @isset($offer['notaire']) {!! ($offer['notaire']==$notary['name'].' '.$notary['lastname'].' ('.$notary['key'].')') ? 'selected' : '' !!} @endisset value="{!! $notary['name'] !!} {!! $notary['lastname'] !!} ({!! $notary['key'] !!})">{!! $notary['name'] !!} {!! $notary['lastname'] !!}</option>
                                             }
                                             @endforeach
                                         </select>
@@ -1269,7 +1274,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2"><strong>Validité de l offre :</strong></div>
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                        <input type="date" name="number_offer" class="form-control" value="@isset($offer['validity'] ){!! $offer['validity'] !!}@endisset">
+                                        <input type="date" name="validity" class="form-control" value="@isset($offer['validity'] ){!! $offer['validity'] !!}@endisset">
                                     </div>
                                 </div>
                             </div>
@@ -1283,7 +1288,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                     <option value="">Choisissez un modèle</option>
                                     @foreach($templates as $template)
                                     @if($template['type'] == 'condition')
-                                    <option @isset($offer['condition_offer']) {!! ($offer['condition_offer']==file_get_contents(asset('templates/'.$template['file']))) ? 'selected' : '' !!} @endisset value="{!! file_get_contents(asset('templates/'.$template['file'])) !!}">{!! file_get_contents(asset('templates/'.$template['file'])) !!}</option>
+                                    <option @isset($offer['condition']) {!! ($offer['condition']==file_get_contents(asset('templates/'.$template['file']))) ? 'selected' : '' !!} @endisset value="{!! file_get_contents(asset('templates/'.$template['file'])) !!}">{!! file_get_contents(asset('templates/'.$template['file'])) !!}</option>
                                     @endif
                                     @endforeach
                                 </select>
@@ -1291,7 +1296,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                         </div>
                         <div class="row mb-3">
                             <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-2">
-                                <textarea id="tinyconditionOffer" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">@isset($offer['condition_offer']){!! $offer['condition_offer'] !!}@endisset</textarea>
+                                <textarea id="tinyconditionOffer" name="condition" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">@isset($offer['condition']){!! $offer['condition'] !!}@endisset</textarea>
                             </div>
                         </div>
                         <div class="row ">
@@ -1299,7 +1304,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 mb-2"><strong>Texte à ajouter à l’offre :</strong></div>
                                     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-12 col-xl-6 mb-2">
-                                        <select class="form-control" name="text_add_offer" id="text_add_offer">
+                                        <select class="form-control" name="textadded" id="text_add_offer">
                                             <option>Choisissez un modèle</option>
                                             @foreach($templates as $template)
                                             @if($template['type'] == 'text-offer')
@@ -1315,14 +1320,15 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                                         @endforeach
                                     </div>
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                                        <textarea name="other_offer" id="other_offer" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">@isset($offer['textadded']) {!! $offer['textadded'] !!} @endisset</textarea>
+                                        <textarea name="other_offer" id="other_offer" data-height="200" data-tiny="tinyconditionOffer" rows="5" class="form-control">@isset($offer['other_offer']) {!! $offer['other_offer'] !!} @endisset</textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         @if(Auth::user()->type != 3)
                         <div class="text-right mt-4">
-                            <button type="button" class="btn btn-lg btn-success" data-toggle="modal" data-target="#editOfferPDF" data-save-data>Générer l'offre</button>
+                            <button type="button" class="btn btn-lg btn-danger" data-toggle="modal" data-target="#editOfferPDF" data-save-data>Générer l'offre</button>
+                            <button type="submit" class="btn btn-lg btn-success">Sauvegarder</button>
                         </div>
                         @endif
                     </div>
