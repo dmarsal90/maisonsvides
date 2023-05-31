@@ -24,6 +24,7 @@ mix.js([
 	.sourceMaps();
 
 mix.js('resources/js/script.js', 'public/js/script.js');
+mix.js('resources/js/preview.js', 'public/js/preview.js');
 
 
 

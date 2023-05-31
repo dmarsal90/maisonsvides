@@ -381,16 +381,6 @@ class EstateController extends Controller
             // Get estates to show to manager
             $estates = $this->getEstatesToAgent(Auth::user()->id);
         }
-        // If session is of the a manager
-        if (Auth::user()->type == 2 || Auth::user()->type == 1) {
-            // Get estates to show to manager
-            $estates = $this->getEstatesToManager(Auth::user()->id);
-        }
-        // If session is of the a manager
-        if (Auth::user()->type == 3) {
-            // Get estates to show to manager
-            $estates = $this->getEstatesToAgent(Auth::user()->id);
-        }
         //Get data of a seller
         $seller = $this->getSeller($estate['seller']);
         //Get estate details
@@ -488,7 +478,7 @@ class EstateController extends Controller
         }
 
         // Get to show events
-        // $eve_ = $this->showEvents($id);
+        $eve_ = $this->showEvents($id);
         // Get events confirmed
         $eventConfirmed = EstateEvent::where('confirmed', '=', 1)->get();
         // Get total tickets no answered
@@ -505,9 +495,8 @@ class EstateController extends Controller
         //'details' => $details
 
         // Return view the data of the estate
-        return view('estates.view', ['id' => $id, 'estates' => $estates, 'comments' => $comments, 'estateDetails' => $estateDetails,  'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
+        return view('estates.view', ['id' => $id, 'estates' => $estates, 'eve_' => $eve_, 'comments' => $comments, 'estateDetails' => $estateDetails,  'resolutions' => $resolutions, 'estate' => $estate, 'seller' => $seller, 'logs' => $logs, 'status' => $status, 'categories' => $categories, 'realestates' => $realestates, 'advertisements' => $advertisements, 'medias' => $medias, 'offer' => $offer, 'remarks' => $remarks, 'templates' => $templates, 'all' => $all, 'agents' => $agents, 'notaries' => $notaries, 'templatesReminders' => $templatesReminders, 'reminders' => $reminders, 'auxTickets' => $auxTickets, 'emails' => $emails,  'eventConfirmed' => $eventConfirmed, 'typemenu' => $typemenu, 'templatesTask' => $templatesTask, 'countTicketsNoAnswer' => $countTicketsNoAnswer, 'auxticketsNoAnswer' => $auxticketsNoAnswer]);
     }
-
     /**
      * Delete
      */
@@ -561,7 +550,7 @@ class EstateController extends Controller
         }
         foreach ($calendarList as $value) {
             $account = explode("@", $value->id);
-            if ($account[1] == 'gmail.com') {
+            if ($account[1] == 'maisonsvides.be') {
                 $id = 'src=' . $value->id . '&amp;';
                 $ids = $ids . $id;
             }
@@ -591,7 +580,19 @@ class EstateController extends Controller
             // Get data of events of the DB
             $events = Event::all();
             foreach ($events as $event) {
-                $allEvents['events'][] = $service->events->get('primary', $event->event_id);
+                $eventId = $event->id;
+                try {
+                    $allEvents['events'][] = $service->events->get('primary', $eventId);
+                    dd($allEvents['events'][]);
+                } catch (Google_Service_Exception $e) {
+                    // Handle the exception
+                    $error = array(
+                        'event_id' => $eventId,
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                    );
+                    $allEvents['errors'][] = $error;
+                }
             }
             $allEvents['total'] = count($events);
         }
@@ -873,12 +874,12 @@ class EstateController extends Controller
             // dd(isset($event->id));
             /*$event = $service->events->insert($this->calendarId, $event);*/
             if (isset($event->id)) {
-                /* $estateEvent = EstateEvent::create([
+                $estateEvent = EstateEvent::create([
                     'estate_id' => $request->input('estate_id'),
                     'event_id' => $event->id,
                     'user_id' => Auth::user()->id,
                     'seller_id' => $request->input('seller_id') // o $data['seller_id']
-                ]); */
+                ]);
                 $event_created = Event::create([
                     'estate_id' => $request->input('estate_id'),
                     //'event_id' => $event->id,
@@ -1173,12 +1174,14 @@ class EstateController extends Controller
             'status' => false,
             'message' => 'Le commentaire n\'a pas pu être créé. Réessayez plus tard.'
         );
+
         try {
             $category = EstateComment::create([
                 'estate_id' => $data['estate_id'],
                 'user_id' => Auth::user()->id,
                 'comment' => $data['estate_comment_internal']
             ]);
+
             //Create new log about update
             EstateLog::create([
                 'estate_id' => $data['estate_id'],
@@ -1187,24 +1190,22 @@ class EstateController extends Controller
                 'new_value' => $data['estate_comment_internal'],
                 'field' => 'commentrdv'
             ]);
+
             $response = array(
                 'status' => true,
-                'message' => 'Le commentaire a été créée',
+                'message' => 'Le commentaire a été créé',
                 'data' => $data,
             );
+
+            return back()->with('success', $response['message']);
         } catch (\Exception $e) {
             $message = $e->getMessage();
             if ($e->getCode() == 23000) {
                 $message = 'Le commentaire existe déjà';
             }
-            $response = array(
-                'status' => false,
-                'message' => $message,
-                'data' => $data
-            );
+            $response['message'] = $message;
+            return back()->with('error', $response['message']);
         }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
     }
 
     /**
@@ -1241,35 +1242,23 @@ class EstateController extends Controller
     {
         //Get data of the request
         $data = $request->all();
-        //Init the response
-        $response = array(
-            'status' => false,
-            'message' => 'La résolution n\'a pas pu être créé. Réessayez plus tard.'
-        );
+
         try {
             $category = EstateResolution::create([
                 'estate_id' => $data['estate_id'],
                 'user_id' => Auth::user()->id,
                 'comment' => $data['estate_new_problem']
             ]);
-            $response = array(
-                'status' => true,
-                'message' => 'La résolution a été créée',
-                'data' => $data,
-            );
+
+            $message = 'La résolution a été créée';
+            return back()->with('success', $message);
         } catch (\Exception $e) {
-            $message = "";
+            $message = "La résolution n'a pas pu être créée. Réessayez plus tard.";
             if ($e->getCode() == 23000) {
                 $message = 'La résolution existe déjà';
             }
-            $response = array(
-                'status' => false,
-                'message' => $message,
-                'data' => $data
-            );
+            return back()->with('error', $message);
         }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
     }
 
     /**
@@ -1407,7 +1396,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         // Get all estates that don't have an agent assigned
@@ -1439,7 +1429,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         return $superAux;
@@ -1479,7 +1470,8 @@ class EstateController extends Controller
                 'agency_name' => $_estate->agency_name,
                 'information_additional' => $_estate->information_additional,
                 'module_visit' => $_estate->module_visit,
-                'created_at' => $_estate->created_at
+                'created_at' => $_estate->created_at,
+                'problems' => $_estate->problems
             );
         }
         // dd($estatesArray);die;
@@ -2271,42 +2263,66 @@ class EstateController extends Controller
      */
     public function newAdvertisement(Request $request)
     {
-        //Get data of the request
+        // Get data of the request
         $data = $request->all();
-        //Init the response
+
+        // Init the response
         $response = array(
             'status' => false,
             'message' => 'Le nouveau site immobilier n\'a pas pu être créée. Réessayez plus tard.'
         );
 
-        try {
+        // Check if the advertisement already exists
+        $existingAd = EstateRealEstate::where('estate_id', $data['estate_id'])
+            ->where('realestate_id', $data['estate_form_ads_site'])
+            ->where('refrence', $data['estate_ads_ref'])
+            ->where('url', $data['estate_ads_url'])
+            ->where('put_online', $data['estate_ads_online'])
+            ->where('price', $data['estate_ads_price'])
+            ->first();
 
-            $es = EstateRealEstate::create([
-                'estate_id' => $data['estate_id'],
-                'realestate_id' => $data['estate_form_ads_site'],
-                'refrence' => $data['estate_ads_ref'],
-                'url' => $data['estate_ads_url'],
-                'put_online' => $data['estate_ads_online'],
-                'price' => $data['estate_ads_price']
-            ]);
-            $response = array(
-                'status' => true,
-                'message' => 'Le nouveau site immobilier a été créée'
-            );
-        } catch (\Exception $e) {
-            $message = "";
-            if ($e->getCode() == 23000) {
-                $message = 'Le nouveau site immobilier existe déjà';
-            }
+        if ($existingAd) {
+            // An advertisement with the same characteristics already exists
             $response = array(
                 'status' => false,
-                'message' => $message,
+                'message' => 'Le nouveau site immobilier existe déjà.',
                 'data' => $data
             );
+        } else {
+            // The advertisement does not exist, create a new one
+            try {
+                $es = EstateRealEstate::create([
+                    'estate_id' => $data['estate_id'],
+                    'realestate_id' => $data['estate_form_ads_site'],
+                    'refrence' => $data['estate_ads_ref'],
+                    'url' => $data['estate_ads_url'],
+                    'put_online' => $data['estate_ads_online'],
+                    'price' => $data['estate_ads_price']
+                ]);
+
+                $response = array(
+                    'status' => true,
+                    'message' => 'Le nouveau site immobilier a été créé.'
+                );
+            } catch (\Exception $e) {
+                $message = "";
+                if ($e->getCode() == 23000) {
+                    $message = 'Le nouveau site immobilier existe déjà.';
+                }
+                $response = array(
+                    'status' => false,
+                    'message' => $message,
+                    'data' => $data
+                );
+            }
         }
 
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
+        // Set message in session
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message']);
+        }
     }
 
     /**
@@ -2325,6 +2341,7 @@ class EstateController extends Controller
         )->join("realestates", "realestates.id", "=", "estate_realestate.realestate_id")
             ->where('estate_id', '=', $estate_id)
             ->get();
+
         $advsArray = array();
         foreach ($estateadv as $adv) {
             $putonline = strtotime($adv->put_online);
@@ -2339,6 +2356,7 @@ class EstateController extends Controller
                 'price' => $adv->price
             );
         }
+        // dd($advsArray);die;
         return $advsArray;
     }
 
@@ -2511,6 +2529,65 @@ class EstateController extends Controller
         return response($response)->header('Content-Type', 'application/json');
     }
 
+
+    public function uploadFiles(Request $request)
+    {
+        /*  $validator = Validator::make($request->all(), [
+            'estate_photos.*' => 'mimes:jpeg,jpg,png',
+            'estate_documents.*' => 'mimes:pdf,json,txt,doc,docx',
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        } */
+
+        $response = array('status' => false);
+        $estate = Estate::find($request->input('estate_id'));
+
+        if ($estate) {
+            $images = array();
+            $documents = array();
+
+            if ($request->hasFile('estate_photos')) {
+                foreach ($request->file('estate_photos') as $photo) {
+                    if ($photo->isValid() && $photo->getClientMimeType() == 'image/jpeg' || $photo->getClientMimeType() == 'image/png') {
+                        $filename = Str::random(40) . '.' . $photo->getClientOriginalExtension();
+                        $photo->storeAs('public/images', $filename);
+                        $images[] = $filename;
+                    }
+                }
+            }
+
+            if ($request->hasFile('estate_documents')) {
+                foreach ($request->file('estate_documents') as $doc) {
+                    if ($doc->isValid() && in_array($doc->getClientMimeType(), ['application/pdf', 'application/json', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) {
+                        $filename = Str::random(40) . '.' . $doc->getClientOriginalExtension();
+                        $doc->storeAs('public/documents', $filename);
+                        $documents[] = $filename;
+                    }
+                }
+            }
+
+            if (!empty($images)) {
+                $estate->images = json_encode($images);
+            }
+
+            if (!empty($documents)) {
+                $estate->docs = json_encode($documents);
+            }
+
+            try {
+                $estate->save();
+                $response['status'] = true;
+            } catch (\Exception $e) {
+                return back()->with('message', 'Error al guardar los archivos: ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('message', 'Archivos cargados exitosamente.');
+    }
+
+
     /**
      * Get medias of the estate
      */
@@ -2620,7 +2697,7 @@ class EstateController extends Controller
                 'price_market' => $offre->price_market,
                 'other_offer' => $offre->other_offer,
                 'notaire' => $offre->notaire,
-                'condition_offer' => $offre->condition_offer,
+                'condition' => $offre->condition,
                 'validity' => $offre->validity,
                 'textadded' => $offre->textadded,
                 'pdf' => $offre->pdf
@@ -2632,77 +2709,63 @@ class EstateController extends Controller
     /**
      * Update offre of the estate
      */
+
     public function updateOffer(Request $request)
     {
+        $updated = false;
+
         // Get all data of request
         $data = $request->all();
+//dd($data);die;
         $estateid = $data['estate_id'];
         $offre = $this->getOffre($estateid);
+
         // If no exist a offer in this estate a new one is created
         if (empty($offre)) {
             try {
-                // Create new offer of the estate
+                // Create new offer
                 EstateOffre::create([
                     'estate_id' => $data['estate_id'],
                     'price_seller' => $data['price_seller'],
                     'price_wesold' => $data['price_wesold'],
                     'price_market' => $data['price_market'],
-                    'other_offer' => $data['other_offer']
+                    'validity' => $data['validity'],
+                    'other_offer' => $data['other_offer'],
+                    'notaire' => $data['notary'],
+                    'condition' => $data['condition'],
                 ]);
-                $response = array( // If response is true
-                    'status' => true,
-                    'message' => 'Le offre site immobilier a été créée',
-                    'data' => $data,
-                );
-            } catch (\Exception $e) {
-                $message = ""; // If
-                if ($e->getCode() == 23000) {
-                    $message = 'Le offre site immobilier existe déjà';
-                }
-                $response = array(
-                    'status' => false,
-                    'message' => $message,
-                    'data' => $data
-                );
-            }
 
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
-        } else { // If exist a offer in this estate only a new one is updated
-            // Init updated
-            $updated = false;
-            // Init the reponse
-            $response = array(
-                'status' => false, // Reponse status
-                'message' => 'Le offre n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
-            );
+                return back()->with('success', 'Le offre site immobilier a été créée');
+            } catch (\Exception $e) {
+                if ($e->getCode() == 23000) {
+                    return back()->with('error', 'Le offre site immobilier existe déjà');
+                }
+                return back()->with('error', 'Une erreur s\'est produite lors de la création del\'offre.');
+            }
+        } else {
+            // If exist a offer in this estate only a new one is updated
             // Get keys of data
-            foreach ($data as $key => $dat) { // Foreach key of data
+            foreach ($data as $key => $dat) {
                 if ($key != 'other_offer') {
                     if ($dat == NULL) {
                         $dat = 0;
                     }
                 }
                 if ($key !== '_token') {
-                    $updated = $this->updateData(app("App\\Models\\EstateOffre"), $key, $dat, $offre['id'], $estateid, $key); // Updatate data
+                    $updated = $this->updateData(app("App\\Models\\EstateOffre"), $key, $dat, $offre['id'], $estateid, $key);
                 }
             }
-            if ($updated) { // If updated is true
-                $response = array(
-                    'status' => true,
-                    'message' => 'Le offre a été mise à jour'
-                );
-            }
 
-            if (!$updated) { // If updated is false
-                $reponse = array(
-                    'status' => false,
-                    'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-                );
+            if ($updated) {
+                return back()->with('success', 'Le offre a été mise à jour');
+            } else {
+                try {
+                    // Throw exception if offer update failed
+                    throw new \Exception('Une erreur s\'est produite lors de la mise à jour de l\'offre.');
+                } catch (\Exception $e) {
+                    return back()->with('error', $e->getMessage());
+                }
             }
-
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
         }
     }
 
@@ -2740,14 +2803,17 @@ class EstateController extends Controller
     {
         // Get all data of request
         $data = $request->all();
-        // dd($data);
+
         $estateid = $data['estate_id'];
         $remark = $this->getEstateRemark($estateid);
-        // Init the reponse
+        //dd($remark);
+
+        // Init the response
         $response = array(
-            'status' => false, // Reponse status
+            'status' => false, // Response status
             'message' => 'Le remarque n\'a pas été supprimé' // Response message
         );
+
         // If no exist a offer in this estate a new one is created
         if (empty($remark)) {
             // Create new offer of the estate
@@ -2762,51 +2828,65 @@ class EstateController extends Controller
                 'exterior_weak_point' => ($data['exterior_weak_point'] == NULL) ? '' : $data['exterior_weak_point'],
                 'desires_to_sell' => ($data['desires_to_sell'] == NULL) ? 0 : $data['desires_to_sell'],
                 'his_estimate' => ($data['his_estimate'] == NULL) ? 0 : $data['his_estimate'],
-                'accept_price' => '',
+                'accept_price' => ($data['accept_price'] == NULL) ? 0 : $data['accept_price'],
                 'agent_notice' => ($data['agent_notice'] == NULL) ? '' : $data['agent_notice'],
             ]);
-            $response = array( // If response is true
+
+            $response = array(
                 'status' => true,
                 'message' => 'Le remarque a été créée',
                 'data' => $data,
             );
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
-        } else { // If exist a offer in this estate only a new one is updated
+
+            // Set message in session
+            if ($response['status']) {
+                return back()->with('success', $response['message']);
+            } else {
+                return back()->with('error', $response['message']);
+            }
+        } else {
             // Init updated
             $updated = false;
-            // Init the reponse
+            // Init the response
             $response = array(
-                'status' => false, // Reponse status
+                'status' => false, // Response status
                 'message' => 'Le remarque n\'a pas été mise à jour ou les informations n\'ont pas été modifiées.' // Response message
             );
+
             // Get keys of data
-            foreach ($data as $key => $dat) { // Foreach key of data
+            foreach ($data as $key => $dat) {
                 if ($dat == NULL) {
                     $dat = '';
                     if ($key === "desires_to_sell" || $key === "his_estimate") {
                         $dat = 0;
                     }
                 }
+
                 if ($key !== '_token' && $key !== 'estate_id') {
-                    $updated = $this->updateData(app("App\\Models\\EstateRemark"), $key, $dat, $remark['id'], $estateid, $key); // Updatate data
+                    $updated = $this->updateData(app("App\\Models\\EstateRemark"), $key, $dat, $remark['id'], $estateid, $key);
+
+                    if ($updated) {
+                        $response = array(
+                            'status' => true,
+                            'message' => 'Le remarque a été mise à jour'
+                        );
+                    }
+
+                    if (!$updated) {
+                        $response = array(
+                            'status' => false,
+                            'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
+                        );
+                    }
                 }
             }
-            if ($updated) { // If updated is true
-                $response = array(
-                    'status' => true,
-                    'message' => 'Le remarque a été mise à jour'
-                );
-            }
-            if (!$updated) { // If updated is false
-                $reponse = array(
-                    'status' => false,
-                    'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-                );
-            }
 
-            // Return response
-            return response($response)->header('Content-Type', 'application/json');
+            // Set message in session
+            if ($response['status']) {
+                return back()->with('success', $response['message']);
+            } else {
+                return back()->with('error', $response['message']);
+            }
         }
     }
 
@@ -3272,19 +3352,19 @@ class EstateController extends Controller
                             'no_answer' => 0
                         ]);
                     }
-                    // // Send instant if first reminder is type sms
-                    // if ($data['type_template_r'] == 'sms') {
-                    // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                    // 	$client = new \Nexmo\Client($basic);
-                    // 	// Sending SMS
-                    // 	$message = $client->message()->send([
-                    // 		'to' => '527731951309',//$data['seller_phone'],
-                    // 		'from' => 'Wesold',
-                    // 		'text' => $data['body_mail_reminder']
-                    // 	]);
-                    // 	// Updatate data to next reminder
-                    // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', (0 + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                    // }
+                    // Send instant if first reminder is type sms
+                    if ($data['type_template_r'] == 'sms') {
+                        $basic    = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                        $client = new \Nexmo\Client($basic);
+                        // Sending SMS
+                        $message = $client->message()->send([
+                            'to' => $data['seller_phone'],
+                            'from' => 'Wesold',
+                            'text' => $data['body_mail_reminder']
+                        ]);
+                        // Updatate data to next reminder
+                        $updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', (0 + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                    }
                 } // End - If the reminder is instant
                 // If the reminder isn't instant
                 if (isset($data['change_date']) && $data['change_date'] == 'on' && !isset($data['charge_process'])) {
@@ -3383,38 +3463,38 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // 	// Updatate data to next reminder
-                                // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // 	// Updatate data to next reminder
-                                // 	$updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                    // This is to send a email as a ticket
+                                    $ticket_id = $this->objectTicket->create(
+                                        [
+                                            "name" => $data['seller_name'][$key], // Name to which the ticket will be sent
+                                            "email" => $data['seller_email'][$key], // Email to which the ticket will be sent
+                                        ],
+                                        $data['subject_template'][$key], // Subject to the email
+                                        $data['body_mail_reminder'][$key], // Content to the email
+                                        []
+                                    );
+                                    // Save the union of the ticket wiht the estate
+                                    EstateTicket::create([
+                                        'estate_id' => $data['estate_id'],
+                                        'ticket_id' => $ticket_id,
+                                        'no_answer' => 0
+                                    ]);
+                                    // Updatate data to next reminder
+                                    $updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                                }
+                                if ($reminder == 'sms') {
+                                    $basic    = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                    $client = new \Nexmo\Client($basic);
+                                    // Sending SMS
+                                    $message = $client->message()->send([
+                                        'to' => '527731951309',
+                                        'from' => 'Wesold',
+                                        'text' => $data['body_mail_reminder'][$key]
+                                    ]);
+                                    // Updatate data to next reminder
+                                    $updated = $this->updateData(app("App\\Models\\EstateReminder"), 'next_reminder', ($key + 1), $reminder['id'], $reminder['estate_id'], 'next_reminder', $reminder['user_id']);
+                                }
                             }
                             if ($key !== 0) {
                                 $subject = '';
@@ -3491,34 +3571,34 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                    // This is to send a email as a ticket
+                                    $ticket_id = $this->objectTicket->create(
+                                        [
+                                            "name" => $data['seller_name'][$key], // Name to which the ticket will be sent
+                                            "email" => $data['seller_email'][$key], // Email to which the ticket will be sent
+                                        ],
+                                        $data['subject_template'][$key], // Subject to the email
+                                        $data['body_mail_reminder'][$key], // Content to the email
+                                        []
+                                    );
+                                    // Save the union of the ticket wiht the estate
+                                    EstateTicket::create([
+                                        'estate_id' => $data['estate_id'],
+                                        'ticket_id' => $ticket_id,
+                                        'no_answer' => 0
+                                    ]);
+                                }
+                                if ($reminder == 'sms') {
+                                    $basic    = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                    $client = new \Nexmo\Client($basic);
+                                    // Sending SMS
+                                    $message = $client->message()->send([
+                                        'to' => '527731951309',
+                                        'from' => 'Wesold',
+                                        'text' => $data['body_mail_reminder'][$key]
+                                    ]);
+                                }
                             }
                             if ($key !== 0) {
                                 $subject = '';
@@ -3535,34 +3615,34 @@ class EstateController extends Controller
                                     'seller_id' => $data['seller_id'],
                                     'sent' => 0
                                 );
-                                // if ($reminder == 'email' || $reminder == 'task') {
-                                // 	// This is to send a email as a ticket
-                                // 	$ticket_id = $this->objectTicket->create(
-                                // 		[
-                                // 			"name" => $data['seller_name'][$key],// Name to which the ticket will be sent
-                                // 			"email" => $data['seller_email'][$key],// Email to which the ticket will be sent
-                                // 		],
-                                // 		$data['subject_template'][$key],// Subject to the email
-                                // 		$data['body_mail_reminder'][$key],// Content to the email
-                                // 		[]
-                                // 	);
-                                // 	// Save the union of the ticket wiht the estate
-                                // 	EstateTicket::create([
-                                // 		'estate_id' => $data['estate_id'],
-                                // 		'ticket_id' => $ticket_id,
-                                // 		'no_answer' => 0
-                                // 	]);
-                                // }
-                                // if ($reminder == 'sms') {
-                                // 	$basic	= new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
-                                // 	$client = new \Nexmo\Client($basic);
-                                // 	// Sending SMS
-                                // 	$message = $client->message()->send([
-                                // 		'to' => '527731951309',
-                                // 		'from' => 'Wesold',
-                                // 		'text' => $data['body_mail_reminder'][$key]
-                                // 	]);
-                                // }
+                                if ($reminder == 'email' || $reminder == 'task') {
+                                    // This is to send a email as a ticket
+                                    $ticket_id = $this->objectTicket->create(
+                                        [
+                                            "name" => $data['seller_name'][$key], // Name to which the ticket will be sent
+                                            "email" => $data['seller_email'][$key], // Email to which the ticket will be sent
+                                        ],
+                                        $data['subject_template'][$key], // Subject to the email
+                                        $data['body_mail_reminder'][$key], // Content to the email
+                                        []
+                                    );
+                                    // Save the union of the ticket wiht the estate
+                                    EstateTicket::create([
+                                        'estate_id' => $data['estate_id'],
+                                        'ticket_id' => $ticket_id,
+                                        'no_answer' => 0
+                                    ]);
+                                }
+                                if ($reminder == 'sms') {
+                                    $basic    = new \Nexmo\Client\Credentials\Basic('20c3b951', '3C9zf1Y4cH2UH5Xu');
+                                    $client = new \Nexmo\Client($basic);
+                                    // Sending SMS
+                                    $message = $client->message()->send([
+                                        'to' => '527731951309',
+                                        'from' => 'Wesold',
+                                        'text' => $data['body_mail_reminder'][$key]
+                                    ]);
+                                }
                             }
                         }
                         // Save reminders dynamics in the parent array
@@ -3602,7 +3682,11 @@ class EstateController extends Controller
             );
         }
         //Return response
-        return response($response)->header('Content-Type', 'application/json');
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message'])->withInput();
+        }
     }
 
     private function isWeekend($date)
@@ -3748,7 +3832,11 @@ class EstateController extends Controller
             );
         }
         // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message'])->withInput();
+        }
     }
 
     /**
@@ -4207,69 +4295,54 @@ class EstateController extends Controller
      * Change statut en RDV pris
      */
     public function changeStatus(Request $request)
-    {
-        // Save all data of request
-        $data = $request->all();
-        // Init updated
-        $updated = false;
-        // Init the reponse
-        $response = array(
-            'status' => false, // Reponse status
-            'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
-        );
+{
+    // Save all data of request
+    $data = $request->all();
+    // Init updated
+    $updated = false;
 
-        $updated = $this->updateData(app("App\\Models\\Estate"), 'category', 14, $data['estate_id'], $data['estate_id'], 'category'); // Update data
+    $updated = $this->updateData(app("App\\Models\\Estate"), 'category', 14, $data['estate_id'], $data['estate_id'], 'category'); // Update data
 
-        if ($updated) { // If updated is true
-            $response = array(
-                'status' => true,
-                'message' => 'L\'heure a été mise à jour'
-            );
-        }
-
-        if (!$updated) { // If updated is false
-            $reponse = array(
-                'status' => false,
-                'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-            );
-        }
-        //Return response
-        return response($response)->header('Content-Type', 'application/json');
+    if ($updated) { // If updated is true
+        return back()->with('success', 'L\'heure a été mise à jour');
+    } else { // If updated is false
+        return back()->with('error', 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...');
     }
+}
 
     /**
      * Change statut en RDV pris
      */
     public function changeTime(Request $request)
-    {
-        // Save all data of request
-        $data = $request->all();
-        // Init updated
-        $updated = false;
-        // Init the reponse
+{
+    // Save all data of request
+    $data = $request->all();
+    // Init updated
+    $updated = false;
+    // Init the reponse
+    $response = array(
+        'status' => false, // Reponse status
+        'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
+    );
+
+    $updated = $this->updateData(app("App\\Models\\Estate"), 'date_send_reminder', $data['time_to_send_reminder'], $data['estate_id'], $data['estate_id'], 'date_send_reminder'); // Update data
+
+    if ($updated) { // If updated is true
         $response = array(
-            'status' => false, // Reponse status
-            'message' => 'L\'heure n\'a pas été mise à jour ou L\'heure n\'ont pas été modifiée.' // Response message
+            'status' => true,
+            'message' => 'L\'heure a été mise à jour'
         );
-
-        $updated = $this->updateData(app("App\\Models\\Estate"), 'date_send_reminder', $data['time_to_send_reminder'], $data['estate_id'], $data['estate_id'], 'date_send_reminder'); // Update data
-
-        if ($updated) { // If updated is true
-            $response = array(
-                'status' => true,
-                'message' => 'L\'heure a été mise à jour'
-            );
-        }
-
-        if (!$updated) { // If updated is false
-            $reponse = array(
-                'status' => false,
-                'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
-            );
-        }
-        // Return response
-        return response($response)->header('Content-Type', 'application/json');
+        return back()->with('success', $response['message']); // Redirect to previous page with success message
     }
+
+    if (!$updated) { // If updated is false
+        $reponse = array(
+            'status' => false,
+           'message' => 'Certaines données n\'ont pas pu être mises à jour ou ont la même valeur, veuillez réessayer plus tard ...'
+        );
+        return back()->with('error', $response['message']); // Redirect to previous page with error message
+    }
+}
 
     /**
      * Change statut en RDV pris

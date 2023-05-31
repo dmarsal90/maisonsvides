@@ -136,6 +136,7 @@ Route::post('changestatus', 'EstateController@changeStatus')->name('changestatus
 Route::post('changetime', 'EstateController@changeTime')->name('changetime')->middleware('auth');
 Route::post('validateconfirmation', 'EstateController@validateConfirmation')->name('validateconfirmation')->middleware('auth');
 Route::post('createticket_e', 'EstateController@createTicket')->name('createticket_e')->middleware('auth');
+Route::post('addfiles', 'EstateController@addFiles')->name('addfiles')->middleware('auth');
 
 
 //Offres
