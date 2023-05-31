@@ -768,8 +768,9 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                     </div>
                 </div>
                 <div class="text-right">
-                    <button type="button" class="btn btn-lg btn-dark" data-cancel>Annuler</button>
-                    <a type="button" data-modified="false" data-submit-form="form-change-time" class="btn btn-success">Changer</a>
+                    <button type="reset" class="btn btn-lg btn-dark" data-cancel>Annuler</button>
+                    <button type="submit" class="btn btn-lg btn-success" data-submit-form="form-change-time" data-modified="false">Changer</button>
+                    <!-- <a type="button" data-modified="false" data-submit-form="form-change-time" class="btn btn-success">Changer</a> -->
                 </div>
             </div>
         </form>
