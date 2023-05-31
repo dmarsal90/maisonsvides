@@ -550,7 +550,7 @@ class EstateController extends Controller
         }
         foreach ($calendarList as $value) {
             $account = explode("@", $value->id);
-            if ($account[1] == 'gmail.com') {
+            if ($account[1] == 'maisonsvides.be') {
                 $id = 'src=' . $value->id . '&amp;';
                 $ids = $ids . $id;
             }
