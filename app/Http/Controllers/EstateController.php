@@ -580,7 +580,19 @@ class EstateController extends Controller
             // Get data of events of the DB
             $events = Event::all();
             foreach ($events as $event) {
-                $allEvents['events'][] = $service->events->get('primary', $event->event_id);
+                $eventId = $event->id;
+                try {
+                    $allEvents['events'][] = $service->events->get('primary', $eventId);
+                    dd($allEvents['events'][]);
+                } catch (Google_Service_Exception $e) {
+                    // Handle the exception
+                    $error = array(
+                        'event_id' => $eventId,
+                        'message' => $e->getMessage(),
+                        'code' => $e->getCode(),
+                    );
+                    $allEvents['errors'][] = $error;
+                }
             }
             $allEvents['total'] = count($events);
         }
