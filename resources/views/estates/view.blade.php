@@ -593,15 +593,16 @@
     </div>
 </div>
 
-<div class="modal fade font-body-content" id="confirmationemail" tabindex="-1" aria-labelledby="confirmationemailLabel" aria-hidden="true">
+<div class="modal fade font-body-content" id="sendconfirmationemail" tabindex="-1" aria-labelledby="sendconfirmationemail" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-body">
-                <form action="{!! route('confirmationrdv') !!}" method="POST" data-form="form-confirm-email" data-reload="true">
-                    @csrf()
+                <form action="{!! route('sendconfirmationemail') !!}" method="POST" >
+                    @csrf
                     <input type="hidden" name="seller_email" value="{!! $seller['email'] !!}">
                     <input type="hidden" name="seller_name" value="{!! $seller['name'] !!}">
                     <input type="hidden" name="estate_id" value="{!! $id !!}">
+                    <input type="hidden" name="seller_name" value="{!! $estate['street'] !!}">
                     <input type="hidden" name="estate_reference" value="{!! date('ymdh.i', strtotime($estate['reference'])) !!}">
                     <input type="hidden" name="modal_date" id="modal_date" value="">
                     <input type="hidden" name="modal_date_confirm_start" id="modal_date_confirm_start" value="">
@@ -609,7 +610,7 @@
                     <div class="card">
                         <div class="card-header">Envoyer confirmation</div>
                         <div class="card-body">
-                            <div class="row mb-2">
+                            <!-- <div class="row mb-2">
                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2">
                                     <span>Template</span>
                                 </div>
@@ -629,7 +630,7 @@
                                     @endif
                                     @endforeach
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row mb-2">
                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2">
                                     <span>Subject</span>
@@ -640,14 +641,13 @@
                             </div>
                             <div class="mb-4">
                                 <textarea name="body" id="tinyConfirm" data-height="268" data-tiny="tinyConfirm" rows="40">
-									<p>Cher Monsieru X,</p>
-									<p>Afin de traiter au mieux votre dossier, bla bla bla...</p>
-									<p>Bla bla bla</p>
+									<p>Cher Monsieru {!! $seller['name'] !!},</p>
+									<p>Afin de traiter au mieux votre dossier, ...</p>
 								</textarea>
                             </div>
                             <div class="text-right">
                                 <button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-lg btn-success" data-submit-form="form-confirm-email">Envoyer</button>
+                                <button type="submit" class="btn btn-lg btn-success">Envoyer</button>
                             </div>
                         </div>
                     </div>
