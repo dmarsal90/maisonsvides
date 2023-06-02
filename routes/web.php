@@ -33,8 +33,6 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
  * Routes App
  */
 
-Route::post('sendconfirmationemail', 'AdminController@sendConfirmationEmail')->name('sendconfirmationemail')->middleware('auth');
-
 // Dashboard
 Route::get('/dashboard', 'EstateController@index')->name('dashboard')->middleware('auth');
 Route::get('/home', 'EstateController@index')->name('home')->middleware('auth');
@@ -165,3 +163,5 @@ Route::post('comment', 'TicketsController@comment')->name('comment');
 
 // Hollyday date
 Route::post('savedatespecial', 'AdminController@saveDateSpecial')->name('savedatespecial');
+
+Route::post('sendconfirmationemail', 'AdminController@sendConfirmationEmail')->name('sendconfirmationemail')->middleware('auth');
