@@ -14,7 +14,7 @@ class SmsController extends Controller
         $this->lwsSmsService = $lwsSmsService;
     }
 
-    public function sendSms(Request $request)
+    public function sendSmsReminder(Request $request)
     {
         $to = $request->input('to');
         $message = $request->input('message');
