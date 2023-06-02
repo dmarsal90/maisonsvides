@@ -33,6 +33,8 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
  * Routes App
  */
 
+Route::post('sendconfirmationemail', 'AdminController@sendConfirmationEmail')->name('sendconfirmationemail')->middleware('auth');
+
 // Dashboard
 Route::get('/dashboard', 'EstateController@index')->name('dashboard')->middleware('auth');
 Route::get('/home', 'EstateController@index')->name('home')->middleware('auth');
@@ -139,6 +141,7 @@ Route::post('createticket_e', 'EstateController@createTicket')->name('createtick
 Route::post('addfiles', 'EstateController@addFiles')->name('addfiles')->middleware('auth');
 
 
+
 //Offres
 Route::post('updateoffer', 'EstateController@updateOffer')->name('updateoffer')->middleware('auth');
 
@@ -162,4 +165,3 @@ Route::post('comment', 'TicketsController@comment')->name('comment');
 
 // Hollyday date
 Route::post('savedatespecial', 'AdminController@saveDateSpecial')->name('savedatespecial');
-

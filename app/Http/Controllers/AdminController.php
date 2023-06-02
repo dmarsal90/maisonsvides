@@ -1231,6 +1231,7 @@ class AdminController extends Controller {
 	 * Send Email Template Test
 	 */
 	public function sendEmailTemplateTest(Request $request) {
+       // dd($request);die;
 		$data = new \stdClass(); // Create new object called $data
 		$data->form_phone_message = $request->templateBody; // Save body of the email
 		$data->subject = $request->subject_email; // Save subject of the email
@@ -1283,6 +1284,59 @@ class AdminController extends Controller {
 		// Return response
 		return response($response)->header('Content-Type', 'application/json');
 	}
+
+    public function sendConfirmationEmail(Request $request)
+    {
+
+        dd($request);die;
+        // Obtener los datos del formulario
+        $seller_email = $request->input('seller_email');
+        $seller_name = $request->input('seller_name');
+        $estate_id = $request->input('estate_id');
+        $estate_address = $request->input('estate_address');
+        $estate_reference = $request->input('estate_reference');
+        $modal_date = $request->input('modal_date');
+        $modal_date_confirm_start = $request->input('modal_date_confirm_start');
+        $modal_date_confirm_end = $request->input('modal_date_confirm_end');
+        $template_id = $request->input('template_id');
+        $subject = $request->input('subject');
+        $body = $request->input('body');
+
+        // Construir los datos para el correo electrónico
+        $data = new \stdClass();
+        $data->from = Auth::user()->email;
+        $data->fromName = Auth::user()->name;
+        $data->emails = array($seller_email);
+        $data->subject = $subject;
+
+
+        $body = str_replace('{seller_name}', $seller_name, $body);
+        $body = str_replace('{estate_address}', $estate_address, $body);
+        $body = str_replace('{modal_date}', $modal_date, $body);
+        $body = str_replace('{modal_date_confirm_start}', $modal_date_confirm_start, $body);
+        $body = str_replace('{modal_date_confirm_end}', $modal_date_confirm_end, $body);
+        $data->body = html_entity_decode($body);
+
+
+        try {
+            Mail::to($seller_email)->send(new EmailT($data));
+            $response = array(
+                'status' => true,
+                'message' => 'Le e-mail a été envoyé'
+            );
+        } catch (\Exception $e) {
+            $response = array(
+                'status' => false,
+                'message' => 'Le e-mail n\'a pas pu être envoyé, veuillez réessayer plus tard...'
+            );
+        }
+
+         if ($response['status']) {
+            return back()->with('success', $response['message']);
+        } else {
+            return back()->with('error', $response['message']);
+        }
+    }
 
 	/**
 	 * Save reminder
