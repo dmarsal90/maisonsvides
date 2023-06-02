@@ -634,8 +634,10 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
                 </div>
                 <div class="row mt-2">
                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendconfirmationemail" data-confirm-email>Envoyer E-mail de confirmation</button>
-                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#confirmationsms" data-confirm-sms>Envoyer SMS de confirmation</button>
+                        <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendconfirmationemail" data-confirm-email>Envoyer E-mail de confirmation</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendconfirmationsms" data-confirm-sms>Envoyer SMS de confirmation</button> -->
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendconfirmationemail">Envoyer E-mail de confirmation</button>
+                        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#sendconfirmationsms">Envoyer SMS de confirmation</button>
                         <h6 class="ffhnm d-inline-block ml-2" style="color:green">{!! $estate['visit_date_at'] !!}</h6>
                     </div>
                 </div>
