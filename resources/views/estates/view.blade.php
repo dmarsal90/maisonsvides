@@ -597,7 +597,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-body">
-                <form action="{!! route('sendconfirmationemail') !!}" method="POST" >
+                <form action="{!! route('sendconfirmationemail') !!}" method="POST">
                     @csrf
                     <input type="hidden" name="seller_email" value="{!! $seller['email'] !!}">
                     <input type="hidden" name="seller_name" value="{!! $seller['name'] !!}">
@@ -657,17 +657,34 @@
     </div>
 </div>
 
-<div class="modal fade font-body-content" id="confirmationsms" tabindex="-1" aria-labelledby="confirmationsmsLabel" aria-hidden="true">
+<div class="modal fade font-body-content" id="sendconfirmationsms" tabindex="-1" aria-labelledby="sendconfirmationsmsLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
             <div class="modal-body">
-                <form action="{!! route('confirmationsmsrdv') !!}" method="POST" data-form="form-confirm-sms" data-reload="true">
+                <form action="{!! route('sendsmsreminder') !!}" method="POST">
                     @csrf()
-                    <input type="hidden" name="seller_email" value="{!! $seller['email'] !!}">
+
                     <input type="hidden" name="seller_name" value="{!! $seller['name'] !!}">
+                    <input type="hidden" name="to" value="{!! $seller['phone'] !!}">
                     <input type="hidden" name="estate_id" value="{!! $id !!}">
+                    <input type="hidden" name="estate_address" value="{!! $estate['street'] !!}">
                     <input type="hidden" name="estate_reference" value="{!! date('ymdh.i', strtotime($estate['reference'])) !!}">
                     <input type="hidden" name="modal_date" id="modal_date_sms" value="">
+                    <?php
+                    // Obtener la cadena de la base de datos
+                    $visit_date_at = $estate['visit_date_at'];
+
+                    // Descomponer la cadena en partes separadas por espacios y guiones
+                    $parts = explode(' ', $visit_date_at);
+                    $date = $parts[2];
+                    $start_time = $parts[4];
+                    $end_time = $parts[6];
+
+                    // Formatear la fecha y horas de inicio y fin
+                    $modal_date = date('Y-m-d', strtotime($date));
+                    $modal_date_confirm_start = date('H:i', strtotime($start_time));
+                    $modal_date_confirm_end = date('H:i', strtotime($end_time));
+                    ?>
                     <input type="hidden" name="modal_date_confirm_start" id="modal_date_confirm_start_sms" value="">
                     <input type="hidden" name="modal_date_confirm_end" id="modal_modal_date_confirm_end_sms" value="">
                     <div class="card">
@@ -677,7 +694,7 @@
                                 <div class="col-xs-12 col-sm-2 col-md-2 col-lg-2 col-xl-2">
                                     <span>Template</span>
                                 </div>
-                                <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                                <!-- <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
                                     <select class="form-control" id="nom_template_sms">
                                         @foreach($templates as $template)
                                         @if($template['type'] == 'sms')
@@ -691,17 +708,24 @@
 										</textarea>
                                     @endif
                                     @endforeach
-                                </div>
+                                </div> -->
                             </div>
                             <div class="row mb-2">
                                 <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                                    <textarea name="body" class="form-control" id="confirmSMS" rows="4"><p>Cher Monsieru X,</p><p>Afin de traiter au mieux votre dossier, bla bla bla...</p><p>Bla bla bla</p>
-									</textarea>
+                                    <textarea name="body" class="form-control" id="confirmSMS" rows="4">
+                                       <p>Cher Monsieur {!! $seller['name'] !!},</p>
+                                       <p>Afin de traiter au mieux votre dossier pour la propriété située au {!! $estate['street'] !!}, nous vous confirmons la visite le {!! $modal_date !!}.</p>
+                                       <p>La visite est confirmée pour les dates suivantes :</p>
+                                       <p>Début : {!! $modal_date_confirm_start !!}</p>
+                                       <p>Fin : {!! $modal_date_confirm_end !!}</p>
+                                    </textarea>
                                 </div>
                             </div>
                             <div class="text-right">
+                                <!-- <button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
+                                <button type="submit" class="btn btn-lg btn-success" data-submit-form="form-confirm-sms">Envoyer</button> -->
                                 <button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
-                                <button type="submit" class="btn btn-lg btn-success" data-submit-form="form-confirm-sms">Envoyer</button>
+                                <button type="submit" class="btn btn-lg btn-success">Envoyer</button>
                             </div>
                         </div>
                     </div>
