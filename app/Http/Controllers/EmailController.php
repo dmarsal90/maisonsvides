@@ -8,21 +8,22 @@ use Illuminate\Support\Facades\Mail;
 class EmailController extends Controller
 {
     public function sendConfirmationEmail(Request $request)
-    {
-        $para = $request->input('seller_email');
-        $asunto = $request->input('subject');
-        $mensaje = $request->input('body');
+{
+    $to = $request->input('seller_email');
+    $subject = $request->input('subject');
+    $body = $request->input('body');
 
-        // Eliminar las etiquetas HTML del mensaje
-        $mensaje = strip_tags($mensaje);
+    // Eliminar las etiquetas HTML del mensaje
+    $body = strip_tags($body);
 
-        // Enviar el correo electrónico utilizando la clase Mail
-        Mail::send([], [], function ($message) use ($para, $asunto, $mensaje) {
-            $message->to($para)
-                ->subject($asunto)
-                ->setBody($mensaje, 'text/html');
-        });
+    // Enviar el correo electrónico utilizando la clase Mail
+    Mail::send([], [], function ($message) use ($to, $subject, $body) {
+        $message->from('admin@maisonsvides.be', 'Administrateur')
+            ->to($to)
+            ->subject($subject)
+            ->setBody($body, 'text/html');
+    });
 
-        return response()->json(['status' => 'success']);
-    }
+    return response()->json(['status' => 'success']);
+}
 }
