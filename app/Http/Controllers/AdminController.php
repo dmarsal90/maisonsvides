@@ -1285,7 +1285,7 @@ class AdminController extends Controller {
 		return response($response)->header('Content-Type', 'application/json');
 	}
 
-    public function sendConfirmationEmail(Request $request)
+    /* public function sendConfirmationEmail(Request $request)
     {
 
         dd($request);die;
@@ -1336,7 +1336,7 @@ class AdminController extends Controller {
         } else {
             return back()->with('error', $response['message']);
         }
-    }
+    } */
 
 	/**
 	 * Save reminder
