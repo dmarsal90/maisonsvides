@@ -164,6 +164,6 @@ Route::post('comment', 'TicketsController@comment')->name('comment');
 // Hollyday date
 Route::post('savedatespecial', 'AdminController@saveDateSpecial')->name('savedatespecial');
 
-Route::post('/sendconfirmationemail', [\App\Http\Controllers\AdminController::class, 'sendConfirmationEmail'])->name('sendconfirmationemail')->middleware('auth');
+Route::post('/sendconfirmationemail', [\App\Http\Controllers\EmailController::class, 'sendConfirmationEmail'])->name('sendconfirmationemail')->middleware('auth');
 
 Route::post('/send-sms', [\App\Http\Controllers\SmsController::class, 'sendSmsReminder'])->name('sendsmsreminder')->middleware('auth');
