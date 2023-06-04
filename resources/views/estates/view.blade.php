@@ -598,12 +598,27 @@
         <div class="modal-content">
             <div class="modal-body">
                 <form action="{!! route('sendconfirmationemail') !!}" method="POST">
-                    @csrf
+                    @csrf()
                     <input type="hidden" name="seller_email" value="{!! $seller['email'] !!}">
                     <input type="hidden" name="seller_name" value="{!! $seller['name'] !!}">
                     <input type="hidden" name="estate_id" value="{!! $id !!}">
                     <input type="hidden" name="seller_name" value="{!! $estate['street'] !!}">
                     <input type="hidden" name="estate_reference" value="{!! date('ymdh.i', strtotime($estate['reference'])) !!}">
+                    <?php
+                    // Obtener la cadena de la base de datos
+                    $visit_date_at = $estate['visit_date_at'];
+
+                    // Descomponer la cadena en partes separadas por espacios y guiones
+                    $parts = explode(' ', $visit_date_at);
+                    $date = $parts[2];
+                    $start_time = $parts[4];
+                    $end_time = $parts[6];
+
+                    // Formatear la fecha y horas de inicio y fin
+                    $modal_date = date('Y-m-d', strtotime($date));
+                    $modal_date_confirm_start = date('H:i', strtotime($start_time));
+                    $modal_date_confirm_end = date('H:i', strtotime($end_time));
+                    ?>
                     <input type="hidden" name="modal_date" id="modal_date" value="">
                     <input type="hidden" name="modal_date_confirm_start" id="modal_date_confirm_start" value="">
                     <input type="hidden" name="modal_date_confirm_end" id="modal_modal_date_confirm_end" value="">
@@ -636,14 +651,17 @@
                                     <span>Subject</span>
                                 </div>
                                 <div class="col-xs-12 col-sm-10 col-md-10 col-lg-10 col-xl-10">
-                                    <input type="text" name="subject" id="subjectrdv" class="form-control" placeholder="Message" required>
+                                    <input type="text" name="subject" class="form-control" placeholder="Message" required>
                                 </div>
                             </div>
                             <div class="mb-4">
-                                <textarea name="body" id="tinyConfirm" data-height="268" data-tiny="tinyConfirm" rows="40">
-									<p>Cher Monsieru {!! $seller['name'] !!},</p>
-									<p>Afin de traiter au mieux votre dossier, ...</p>
-								</textarea>
+                                <textarea name="body" class="form-control" id="confirmSMS" rows="4">
+                                       <p>Cher Monsieur {!! $seller['name'] !!},</p>
+                                       <p>Afin de traiter au mieux votre dossier pour la propriété située au {!! $estate['street'] !!}, nous vous confirmons la visite le {!! $modal_date !!}.</p>
+                                       <p>La visite est confirmée pour les dates suivantes :</p>
+                                       <p>Début : {!! $modal_date_confirm_start !!}</p>
+                                       <p>Fin : {!! $modal_date_confirm_end !!}</p>
+                                </textarea>
                             </div>
                             <div class="text-right">
                                 <button type="button" class="btn btn-lg btn-dark" data-dismiss="modal">Annuler</button>
