@@ -15,7 +15,7 @@ class CreateMediasTable extends Migration
 
 		Schema::create('medias', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->string('name'); // Name of media
 			$table->string('file_name'); // Name of file
 			$table->string('type'); // Type of media photo, document

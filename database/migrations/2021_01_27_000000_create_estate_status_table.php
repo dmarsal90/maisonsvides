@@ -15,7 +15,7 @@ class CreateEstateStatusTable extends Migration
 
 		Schema::create('estate_status', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->bigInteger('category_id'); // Estate Status ID
 			$table->bigInteger('user_id'); // User that change the status
 			$table->timestamp('start_at')->nullable(); // Created at

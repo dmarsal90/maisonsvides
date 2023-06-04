@@ -15,7 +15,7 @@ class CreateEstateRemarksTable extends Migration
 	{
 		Schema::create('estate_remarks', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->longText('interior_state'); // State interior of the maison
 			$table->longText('exterior_state'); // State exterior of the maison
 			$table->longText('district_state'); // State of the neighborhood

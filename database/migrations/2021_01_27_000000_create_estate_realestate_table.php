@@ -15,7 +15,7 @@ class CreateEstateRealestateTable extends Migration
 
 		Schema::create('estate_realestate', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->bigInteger('realestate_id'); // Realestate ID
 			$table->string('refrence'); // Reference Realestate
 			$table->string('url'); // URL Realestate

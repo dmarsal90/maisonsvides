@@ -15,7 +15,7 @@ class CreateEstateReminderTable extends Migration
 	{
 		Schema::create('estate_reminder', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->bigInteger('user_id'); // User id
 			$table->string('name_reminder'); // Name of reminder
 			$table->longText('content'); // Date of reminder

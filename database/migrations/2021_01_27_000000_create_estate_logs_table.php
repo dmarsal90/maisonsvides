@@ -15,7 +15,7 @@ class CreateEstateLogsTable extends Migration
 
 		Schema::create('estate_logs', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->bigInteger('user_id'); // User that change the status
 			$table->longText('old_value')->nullable(); // Save old value
 			$table->longText('new_value')->nullable(); // Save new value

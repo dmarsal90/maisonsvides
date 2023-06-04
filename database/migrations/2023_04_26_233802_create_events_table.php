@@ -23,11 +23,11 @@ class CreateEventsTable extends Migration
             $table->dateTime('end');
             $table->string('localization');
             $table->text('description');
-           // $table->unsignedBigInteger('estate_id')->nullable();
+            $table->unsignedBigInteger('estate_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-           // $table->foreign('estate_id')->references('id')->on('estates');
+            $table->foreign('estate_id')->references('id')->on('estates');
         });
     }
 

@@ -22,7 +22,7 @@ class CreateEstatesTable extends Migration
             $table->integer('box');
             $table->integer('code_postal');
             $table->string('city');
-            $table->bigInteger('seller');
+            $table->unsignedBigInteger('seller');
             $table->longText('when_want_sell');
             $table->longText('want_tenant_after_sell');
             $table->longText('want_buy_wesold');

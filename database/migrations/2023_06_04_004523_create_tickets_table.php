@@ -19,9 +19,10 @@ class CreateTicketsTable extends Migration
             $table->string('email');
             $table->string('subject');
             $table->text('comment');
-            $table->boolean('isSolved')->default(false);
-            $table->unsignedBigInteger('agent_id')->nullable();
-            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
+            $table->boolean('isSolved')->nullable();
+            $table->bigInteger('agent_id')->nullable();
+            $table->unsignedBigInteger('estate_id'); // Estate id
+            $table->foreign('agent_id')->references('agent_id')->on('agents');
             $table->softDeletes();
             $table->timestamps();
         });

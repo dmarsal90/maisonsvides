@@ -15,7 +15,7 @@ class CreateEstateOffersTable extends Migration
 
 		Schema::create('estate_offers', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->double('price_seller'); // Price estimated by the seller
 			$table->double('price_wesold'); // Price estimated by Wesold
 			$table->double('price_market'); // Price estimated by market

@@ -15,13 +15,15 @@ class CreateEstateTickets extends Migration
 	{
 		Schema::create('estate_tickets', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate id
+			$table->unsignedBigInteger('estate_id'); // Estate id
 			$table->bigInteger('ticket_id'); // Ticket id
 			$table->boolean('no_answer'); // 1 = Yes, 0 = No
+            $table->bigInteger('agent_id')->nullable();
 			$table->timestamp('created_at')->useCurrent(); // Created at
 			$table->timestamp('updated_at')->useCurrent(); // Updated at
 			$table->timestamp('deleted_at')->nullable(); // Deleted at
 			$table->foreign('estate_id')->references('id')->on('estates'); // Add foreign key of user type
+            $table->foreign('agent_id')->references('agent_id')->on('agents');
 		});
 	}
 

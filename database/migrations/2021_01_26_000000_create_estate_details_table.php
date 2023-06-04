@@ -15,7 +15,7 @@ class CreateEstateDetailsTable extends Migration
 
 		Schema::create('estate_details', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->longText('description')->nulleable(); // Estate description
 			$table->longText('comment')->nulleable(); // Free comment of seller
 			$table->longText('problems')->nulleable(); // Problems reported by seller

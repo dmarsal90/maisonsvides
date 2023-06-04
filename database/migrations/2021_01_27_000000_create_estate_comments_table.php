@@ -15,7 +15,7 @@ class CreateEstateCommentsTable extends Migration
 
 		Schema::create('estate_comments', function (Blueprint $table) {
 			$table->bigInteger('id')->autoIncrement(); // ID autoincrement
-			$table->bigInteger('estate_id'); // Estate ID
+			$table->unsignedBigInteger('estate_id'); // Estate ID
 			$table->bigInteger('user_id'); // User that comment
 			$table->longText('comment')->nullable(); // User comment
 			$table->timestamp('created_at')->useCurrent(); // Created at
