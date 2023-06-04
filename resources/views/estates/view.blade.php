@@ -1276,14 +1276,8 @@
 
 <script type="text/javascript">
     window.urldeletemedias = "{!! route('deletemedia', 0) !!}";
-    aTemplates = {
-        !!json_encode($templates);!!
-    }; // Varible to obtain the information directly in javascript when a editUser will be updated
-    aTemplatesReminders = {
-        !!json_encode($templatesReminders);!!
-    }; // Varible to obtain the information directly in javascript when a editUser will be updated
-    aEventConfirmed = {
-        !!json_encode($eventConfirmed);!!
-    }; // Varible to obtain the information directly in javascript when a editUser will be updated
+    aTemplates = {!! json_encode($templates); !!}; // Variable to obtain the information directly in javascript when a editUser will be updated
+    aTemplatesReminders = {!! json_encode($templatesReminders); !!}; // Variable to obtain the information directly in javascript when a editUser will be updated
+    aEventConfirmed = {!! json_encode($eventConfirmed); !!}; // Variable to obtain the information directly in javascript when a editUser will be updated
 </script>
 @endsection
