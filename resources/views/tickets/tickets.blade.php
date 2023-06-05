@@ -12,6 +12,7 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+    @session()->forget('success')
     @endif
 
     @if(session('error'))
@@ -21,12 +22,13 @@
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
+    @session()->forget('error')
     @endif
-    <!--  <script>
+      <script>
         setTimeout(function() {
             $('.alert').slideUp();
         }, 3000);
-    </script> -->
+    </script>
     <div class="row mb-4">
         <a role="button" class="btn btn-success" data-toggle="modal" data-target="#createTicket"><i class="bi bi-plus" style="font-size:17px;"></i>Nouveau Ticket</a>
     </div>
