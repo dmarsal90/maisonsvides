@@ -158,7 +158,8 @@ Route::get('viewTickets', 'TicketsController@viewTickets')->name('viewTickets');
 Route::get('viewoneticket/{id}', 'TicketsController@viewOneTicket')->name('viewoneticket');
 Route::get('viewoneticketdash/{id}', 'TicketsController@viewOneTicketDash')->name('viewoneticketdash');
 Route::get('viewoneticketdetails/{id}/{estateid}', 'TicketsController@viewOneTicketDetails')->name('viewoneticketdetails');
-Route::post('createticket', 'TicketsController@createTicket')->name('createticket');
+//Route::post('createticket', 'TicketsController@createTicket')->name('createticket');
+Route::post('createticket', 'TicketNewController@createTicket')->name('createticket');
 Route::post('comment', 'TicketsController@comment')->name('comment');
 
 // Hollyday date
