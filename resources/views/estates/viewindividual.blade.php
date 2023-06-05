@@ -12,6 +12,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
+@session()->forget('success')
 @endif
 
 @if(session('error'))
@@ -21,6 +22,7 @@ $tabActive = isset($_COOKIE['tab-active']) ? $_COOKIE['tab-active'] : "estate-in
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
+@session()->forget('error')
 @endif
 
 
