@@ -18,7 +18,7 @@ class EmailController extends Controller
 
         // Enviar el correo electrónico utilizando la clase Mail
         Mail::send([], [], function ($message) use ($to, $subject, $body) {
-            $message->from('admin@maisonsvides.be', 'Administrateur')
+            $message->from(env('MAIL_ADMIN_FROM_ADDRESS'), env('MAIL_ADMIN_FROM_NAME'))
                 ->to($to)
                 ->subject($subject)
                 ->setBody($body, 'text/html');
@@ -38,7 +38,7 @@ class EmailController extends Controller
 
         // Enviar el correo electrónico utilizando la clase Mail
         Mail::send([], [], function ($message) use ($to, $subject, $body) {
-            $message->from('tickets@maisonsvides.be', 'Tickets')
+            $message->from(env('MAIL_TICKETS_FROM_ADDRESS'), env('MAIL_TICKETS_FROM_NAME'))
                 ->to($to)
                 ->subject($subject)
                 ->setBody($body, 'text/html');
