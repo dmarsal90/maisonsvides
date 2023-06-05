@@ -79,12 +79,19 @@ class TicketNewController extends Controller
                 'subject' => $data['subject'],
                 'comment' => $data['body'],
                 'isSolved'=> 0,
-                'agent_id'=> 2,
+                'agent_id'=> null,
             ]);
-            
+
 
             // Send email notification
-            Mail::to('david@flexvision.be')->send(new NewTicketNotification());
+            Mail::to('david@flexvision.be')->send(new NewTicketNotification(
+                $data['name_ticket'],
+                $data['email'],
+                $data['subject'],
+                $data['body'],
+                false,
+                null,
+            ));
 
             return back()->with('success', 'Le ticket a été créé avec succès.');
         } catch (\Exception $e) {
