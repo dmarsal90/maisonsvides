@@ -16,13 +16,19 @@ class EmailController extends Controller
         // Eliminar las etiquetas HTML del mensaje
         $body = strip_tags($body);
 
-        // Enviar el correo electrónico utilizando la clase Mail
-        Mail::send([], [], function ($message) use ($to, $subject, $body) {
-            $message->from(env('MAIL_ADMIN_FROM_ADDRESS'), env('MAIL_ADMIN_FROM_NAME'))
-                ->to($to)
-                ->subject($subject)
-                ->setBody($body, 'text/html');
-        });
+        try {
+            Mail::send([], [], function ($message) use ($to, $subject, $body) {
+                $message->from(env('MAIL_ADMIN_FROM_ADDRESS'), env('MAIL_ADMIN_FROM_NAME'))
+                    ->to($to)
+                    ->subject($subject)
+                    ->setBody($body, 'text/html');
+            });
+        } catch (\Swift_TransportException $e) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ], 422);
+        }
 
         return response()->json(['status' => 'success']);
     }
@@ -35,14 +41,20 @@ class EmailController extends Controller
 
         // Eliminar las etiquetas HTML del mensaje
         $body = strip_tags($body);
-
-        // Enviar el correo electrónico utilizando la clase Mail
-        Mail::send([], [], function ($message) use ($to, $subject, $body) {
-            $message->from(env('MAIL_TICKETS_FROM_ADDRESS'), env('MAIL_TICKETS_FROM_NAME'))
-                ->to($to)
-                ->subject($subject)
-                ->setBody($body, 'text/html');
-        });
+        try {
+            // Enviar el correo electrónico utilizando la clase Mail
+            Mail::send([], [], function ($message) use ($to, $subject, $body) {
+                $message->from(env('MAIL_TICKETS_FROM_ADDRESS'), env('MAIL_TICKETS_FROM_NAME'))
+                    ->to($to)
+                    ->subject($subject)
+                    ->setBody($body, 'text/html');
+            });
+        } catch (\Swift_TransportException $e) {
+            return response()->json([
+                'status' => 'fail',
+                'message' => $e->getMessage()
+            ], 422);
+        }
 
         return response()->json(['status' => 'success']);
     }
